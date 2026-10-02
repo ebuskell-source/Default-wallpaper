@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="TLA BootPaper">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>TLA BootPaper</title>
+<style>
+  :root {
+    --bg: #f3f5f9; --card: #ffffff; --text: #16202e; --muted: #5b6676; --line: #dfe4ec;
+    --accent: #2f6fe4; --accent-text: #ffffff; --gold: #f2b830; --shade: rgba(10, 16, 28, .72);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0d1420; --card: #172131; --text: #eef2f8; --muted: #9aa6b8; --line: #263247;
+            --accent: #4f8bff; --shade: rgba(0, 0, 0, .82); }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 17px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif; }
+  header { padding: calc(env(safe-area-inset-top) + 28px) 24px 8px; max-width: 1180px; margin: 0 auto;
+    display: flex; align-items: center; gap: 16px; }
+  header img { width: 56px; height: 56px; border-radius: 13px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+  h1 { margin: 0; font-size: 28px; letter-spacing: -.01em; }
+  header p { margin: 2px 0 0; color: var(--muted); }
+  main { max-width: 1180px; margin: 0 auto; padding: 12px 24px calc(env(safe-area-inset-bottom) + 32px); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+  .tile { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 0; overflow: hidden;
+    cursor: pointer; text-align: left; color: inherit; font: inherit; transition: transform .15s ease; }
+  .tile:active { transform: scale(.97); }
+  .tile img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--line); }
+  .tile span { display: block; padding: 10px 14px 12px; font-weight: 600; }
+  .tile.current { outline: 3px solid var(--gold); outline-offset: -3px; }
+  .note { color: var(--muted); font-size: 15px; margin-top: 22px; }
+
+  .viewer { position: fixed; inset: 0; background: var(--shade); display: none; align-items: center; justify-content: center;
+    padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px); z-index: 10; }
+  .viewer.open { display: flex; }
+  .panel { background: var(--card); border-radius: 22px; width: min(920px, 100%); max-height: 100%; overflow: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+  .panel img { display: block; width: 100%; aspect-ratio: 4 / 3; max-height: 58vh; object-fit: contain; background: #000; }
+  .body { padding: 18px 22px 22px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  h2 { margin: 0; font-size: 22px; }
+  .buttons { display: flex; gap: 10px; }
+  button.primary, button.plain { border: 0; border-radius: 12px; padding: 11px 18px; font: 600 17px/1 inherit; cursor: pointer; }
+  button.primary { background: var(--accent); color: var(--accent-text); }
+  button.plain { background: var(--line); color: var(--text); }
+  ol { margin: 16px 0 0; padding-left: 22px; color: var(--muted); }
+  ol li { margin: 4px 0; }
+  ol b { color: var(--text); }
+  .hint { display: none; margin: 12px 0 0; color: var(--muted); }
+  .hint.show { display: block; }
+</style>
+</head>
+<body>
+<header>
+  <img src="apple-touch-icon.png" alt="">
+  <div>
+    <h1>TLA BootPaper</h1>
+    <p>Choose a TLA background for your iPad.</p>
+  </div>
+</header>
+<main>
+  <div class="grid" id="grid"></div>
+  <p class="note">Your iPad starts with the TLA Classic background. Pick any of these to use instead.</p>
+</main>
+
+<div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="name">
+  <div class="panel">
+    <img id="big" alt="">
+    <div class="body">
+      <div class="row">
+        <h2 id="name"></h2>
+        <div class="buttons">
+          <button class="primary" id="save">Save to Photos</button>
+          <button class="plain" id="close">Close</button>
+        </div>
+      </div>
+      <p class="hint" id="hint">Touch and hold the picture, then choose <b>Save to Photos</b>.</p>
+      <ol>
+        <li>Tap <b>Save to Photos</b> above, then <b>Save Image</b>.</li>
+        <li>Open <b>Photos</b>, open the picture, tap <b>Share</b>, then <b>Use as Wallpaper</b>.</li>
+        <li>Tap <b>Add</b>, then <b>Set as Wallpaper Pair</b> to use it on the Lock Screen and Home Screen.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<script>
+const BACKGROUNDS = [
+  ["tla", "TLA Classic"], ["frutiger-aero", "Frutiger Aero"], ["liquid-glass", "Liquid Glass"],
+  ["microsoft", "Microsoft"], ["rainy", "Rainy"], ["code", "Code"], ["bricks", "Bricks"], ["blocks", "Blocks"],
+  ["space", "Space"], ["claymation", "Claymation"], ["solarpunk", "Solarpunk"], ["anime", "Anime"], ["ocean", "Ocean"],
+];
+const grid = document.getElementById("grid"), viewer = document.getElementById("viewer");
+const big = document.getElementById("big"), nameEl = document.getElementById("name"), hint = document.getElementById("hint");
+let current = null;
+
+for (const [id, name] of BACKGROUNDS) {
+  const b = document.createElement("button");
+  b.className = "tile" + (id === "tla" ? " current" : "");
+  b.innerHTML = `<img src="thumbs/${id}.jpg" alt="" loading="lazy"><span>${name}</span>`;
+  b.addEventListener("click", () => open(id, name));
+  grid.appendChild(b);
+}
+
+function open(id, name) {
+  current = { id, name };
+  big.src = `img/${id}.jpg`; big.alt = `${name} background`;
+  nameEl.textContent = name; hint.classList.remove("show");
+  viewer.classList.add("open");
+}
+function close() { viewer.classList.remove("open"); }
+document.getElementById("close").addEventListener("click", close);
+viewer.addEventListener("click", e => { if (e.target === viewer) close(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+
+// Hands the picture to the iPad's share sheet ("Save Image" puts it in Photos). Where that isn't
+// available, say how to save it by touching and holding the picture instead.
+document.getElementById("save").addEventListener("click", async () => {
+  if (!current) return;
+  try {
+    const blob = await (await fetch(`img/${current.id}.jpg`)).blob();
+    const file = new File([blob], `TLA ${current.name}.jpg`, { type: "image/jpeg" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file] });
+      return;
+    }
+  } catch (e) {
+    if (e && e.name === "AbortError") return;   // they closed the share sheet
+  }
+  hint.classList.add("show");
+});
+</script>
+</body>
+</html>
