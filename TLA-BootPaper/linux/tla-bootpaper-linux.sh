@@ -3,9 +3,9 @@
 # video at login, the TLA backgrounds (desktop and lock screen, changed only in the TLA BootPaper app) and the
 # TLA BootPaper app. The bundle comes from the organization's GitHub repository and is only used if its SHA-256
 # matches the one below. When it's already installed, this does nothing.
-VERSION="3.4.5"
-URL="https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/tla-bootpaper-linux-3.4.5.tar.gz"
-SHA256="17b731259257a3d2a18e867c197b483e34c8b8dd67b15b7e3bb0ce7b70bf64d7"
+VERSION="3.5"
+URL="https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/tla-bootpaper-linux-3.5.tar.gz"
+SHA256="52d5f08ff4e1e8b6553312bcf98dc8dcc1358106ce4d54f980d2da816983f890"
 
 if [ "$(cat /opt/tla-bootpaper/VERSION 2>/dev/null)" = "$VERSION" ] && systemctl is-enabled --quiet tla-bootpaper-guard.timer 2>/dev/null; then
   echo "TLA BootPaper $VERSION is installed."
