@@ -12,10 +12,12 @@
   :root {
     --bg: #f3f5f9; --card: #ffffff; --text: #16202e; --muted: #5b6676; --line: #dfe4ec;
     --accent: #2f6fe4; --accent-text: #ffffff; --gold: #f2b830; --shade: rgba(10, 16, 28, .72);
+    --help-bg: #e7f0fd; --help-line: #9cc3f5; --help-text: #102a4c;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg: #0d1420; --card: #172131; --text: #eef2f8; --muted: #9aa6b8; --line: #263247;
-            --accent: #4f8bff; --shade: rgba(0, 0, 0, .82); }
+            --accent: #4f8bff; --shade: rgba(0, 0, 0, .82);
+            --help-bg: #15284a; --help-line: #2f5591; --help-text: #e3edff; }
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; background: var(--bg); color: var(--text);
@@ -34,6 +36,9 @@
   .tile span { display: block; padding: 10px 14px 12px; font-weight: 600; }
   .tile.current { outline: 3px solid var(--gold); outline-offset: -3px; }
   .note { color: var(--muted); font-size: 15px; margin-top: 22px; }
+  .help { background: var(--help-bg); border: 1px solid var(--help-line); color: var(--help-text);
+    border-radius: 14px; padding: 14px 18px; margin: 0 0 20px; }
+  .help a { color: var(--accent); font-weight: 600; }
 
   .viewer { position: fixed; inset: 0; background: var(--shade); display: none; align-items: center; justify-content: center;
     padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px); z-index: 10; }
@@ -64,6 +69,9 @@
   </div>
 </header>
 <main>
+  <p class="help"><b>Have an idea or found a problem?</b> Email
+    <a href="mailto:helpdesk@schoolathome.ca">helpdesk@schoolathome.ca</a> to ask for a new background, report a bug,
+    or suggest how to make TLA devices better to use.</p>
   <div class="grid" id="grid"></div>
   <p class="note">Your iPad starts with the TLA Classic background. Pick any of these to use instead.</p>
 </main>
