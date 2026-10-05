@@ -146,6 +146,7 @@ if (params.toString()) history.replaceState(null, "", here);
 for (const [id, name] of BACKGROUNDS) {
   const b = document.createElement("button");
   b.className = "tile" + (id === mine ? " current" : "");
+  b.dataset.id = id;
   b.innerHTML = `<img src="thumbs/${id}.jpg" alt="" loading="lazy"><span>${name}</span>`;
   b.addEventListener("click", () => open(id, name));
   grid.appendChild(b);
@@ -162,12 +163,15 @@ document.getElementById("close").addEventListener("click", close);
 viewer.addEventListener("click", e => { if (e.target === viewer) close(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
 
+// After the wallpaper is set, Shortcuts just stays open (sending people back here would open the page in Safari
+// rather than the Home Screen app). Only if the shortcut is missing does it come back, to show the one-time setup.
 document.getElementById("use").addEventListener("click", () => {
   if (!current) return;
   const enc = encodeURIComponent, img = new URL(`img/${current.id}.jpg`, here).href;
+  try { localStorage.setItem("tla-bg", current.id); } catch (e) {}
+  for (const t of grid.children) t.classList.toggle("current", t.dataset.id === current.id);
   location.href = "shortcuts://x-callback-url/run-shortcut?name=" + enc(SHORTCUT_NAME) +
-    "&input=text&text=" + enc(img) + "&x-success=" + enc(here + "?set=" + current.id) +
-    "&x-error=" + enc(here + "?setup=1") + "&x-cancel=" + enc(here);
+    "&input=text&text=" + enc(img) + "&x-error=" + enc(here + "?setup=1");
 });
 
 // Hands the picture to the iPad's share sheet ("Save Image" puts it in Photos). Where that isn't
