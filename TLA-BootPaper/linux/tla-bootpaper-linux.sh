@@ -1,15 +1,29 @@
 #!/bin/bash
-# TLA BootPaper for Linux - Intune Linux script (runs as root). Installs or updates TLA BootPaper: the TLA intro
-# video at login, the TLA backgrounds (desktop and lock screen, changed only in the TLA BootPaper app) and the
-# TLA BootPaper app. The bundle comes from the organization's GitHub repository and is only used if its SHA-256
-# matches the one below. When it's already installed, this does nothing.
-VERSION="3.5"
-URL="https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/tla-bootpaper-linux-3.5.tar.gz"
-SHA256="52d5f08ff4e1e8b6553312bcf98dc8dcc1358106ce4d54f980d2da816983f890"
+# TLA BootPaper for Linux - Intune Linux script. Installs or updates TLA BootPaper: the TLA intro video at login,
+# the TLA backgrounds (desktop and lock screen, changed only in the TLA BootPaper app) and the TLA BootPaper app.
+# Intune runs it as the person signed in ("User" context), so it installs just for them and nobody is asked for an
+# administrator password; run as root, it installs for everyone. The bundle comes from the organization's GitHub
+# repository and is only used if its SHA-256 matches the one below. When it's already installed, this does nothing.
+VERSION="3.5.5"
+URL="https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/tla-bootpaper-linux-3.5.5.tar.gz"
+SHA256="1b3a7952a4bf08c5a01b0b3a5818c3f9ea50727eb7c12b3ff1664496b3155751"
 
-if [ "$(cat /opt/tla-bootpaper/VERSION 2>/dev/null)" = "$VERSION" ] && systemctl is-enabled --quiet tla-bootpaper-guard.timer 2>/dev/null; then
-  echo "TLA BootPaper $VERSION is installed."
-  exit 0
+if [ "$(id -u)" = 0 ]; then
+  DEST=/opt/tla-bootpaper
+  if [ "$(cat "$DEST/VERSION" 2>/dev/null)" = "$VERSION" ] && systemctl is-enabled --quiet tla-bootpaper-guard.timer 2>/dev/null; then
+    echo "TLA BootPaper $VERSION is installed for everyone."; exit 0
+  fi
+else
+  HOME="${HOME:-$(getent passwd "$(id -u)" | cut -d: -f6)}"
+  # Already installed for everyone (by an administrator): that copy serves this person too.
+  if [ -f /opt/tla-bootpaper/VERSION ]; then
+    echo "TLA BootPaper $(cat /opt/tla-bootpaper/VERSION) is installed for everyone on this computer; an administrator updates it."
+    exit 0
+  fi
+  DEST="${XDG_DATA_HOME:-$HOME/.local/share}/tla-bootpaper"
+  if [ "$(cat "$DEST/VERSION" 2>/dev/null)" = "$VERSION" ] && [ -f "${XDG_CONFIG_HOME:-$HOME/.config}/autostart/tla-bootpaper.desktop" ]; then
+    echo "TLA BootPaper $VERSION is installed."; exit 0
+  fi
 fi
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
