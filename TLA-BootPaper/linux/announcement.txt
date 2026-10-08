@@ -3,3 +3,4 @@
 # Lines starting with # are notes like these and are never shown.
 # Laptops pick up a change within about 20 minutes. It shows on the login screen and when someone logs in.
 # Remember this file is public: anyone can read it.
+The TLA Hub will be closed from October 20 at 6 am to October 21 at 10 pm. If you need to do work in Bsp, make sure you download your work beforehand!
