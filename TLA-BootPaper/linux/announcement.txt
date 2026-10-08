@@ -1,0 +1,5 @@
+# TLA BootPaper announcement for the Linux laptops.
+# Write the announcement on the line below (up to 300 characters). Delete it to show no announcement.
+# Lines starting with # are notes like these and are never shown.
+# Laptops pick up a change within about 20 minutes. It shows on the login screen and when someone logs in.
+# Remember this file is public: anyone can read it.
