@@ -4,13 +4,18 @@
 # Intune runs it as root ("Root" context; the computer's admin approves that once), and it installs for everyone
 # on the computer. Run by someone without admin rights, it installs just for them instead. The bundle comes from
 # the organization's GitHub repository and is only used if its SHA-256 matches the one below. When it's already installed, this does nothing.
-VERSION="4.0.5"
-URL="https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/tla-bootpaper-linux-4.0.5.tar.gz"
-SHA256="8a5641385876e216b572d81415570b5c70046795244ddfc0944bc1382bc885a2"
+VERSION="4.1"
+URL="https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/tla-bootpaper-linux-4.1.tar.gz"
+SHA256="6612993d97023abb61a494e3a5f40e79400e7e8fb0245e9da8a275abd5732df0"
 
 if [ "$(id -u)" = 0 ]; then
   DEST=/opt/tla-bootpaper
-  if [ "$(cat "$DEST/VERSION" 2>/dev/null)" = "$VERSION" ] && systemctl is-enabled --quiet tla-bootpaper-guard.timer 2>/dev/null; then
+  have="$(cat "$DEST/VERSION" 2>/dev/null)"
+  if [ -n "$have" ] && [ "$have" != "$VERSION" ] && [ "$(printf '%s\n%s\n' "$have" "$VERSION" | sort -V | tail -1)" = "$have" ] &&
+     systemctl is-enabled --quiet tla-bootpaper-guard.timer 2>/dev/null; then
+    echo "TLA BootPaper $have is installed for everyone (newer than this script's $VERSION)."; exit 0   # (4.1: never goes back)
+  fi
+  if [ "$have" = "$VERSION" ] && systemctl is-enabled --quiet tla-bootpaper-guard.timer 2>/dev/null; then
     echo "TLA BootPaper $VERSION is installed for everyone."; exit 0
   fi
 else
