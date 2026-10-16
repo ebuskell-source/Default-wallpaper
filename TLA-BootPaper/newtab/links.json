@@ -1,0 +1,16 @@
+{
+  "_about": "The TLA new tab page's links and search. Edit on GitHub: the change shows within about 10 minutes. icon is one of: hub, mail, chat, cloud, apps, help, book, calendar, video, link. The page lists at most 8 links.",
+  "search": {
+    "placeholder": "Search the web",
+    "action": "https://www.bing.com/search",
+    "params": { "adlt": "strict" }
+  },
+  "links": [
+    { "name": "TLA Hub", "url": "https://hub.schoolathome.ca/", "icon": "hub" },
+    { "name": "Email", "url": "https://outlook.office.com/mail/", "icon": "mail" },
+    { "name": "Teams", "url": "https://teams.microsoft.com/", "icon": "chat" },
+    { "name": "OneDrive", "url": "https://www.microsoft365.com/onedrive", "icon": "cloud" },
+    { "name": "Microsoft 365", "url": "https://www.microsoft365.com/", "icon": "apps" },
+    { "name": "Helpdesk", "url": "mailto:helpdesk@schoolathome.ca", "icon": "help" }
+  ]
+}
