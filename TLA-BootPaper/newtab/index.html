@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy"
-      content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; form-action https:; base-uri 'none'">
+      content="default-src 'self'; img-src 'self' data: chrome-extension://bemjdlnfdfdgnkimadgogaadgdfnipam extension://bemjdlnfdfdgnkimadgogaadgdfnipam; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; form-action https:; base-uri 'none'">
 <title>New tab</title>
 <link rel="icon" href="icon.png">
 <!--
@@ -13,6 +13,8 @@
   NewTabPageLocation). It shows today's TLA background (the seasonal theme in season, otherwise a different one each
   day, in its dark look when the computer is in dark mode), the time, the TLA announcement (../linux/announcement.txt)
   and the links in links.json. Nothing is sent anywhere: it only reads files next to it.
+  5.4: each person's own shortcuts (Add shortcut, edit, remove; kept in their browser), and, where the TLA New Tab
+  extension is installed (../extension/), the browser's most-visited sites, like Chrome's and Edge's own new tab page.
 -->
 <style>
   :root {
@@ -36,7 +38,7 @@
            background: linear-gradient(to bottom, rgba(8, 20, 38, 0.62) 0%, rgba(8, 20, 38, 0.18) 30%, rgba(8, 20, 38, 0) 45%,
                                        rgba(8, 20, 38, 0) 62%, rgba(8, 20, 38, 0.55) 100%); }
 
-  main { position: relative; min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto;
+  main { position: relative; min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto auto;
          padding: clamp(20px, 3.5vw, 44px); gap: 12px; }
 
   /* The top band: the time, search and the announcement. The middle (the TLA logo in every picture) stays clear. */
@@ -70,6 +72,42 @@
   nav .ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 13px; background: rgba(255, 255, 255, 0.12); }
   nav svg { width: 24px; height: 24px; stroke: var(--gold); }
 
+  /* 5.4: the person's shortcuts (and the browser's most-visited sites), like Chrome's and Edge's own tiles. */
+  .shortcuts { justify-self: center; display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: min(100%, 1010px);
+               padding: 5px 10px; border-radius: 20px; border: 1px solid var(--glass-edge); background: var(--glass);
+               -webkit-backdrop-filter: blur(20px) saturate(1.3); backdrop-filter: blur(20px) saturate(1.3); }
+  .tile { position: relative; width: 96px; }
+  .tile > a, .tile > button.add { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; padding: 8px 4px 6px;
+          border: 0; border-radius: 14px; background: none; color: var(--white); text-decoration: none; font: 13px/1.2 var(--type);
+          text-align: center; cursor: pointer; }
+  .tile > a:hover, .tile > button.add:hover { background: rgba(255, 255, 255, 0.12); }
+  .tile > a:focus-visible, .tile > button:focus-visible { outline: 3px solid var(--gold); outline-offset: 0; }
+  .tile .label { display: block; width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .fav { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.94);
+         color: var(--navy); font: 600 18px var(--type); }
+  .fav img { width: 22px; height: 22px; }
+  .add .fav { background: rgba(255, 255, 255, 0.14); color: var(--white); border: 1.5px dashed rgba(255, 255, 255, 0.55); font-weight: 400; font-size: 24px; }
+  .tile .more { position: absolute; top: 2px; right: 6px; width: 26px; height: 26px; border: 0; border-radius: 50%; padding: 0;
+                background: rgba(11, 27, 51, 0.75); color: var(--white); font: 600 15px/26px var(--type); cursor: pointer; opacity: 0; }
+  .tile:hover .more, .tile:focus-within .more { opacity: 1; }
+  .shortcuts[hidden] { display: none; }
+
+  dialog { width: min(420px, calc(100vw - 32px)); padding: 22px 22px 18px; border: 1px solid var(--glass-edge); border-radius: 16px;
+           background: #13294A; color: var(--white); font-family: var(--type); box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45); }
+  dialog::backdrop { background: rgba(8, 20, 38, 0.55); }
+  dialog h2 { margin: 0 0 14px; font: 600 18px var(--type-display); }
+  dialog label { display: block; margin: 0 0 12px; font-size: 13px; }
+  dialog input { display: block; width: 100%; margin-top: 5px; height: 38px; padding: 0 12px; border: 1px solid rgba(255, 255, 255, 0.25);
+                 border-radius: 9px; background: rgba(255, 255, 255, 0.96); color: var(--navy); font: 15px var(--type); }
+  dialog input:focus-visible { outline: 3px solid var(--gold); outline-offset: 1px; }
+  dialog .error { min-height: 18px; margin: -4px 0 8px; color: #FFD27A; font-size: 13px; }
+  dialog .buttons { display: flex; gap: 8px; margin-top: 6px; }
+  dialog button { height: 36px; padding: 0 16px; border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.3); background: none;
+                  color: var(--white); font: 600 14px var(--type); cursor: pointer; }
+  dialog button.primary { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+  dialog button.remove { margin-right: auto; }
+  dialog button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
   .caption { position: fixed; right: clamp(14px, 2vw, 24px); bottom: 10px; margin: 0; font-size: 12px; opacity: 0.8;
              text-shadow: 0 1px 6px rgba(8, 20, 38, 0.8); }
 
@@ -84,6 +122,7 @@
     .notice { justify-self: stretch; max-width: none; }
     form { grid-row: auto; }
     nav a { width: 84px; }
+    .tile { width: 84px; }
     .caption { position: static; text-align: center; }
   }
   @media (prefers-reduced-motion: reduce) { .picture { transition: none; } }
@@ -106,8 +145,22 @@
     <aside class="notice" id="notice" hidden><strong>From TLA</strong><span id="notice-text"></span></aside>
   </header>
   <div></div>
+  <section class="shortcuts" id="shortcuts" aria-label="Your shortcuts" hidden></section>
   <nav id="links" aria-label="School links"></nav>
 </main>
+<dialog id="edit" aria-labelledby="edit-title">
+  <form method="dialog" id="edit-form" novalidate>
+    <h2 id="edit-title">Add shortcut</h2>
+    <label>Name<input id="edit-name" maxlength="40" autocomplete="off"></label>
+    <label>URL<input id="edit-url" maxlength="2000" autocomplete="off" inputmode="url" placeholder="example.com"></label>
+    <p class="error" id="edit-error" role="alert"></p>
+    <div class="buttons">
+      <button type="button" class="remove" id="edit-remove">Remove</button>
+      <button type="button" id="edit-cancel">Cancel</button>
+      <button type="submit" class="primary" id="edit-save">Done</button>
+    </div>
+  </form>
+</dialog>
 <p class="caption" id="caption"></p>
 
 <script>
@@ -248,6 +301,150 @@ function showLinks(cfg) {
 }
 showLinks(DEFAULT_LINKS);
 fetch('links.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(c => c && showLinks(c)).catch(() => {});
+
+// ---- the person's shortcuts (5.4) ----
+// Their own (Add shortcut), kept in this browser only, and then the browser's most-visited sites when the TLA New Tab
+// extension is installed (it's the only way a web page can get them). At most 10 tiles, like Chrome's and Edge's.
+const EXTENSION_ID = 'bemjdlnfdfdgnkimadgogaadgdfnipam';
+const STORE_KEY = 'tla-newtab-shortcuts';
+const MAX_TILES = 10;
+let store = { mine: [], hidden: [] };
+let mostVisited = [], iconBase = '';
+try {
+  const s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+  if (s && Array.isArray(s.mine)) store.mine = s.mine.filter(x => x && typeof x.name === 'string' && webUrl(x.url)).slice(0, MAX_TILES);
+  if (s && Array.isArray(s.hidden)) store.hidden = s.hidden.filter(u => typeof u === 'string').slice(0, 200);
+} catch (e) { }
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) { } }
+function webUrl(u) { try { const x = new URL(u); return /^https?:$/.test(x.protocol) ? x.href : null; } catch (e) { return null; } }
+function sameSite(a, b) { return a.replace(/\/+$/, '').toLowerCase() === b.replace(/\/+$/, '').toLowerCase(); }
+function hostName(u) { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return u; } }
+
+function tiles() {
+  const list = store.mine.map(s => ({ name: s.name, url: s.url, mine: true }));
+  for (const s of mostVisited) {
+    if (list.length >= MAX_TILES) break;
+    if (s.url.startsWith(location.origin + location.pathname)) continue;   // (this page)
+    if (store.hidden.some(h => sameSite(h, s.url)) || list.some(t => sameSite(t.url, s.url))) continue;
+    list.push({ name: s.title || hostName(s.url), url: s.url, mine: false });
+  }
+  return list;
+}
+function letterColor(text) {
+  let h = 0; for (const c of text) h = (h * 31 + c.codePointAt(0)) % 360;
+  return 'hsl(' + h + ' 45% 42%)';
+}
+function iconFor(t) {
+  const fav = document.createElement('span');
+  fav.className = 'fav';
+  const letter = () => { fav.textContent = (hostName(t.url)[0] || '?').toUpperCase(); fav.style.background = letterColor(hostName(t.url)); fav.style.color = '#fff'; };
+  if (iconBase) {
+    const img = new Image();
+    img.alt = '';
+    img.onerror = () => { img.remove(); letter(); };
+    img.src = iconBase + '_favicon/?pageUrl=' + encodeURIComponent(t.url) + '&size=32';
+    fav.append(img);
+  } else letter();
+  return fav;
+}
+function showShortcuts() {
+  const box = document.getElementById('shortcuts');
+  box.textContent = '';
+  const list = tiles();
+  list.forEach((t, i) => {
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    const a = document.createElement('a');
+    a.href = t.url;
+    a.title = t.name + '\n' + t.url;
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = t.name.slice(0, 40);
+    a.append(iconFor(t), label);
+    const more = document.createElement('button');
+    more.type = 'button';
+    more.className = 'more';
+    more.textContent = '⋯';
+    more.setAttribute('aria-label', 'Edit shortcut ' + t.name);
+    more.addEventListener('click', () => openEditor(t));
+    tile.append(a, more);
+    box.append(tile);
+  });
+  if (store.mine.length < MAX_TILES) {
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    const add = document.createElement('button');
+    add.type = 'button';
+    add.className = 'add';
+    const fav = document.createElement('span');
+    fav.className = 'fav';
+    fav.textContent = '+';
+    fav.setAttribute('aria-hidden', 'true');
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = 'Add shortcut';
+    add.append(fav, label);
+    add.addEventListener('click', () => openEditor(null));
+    tile.append(add);
+    if (list.length >= MAX_TILES) box.lastElementChild.replaceWith(tile); else box.append(tile);
+  }
+  box.hidden = false;
+}
+
+// Add or edit a shortcut. A most-visited site that's edited becomes one of theirs; removed, it stays hidden.
+let editing = null;
+const dlg = document.getElementById('edit');
+function openEditor(t) {
+  editing = t;
+  document.getElementById('edit-title').textContent = t ? 'Edit shortcut' : 'Add shortcut';
+  document.getElementById('edit-name').value = t ? t.name : '';
+  document.getElementById('edit-url').value = t ? t.url : '';
+  document.getElementById('edit-error').textContent = '';
+  document.getElementById('edit-remove').hidden = !t;
+  dlg.showModal();
+  document.getElementById(t ? 'edit-name' : 'edit-url').focus();
+}
+function forget(url) {
+  store.mine = store.mine.filter(s => !sameSite(s.url, url));
+  if (mostVisited.some(s => sameSite(s.url, url)) && !store.hidden.some(h => sameSite(h, url))) store.hidden.push(url);
+}
+document.getElementById('edit-form').addEventListener('submit', e => {
+  e.preventDefault();
+  let raw = document.getElementById('edit-url').value.trim();
+  if (raw && !/^[a-z][a-z0-9+.-]*:/i.test(raw)) raw = 'https://' + raw;
+  const url = webUrl(raw);
+  if (!url || !/\./.test(new URL(url).hostname)) { document.getElementById('edit-error').textContent = 'Type a web address, like example.com.'; return; }
+  const name = document.getElementById('edit-name').value.trim().slice(0, 40) || hostName(url);
+  if (editing) {
+    const i = store.mine.findIndex(s => sameSite(s.url, editing.url));
+    if (i >= 0) store.mine[i] = { name, url };
+    else { if (!sameSite(editing.url, url)) forget(editing.url); store.mine.push({ name, url }); }
+  } else {
+    if (!store.mine.some(s => sameSite(s.url, url))) store.mine.push({ name, url });
+  }
+  store.mine = store.mine.slice(0, MAX_TILES);
+  store.hidden = store.hidden.filter(h => !sameSite(h, url));
+  save(); dlg.close(); showShortcuts();
+});
+document.getElementById('edit-remove').addEventListener('click', () => { if (editing) { forget(editing.url); save(); } dlg.close(); showShortcuts(); });
+document.getElementById('edit-cancel').addEventListener('click', () => dlg.close());
+
+// The browser's most-visited sites, from the TLA New Tab extension where it's installed (again when the tab comes back).
+function askMostVisited() {
+  try {
+    if (!(window.chrome && chrome.runtime && chrome.runtime.sendMessage)) return;
+    chrome.runtime.sendMessage(EXTENSION_ID, { type: 'topSites' }, reply => {
+      void chrome.runtime.lastError;   // (not installed: nothing to show)
+      if (!reply || !Array.isArray(reply.sites)) return;
+      mostVisited = reply.sites.filter(s => s && webUrl(s.url)).map(s => ({ title: String(s.title || '').slice(0, 80), url: webUrl(s.url) }));
+      if (typeof reply.base === 'string' && /^(chrome-)?extension:\/\/[a-p]{32}\/$/.test(reply.base)) iconBase = reply.base;
+      showShortcuts();
+    });
+  } catch (e) { }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) askMostVisited(); });
+showShortcuts();
+askMostVisited();
 tick();
 </script>
 </body>
