@@ -1,0 +1,22 @@
+Problem report: Sound, speakers or microphone (iad20-gt1022-64dcf95c-a5ac-4186-a43d-6f804a3bb2d1-AE0C6F3370B6)
+What it's about: Sound, speakers or microphone
+How much it's getting in the way: I can still work around it
+
+What happened:
+Sound stops after a few minutes.
+
+-- Details about this Mac (added by TLA BootPaper) --
+Computer: iad20-gt1022-64dcf95c-a5ac-4186-a43d-6f804a3bb2d1-AE0C6F3370B6
+Model: Apple Virtual Machine 1 (VirtualMac2,1)
+Processor: Apple M1 (Virtual)
+Memory: 7 GB
+Serial number: ZW15P49YWY
+System: macOS 26.6.2 (25G83)
+Last restart: Thu Oct 22, 11:06 PM (5 minutes ago)
+Storage: 101 GB free of 335 GB
+TLA BootPaper: 5.5.5 (Experimental), 5.6.0 installed
+Background: Rainy
+Intro video: Match my desktop background
+Reported: Thursday, October 22, 2026 11:11 PM
+
+send enabled: true

@@ -1,0 +1,109 @@
+release	5.6.0
+channel	experimental
+shown	5.5.5
+chan	stable	Stable	5.5.5
+chan	experimental	Experimental	5.5.5
+report	1
+locked	0
+bglocked	0
+lastplayed	
+custom	1
+mode	light
+feature	lightdark	1
+feature	screensaver	1
+feature	calls	1
+feature	care	1
+feature	tour	1
+feature	greeting-switch	1
+feature	greeting-styles	1
+lightdark	Auto	Match my light or dark mode
+lightdark	Light	Always light
+lightdark	Dark	Always dark
+ssstatus		ready
+teams	0
+calls	0
+unbox	ready
+connect	needed
+season	fall	Fall	November 30	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/fall.jpg	1
+current	rainy
+currentfile	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/rainy-r2.jpg
+today	2026-10-22
+fit	Fill	Fill the screen
+fit	Fit	Show the whole picture
+pickfor	Always	From now on
+pickfor	Tomorrow	Just for today
+pickfor	Week	For one week
+matchvideo	rainy
+ondefault	0
+announcement	The TLA Hub will be closed from October 20 at 6 am to October 21 at 10 pm. If you need to do work in Brightspace, make sure you download your work beforehand!
+helpdesk	mailto:helpdesk@schoolathome.ca?subject=TLA%20BootPaper%20%28Mac%29&body=%0A%0A%0A--%20Please%20keep%20these%20details%3A%20they%20help%20the%20helpdesk%20--%0AComputer%3A%20iad20-gt1022-64dcf95c-a5ac-4186-a43d-6f804a3bb2d1-AE0C6F3370B6%0ASystem%3A%20macOS%2026.6.2%20%2825G83%29%0ATLA%20BootPaper%3A%205.5.5%20%28Experimental%29%2C%205.6.0%20installed%0ABackground%3A%20Rainy%0AIntro%20video%3A%20Match%20my%20desktop%20background%0A
+quiet	Off	Don't mute it
+quiet	Hours	Mute it during these hours
+hasvideo	1
+setting	Enabled	1
+setting	PlayWhen	EverySignIn
+setting	Sound	1
+setting	AllowSkip	0
+setting	Background	rainy
+setting	Video	match
+setting	QuietMode	Off
+setting	QuietStart	08:30
+setting	QuietEnd	15:00
+setting	QuietDays	Mon,Tue,Wed,Thu,Fri
+setting	PreferredName	Sevilen
+setting	WallpaperFit	Fill
+setting	LockBackground	same
+setting	TempBackground	
+setting	TempUntil	
+setting	Channel	experimental
+setting	LightDark	Auto
+setting	Screensaver	1
+setting	CareReminders	1
+setting	Greeting	1
+org	Video	match
+org	Background	liquid-glass
+when	EverySignIn	Every time I log in
+when	OncePerDay	Once a day (the first time I log in)
+when	AfterUpdate	Only after macOS installs an update
+when	FirstTime	Only once (and again when there's a new video)
+video	match	Match my desktop background	1	0
+video	surprise	Surprise me (a different one each time)	1	0
+video	microsoft	Microsoft	1	1
+video	liquid-glass	Liquid Glass	1	1
+video	penguins	Penguins	1	1
+video	code	Code	1	0
+video	frutiger-aero	Frutiger Aero	1	1
+video	solarpunk	Solarpunk	1	0
+video	rainy	Rainy	1	0
+video	space	Space	1	0
+video	ocean	Underwater	1	0
+video	beach	Beach	1	1
+video	claymation	Claymation	1	1
+video	blocks	Blocks	1	1
+video	bricks	Bricks	1	1
+video	pixel	8-Bit	1	1
+video	anime	Anime	1	1
+video	sky-city	Sky City	1	0
+video	tla	TLA Classic	1	0
+video	frutiger-aero-v2	Frutiger Aero (newer version)	1	0
+video	liquid-glass-original	Liquid Glass (original)	1	0
+video	microsoft-original	Microsoft (original)	1	0
+bg	microsoft	Microsoft	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/microsoft.jpg	1	1	1	
+bg	liquid-glass	Liquid Glass	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/liquid-glass.jpg	1	1	1	
+bg	penguins	Penguins	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/penguins-light.jpg	1	1	1	
+bg	code	Code	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/code-light.jpg	1	1	0	
+bg	frutiger-aero	Frutiger Aero	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/frutiger-aero.jpg	1	1	1	
+bg	solarpunk	Solarpunk	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/solarpunk.jpg	1	1	0	
+bg	rainy	Rainy	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/rainy.jpg	1	1	0	
+bg	space	Space	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/space-light.jpg	1	1	0	
+bg	ocean	Underwater	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/ocean.jpg	1	1	0	
+bg	beach	Beach	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/beach.jpg	1	1	1	
+bg	claymation	Claymation	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/claymation.jpg	1	1	1	
+bg	blocks	Blocks	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/blocks.jpg	1	1	1	
+bg	bricks	Bricks	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/bricks.jpg	1	1	1	
+bg	pixel	8-Bit	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/pixel.jpg	1	1	1	
+bg	anime	Anime	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/anime.jpg	1	1	1	
+bg	sky-city	Sky City	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/sky-city.jpg	1	1	0	
+bg	tla	TLA Classic	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/tla.jpg	1	1	0	
+bg	experimental	Experimental	0	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/experimental.jpg	0	1	0	experimental
+bg	surprise	Surprise me	1	/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/thumbs/surprise.jpg	0	1
