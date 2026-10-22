@@ -4,9 +4,9 @@
 # Intune runs it as root ("Root" context; the computer's admin approves that once), and it installs for everyone
 # on the computer. Run by someone without admin rights, it installs just for them instead. The bundle comes from
 # the organization's GitHub repository and is only used if its SHA-256 matches the one below. When it's already installed, this does nothing.
-VERSION="5.4.5"
-URL="https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/tla-bootpaper-linux-5.4.5.tar.gz"
-SHA256="9c8a3dbd54d8e29eea033628c7f47af76dc1d4e8661465d8460e0dc598296443"
+VERSION="5.6.0"
+URL="https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/tla-bootpaper-linux-5.6.0.tar.gz"
+SHA256="4e2f4878afb6e52a5e992eb18149179afce7d7dcc85904b6abd830402617c494"
 
 if [ "$(id -u)" = 0 ]; then
   DEST=/opt/tla-bootpaper

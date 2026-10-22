@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TLA BootPaper Staff</title>
+<link rel="icon" href="../newtab/icon.png">
+<!--
+  TLA BootPaper Staff (5.6.0): the organization's lock screen announcement and what people use, for TLA staff.
+  Opened from the TLA BootPaper app ("TLA staff"). Sign-in is Microsoft's own: no password is stored anywhere, in this
+  page or in BootPaper. Only the people assigned to the "TLA BootPaper Staff" app in Microsoft Entra can sign in at
+  all (Entra checks that, not this page); the list below just explains things to anyone else. What they can see and
+  change is also limited by their own Intune role, since every request is made as them (Microsoft Graph, delegated).
+-->
+<style>
+  :root {
+    --bg: #f3f4f7; --card: #ffffff; --ink: #1c1f26; --muted: #5d6472; --line: #e3e6ec; --accent: #0f6cbd;
+    --accent-soft: #e7f0fd; --ok: #107c10; --bad: #c42b1c; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15171c; --card: #1f2229; --ink: #eceef2; --muted: #a2a9b6; --line: #30343d; --accent: #4ca3ff;
+      --accent-soft: #1d2a3b; --ok: #6ccb5f; --bad: #ff8a80; --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 -apple-system, "Segoe UI", system-ui, Ubuntu, sans-serif; }
+  header { display: flex; align-items: center; gap: 14px; padding: 18px 28px; background: var(--card); border-bottom: 1px solid var(--line); }
+  header img { width: 40px; height: 40px; border-radius: 9px; }
+  header h1 { font-size: 20px; margin: 0; }
+  header .who { margin-left: auto; color: var(--muted); font-size: 13px; text-align: right; }
+  header button { margin-left: 10px; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 60px; }
+  h2 { font-size: 18px; margin: 28px 0 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); }
+  .muted { color: var(--muted); }
+  .small { font-size: 13px; }
+  button { font: inherit; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); padding: 7px 16px; cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  textarea { width: 100%; min-height: 84px; font: inherit; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); resize: vertical; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+  .status { font-size: 13px; }
+  .status.ok { color: var(--ok); } .status.bad { color: var(--bad); }
+  .signin { max-width: 460px; margin: 12vh auto; text-align: center; }
+  .signin img { width: 72px; height: 72px; border-radius: 16px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+  .tile .num { font-size: 30px; font-weight: 650; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+  .chart h3 { font-size: 15px; margin: 0 0 2px; }
+  .chart .sub { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .donut { display: flex; gap: 16px; align-items: center; }
+  .donut svg { flex: none; width: 120px; height: 120px; }
+  .legend { list-style: none; margin: 0; padding: 0; font-size: 13px; min-width: 0; flex: 1; }
+  .legend li { display: flex; align-items: center; gap: 8px; margin: 3px 0; }
+  .legend .sw { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .legend .n { margin-left: auto; color: var(--muted); padding-left: 10px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bars { font-size: 13px; }
+  .bar { display: grid; grid-template-columns: 150px 1fr 36px; gap: 8px; align-items: center; margin: 5px 0; }
+  .bar .track { height: 12px; background: var(--bg); border-radius: 6px; overflow: hidden; }
+  .bar .fill { height: 100%; border-radius: 6px; }
+  .bar .n { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .bar .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .platforms { display: flex; gap: 8px; margin: 0 0 12px; }
+  .platforms button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .hidden { display: none !important; }
+  @media (max-width: 600px) { header { padding: 14px 16px; } .bar { grid-template-columns: 90px 1fr 30px; } }
+</style>
+</head>
+<body>
+<header>
+  <img src="../newtab/icon.png" alt="">
+  <div><h1>TLA BootPaper Staff</h1><div class="muted small">Announcement and analytics</div></div>
+  <div class="who" id="who"></div>
+  <button id="signout" class="hidden">Sign out</button>
+</header>
+
+<div id="signin" class="signin card hidden">
+  <img src="../newtab/icon.png" alt="">
+  <h2>TLA staff sign-in</h2>
+  <p class="muted">Sign in with your TLA Microsoft account to update the lock screen announcement and see how TLA BootPaper is being used.</p>
+  <button class="primary" id="signinBtn">Sign in with Microsoft</button>
+  <p class="status bad" id="signinMsg"></p>
+</div>
+
+<main id="app" class="hidden">
+  <h2>Lock screen announcement</h2>
+  <div class="card">
+    <p class="muted small" style="margin-top:0">Shown on every Mac's and Windows PC's lock screen, and at the top of TLA BootPaper. Computers pick up a change the next time they check in with Intune (usually within a few hours). Leave it empty for no announcement.</p>
+    <textarea id="announce" maxlength="500" placeholder="For example: The TLA Hub will be closed on Friday from 6 am to 10 pm."></textarea>
+    <div class="row">
+      <button class="primary" id="saveAnnounce" disabled>Save for Macs and Windows PCs</button>
+      <span class="status" id="announceMsg"></span>
+    </div>
+    <p class="muted small" id="announceWhere"></p>
+  </div>
+
+  <h2>Who uses what</h2>
+  <div class="platforms" id="platforms">
+    <button data-p="all" class="on">All</button><button data-p="mac">Macs</button><button data-p="win">Windows PCs</button>
+  </div>
+  <div class="tiles" id="tiles"></div>
+  <div class="grid" id="charts" style="margin-top:14px"></div>
+  <p class="muted small" id="dataNote"></p>
+</main>
+
+<script>
+'use strict';
+// ---- Settings ---------------------------------------------------------------------------------------------------
+const CLIENT_ID = '__CLIENT_ID__';            // the "TLA BootPaper Staff" app registration in Microsoft Entra
+const TENANT = 'schoolathome.ca';
+const STAFF = ['ebuskell@schoolathome.ca', 'rcroft@schoolathome.ca', 'kjohnson@schoolathome.ca', 'ehewlett@schoolathome.ca',
+               'helpdesk@schoolathome.ca'];   // (Entra enforces who can sign in; this only words the message for anyone else)
+const SCOPES = 'openid profile offline_access https://graph.microsoft.com/User.Read ' +
+               'https://graph.microsoft.com/DeviceManagementConfiguration.ReadWrite.All ' +
+               'https://graph.microsoft.com/DeviceManagementManagedDevices.Read.All';
+const MAC_POLICY = 'TLA Announcement (Mac lock screen)', WIN_POLICY = 'TLA Announcement (Windows lock screen)';
+const REPORT = 'TLA BootPaper popularity';
+const GRAPH = 'https://graph.microsoft.com/beta';
+const REDIRECT = location.origin + location.pathname;
+const $ = id => document.getElementById(id);
+const NAMES = { microsoft: 'Microsoft', 'liquid-glass': 'Liquid Glass', penguins: 'Penguins', code: 'Code', 'frutiger-aero': 'Frutiger Aero',
+  solarpunk: 'Solarpunk', rainy: 'Rainy', space: 'Space', ocean: 'Underwater', beach: 'Beach', claymation: 'Claymation', blocks: 'Blocks',
+  bricks: 'Bricks', pixel: '8-Bit', anime: 'Anime', 'sky-city': 'Sky City', tla: 'TLA Classic', fall: 'Fall', christmas: 'Christmas',
+  easter: 'Easter', experimental: 'Experimental', surprise: 'Surprise me', match: 'Matches background', default: 'Organization default',
+  stable: 'Stable', Auto: 'Matches light/dark', Light: 'Always light', Dark: 'Always dark', Off: 'Off', Hours: 'Set hours',
+  DoNotDisturb: 'While Do Not Disturb', 'frutiger-aero-v2': 'Frutiger Aero (newer)', 'liquid-glass-original': 'Liquid Glass (original)',
+  'microsoft-original': 'Microsoft (original)' };
+const nice = v => NAMES[v] || NAMES[(v || '').toLowerCase()] || v || 'Unknown';
+const COLORS = ['#0f6cbd', '#e8590c', '#2f9e44', '#ae3ec9', '#f59f00', '#1098ad', '#e64980', '#5c7cfa', '#74b816', '#868e96',
+                '#d6336c', '#20c997', '#fab005', '#4263eb', '#a61e4d', '#0ca678'];
+
+// ---- Signing in (Microsoft's own page; authorization code with PKCE, no secret) ---------------------------------
+const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const rand = n => b64url(crypto.getRandomValues(new Uint8Array(n)));
+async function signIn() {
+  const verifier = rand(48), state = rand(16);
+  sessionStorage.setItem('pkce', JSON.stringify({ verifier, state }));
+  const challenge = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+  location.href = `https://login.microsoftonline.com/${TENANT}/oauth2/v2.0/authorize?` + new URLSearchParams({
+    client_id: CLIENT_ID, response_type: 'code', redirect_uri: REDIRECT, scope: SCOPES, state,
+    code_challenge: challenge, code_challenge_method: 'S256', prompt: 'select_account' });
+}
+async function tokenRequest(body) {
+  const r = await fetch(`https://login.microsoftonline.com/${TENANT}/oauth2/v2.0/token`, {
+    method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(Object.assign({ client_id: CLIENT_ID, scope: SCOPES }, body)) });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error_description || j.error || 'Sign-in failed');
+  sessionStorage.setItem('tok', JSON.stringify({ at: j.access_token, rt: j.refresh_token, exp: Date.now() + (j.expires_in - 60) * 1000,
+                                                  id: j.id_token }));
+}
+async function accessToken() {
+  const t = JSON.parse(sessionStorage.getItem('tok') || 'null');
+  if (!t) return null;
+  if (Date.now() < t.exp) return t.at;
+  if (!t.rt) return null;
+  await tokenRequest({ grant_type: 'refresh_token', refresh_token: t.rt });
+  return JSON.parse(sessionStorage.getItem('tok')).at;
+}
+function whoFromIdToken() {
+  const t = JSON.parse(sessionStorage.getItem('tok') || 'null');
+  if (!t || !t.id) return '';
+  try { const p = JSON.parse(atob(t.id.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))); return (p.preferred_username || '').toLowerCase(); }
+  catch (e) { return ''; }
+}
+async function graph(path, opts) {
+  const at = await accessToken();
+  if (!at) throw new Error('Signed out');
+  const r = await fetch(path.startsWith('http') ? path : GRAPH + path, Object.assign({}, opts, {
+    headers: Object.assign({ Authorization: 'Bearer ' + at, 'Content-Type': 'application/json' }, (opts || {}).headers) }));
+  if (r.status === 204) return null;
+  const j = await r.json().catch(() => null);
+  if (!r.ok) throw new Error((j && j.error && j.error.message) || ('Microsoft Graph said ' + r.status));
+  return j;
+}
+async function graphAll(path) {
+  let out = [], next = path;
+  while (next) { const j = await graph(next); out = out.concat(j.value || []); next = j['@odata.nextLink']; }
+  return out;
+}
+
+// ---- The announcement ------------------------------------------------------------------------------------------
+// Mac: a Settings catalog policy (the login window's text). Windows: an imported administrative template (TLA >
+// BootPaper > Announcement). Both are found by name, read, and changed in place.
+const where = {};
+function findText(node, test, path) {        // the first setting value (deep) whose definition id passes test
+  if (!node || typeof node !== 'object') return null;
+  if (node.settingDefinitionId && test(node.settingDefinitionId) && node.simpleSettingValue) return node;
+  for (const k of Object.keys(node)) { const r = findText(node[k], test); if (r) return r; }
+  return null;
+}
+async function loadAnnouncement() {
+  const msgs = [];
+  try {
+    const mac = (await graphAll(`/deviceManagement/configurationPolicies?$select=id,name&$top=100`)).find(p => p.name === MAC_POLICY);
+    if (mac) {
+      const full = await graph(`/deviceManagement/configurationPolicies/${mac.id}?$expand=settings`);
+      const v = findText(full.settings, id => /loginwindowtext/i.test(id));
+      where.mac = { policy: full, value: v };
+      if (v) $('announce').value = v.simpleSettingValue.value || '';
+      msgs.push(v ? 'Mac: "' + MAC_POLICY + '"' : 'Mac: found the policy, but not its text setting');
+    } else msgs.push('Mac: no policy named "' + MAC_POLICY + '"');
+  } catch (e) { msgs.push('Mac: ' + e.message); }
+  try {
+    const win = (await graphAll(`/deviceManagement/groupPolicyConfigurations?$select=id,displayName`)).find(p => p.displayName === WIN_POLICY);
+    if (win) {
+      const dvs = await graphAll(`/deviceManagement/groupPolicyConfigurations/${win.id}/definitionValues?$expand=presentationValues`);
+      let dv = null, pv = null;
+      for (const d of dvs) {
+        const t = (d.presentationValues || []).find(p => (p['@odata.type'] || '').endsWith('groupPolicyPresentationValueText') ||
+                                                         (p['@odata.type'] || '').endsWith('groupPolicyPresentationValueMultiText'));
+        if (t) { dv = d; pv = t; break; }
+      }
+      where.win = { id: win.id, dv, pv };
+      if (pv && !$('announce').value) $('announce').value = Array.isArray(pv.values) ? pv.values.join('\n') : (pv.value || '');
+      msgs.push(pv ? 'Windows: "' + WIN_POLICY + '"' : 'Windows: found the policy, but not its text');
+    } else msgs.push('Windows: no policy named "' + WIN_POLICY + '"');
+  } catch (e) { msgs.push('Windows: ' + e.message); }
+  $('announceWhere').textContent = 'Saves to ' + msgs.join(' · ');
+  $('saveAnnounce').disabled = !(where.mac && where.mac.value) && !(where.win && where.win.pv);
+}
+async function saveAnnouncement() {
+  const text = $('announce').value.trim(), done = [], failed = [];
+  $('saveAnnounce').disabled = true; $('announceMsg').className = 'status'; $('announceMsg').textContent = 'Saving…';
+  if (where.mac && where.mac.value) {
+    try {
+      where.mac.value.simpleSettingValue.value = text;
+      const p = where.mac.policy;
+      await graph(`/deviceManagement/configurationPolicies/${p.id}`, { method: 'PUT', body: JSON.stringify({
+        name: p.name, description: p.description || '', platforms: p.platforms, technologies: p.technologies,
+        roleScopeTagIds: p.roleScopeTagIds, templateReference: p.templateReference,
+        settings: p.settings.map(s => ({ '@odata.type': '#microsoft.graph.deviceManagementConfigurationSetting', settingInstance: s.settingInstance })) }) });
+      done.push('Macs');
+    } catch (e) { failed.push('Macs (' + e.message + ')'); }
+  }
+  if (where.win && where.win.pv) {
+    try {
+      const pv = where.win.pv, multi = (pv['@odata.type'] || '').endsWith('MultiText');
+      await graph(`/deviceManagement/groupPolicyConfigurations/${where.win.id}/updateDefinitionValues`, { method: 'POST', body: JSON.stringify({
+        added: [], deletedIds: [], updated: [{ id: where.win.dv.id, enabled: true, presentationValues: [Object.assign(
+          { '@odata.type': pv['@odata.type'], id: pv.id }, multi ? { values: text ? text.split('\n') : [] } : { value: text })] }] }) });
+      done.push('Windows PCs');
+    } catch (e) { failed.push('Windows PCs (' + e.message + ')'); }
+  }
+  $('announceMsg').className = 'status ' + (failed.length ? 'bad' : 'ok');
+  $('announceMsg').textContent = (done.length ? 'Saved ✓ for ' + done.join(' and ') + '. ' : '') + (failed.length ? "Couldn't save for " + failed.join('; ') : '');
+  $('saveAnnounce').disabled = false;
+}
+
+// ---- Analytics: the "TLA BootPaper popularity" reports ---------------------------------------------------------
+// Each computer reports a line like "2 people | Showing: tla, fall | Picked: tla, default | Video on: 2 | ...":
+// a list (one value per person) or a number (how many of them have it on).
+let rows = [], platform = 'all';
+function parseLine(line) {
+  // ("|", ";" or new lines between the parts; a computer that doesn't say how many people counts as one)
+  const parts = String(line || '').split(/\s*[|;\n]\s*/).map(s => s.trim()).filter(Boolean);
+  const m = /^(\d+)\s+(person|people)/i.exec(parts[0] || '');
+  if (!m && !parts.some(p => p.indexOf(':') > 0)) return null;
+  const r = { people: m ? +m[1] : 1, fields: {} };
+  parts.slice(m ? 1 : 0).forEach(p => {
+    const i = p.indexOf(':'); if (i < 0) return;
+    r.fields[p.slice(0, i).trim()] = p.slice(i + 1).trim();
+  });
+  return r;
+}
+async function loadAnalytics() {
+  rows = [];
+  const notes = [];
+  try {
+    const attrs = await graphAll(`/deviceManagement/deviceCustomAttributeShellScripts?$select=id,displayName`);
+    const a = attrs.find(x => x.displayName === REPORT);
+    if (a) {
+      const states = await graphAll(`/deviceManagement/deviceCustomAttributeShellScripts/${a.id}/deviceRunStates?$expand=managedDevice($select=deviceName)`);
+      states.forEach(s => { const r = parseLine(s.resultMessage); if (r) rows.push(Object.assign(r, { os: 'mac', when: s.lastStateUpdateDateTime })); });
+    } else notes.push('No Mac report named "' + REPORT + '".');
+  } catch (e) { notes.push('Macs: ' + e.message); }
+  try {
+    const scripts = await graphAll(`/deviceManagement/deviceHealthScripts?$select=id,displayName`);
+    const w = scripts.find(x => x.displayName === REPORT);
+    if (w) {
+      const states = await graphAll(`/deviceManagement/deviceHealthScripts/${w.id}/deviceRunStates?$expand=managedDevice($select=deviceName)`);
+      states.forEach(s => { const r = parseLine(s.preRemediationDetectionScriptOutput); if (r) rows.push(Object.assign(r, { os: 'win', when: s.lastStateUpdateDateTime })); });
+    } else notes.push('No Windows report named "' + REPORT + '".');
+  } catch (e) { notes.push('Windows PCs: ' + e.message); }
+  $('dataNote').textContent = notes.join(' ') + ' Reports come from Intune: Macs report every few hours, Windows PCs every hour.';
+  draw();
+}
+function tally(rs, label) {        // {value: people}, or {On, Off} for number fields
+  const out = {};
+  rs.forEach(r => {
+    const v = r.fields[label];
+    if (v === undefined || v === '') return;
+    if (/^\d+$/.test(v)) { const on = Math.min(+v, r.people); out.On = (out.On || 0) + on; out.Off = (out.Off || 0) + (r.people - on); }
+    else v.split(',').map(s => s.trim()).filter(Boolean).forEach(x => { out[x] = (out[x] || 0) + 1; });
+  });
+  return Object.entries(out).sort((a, b) => b[1] - a[1]);
+}
+function donut(title, sub, entries) {
+  const total = entries.reduce((s, e) => s + e[1], 0) || 1, R = 52, C = 2 * Math.PI * R;
+  let off = 0;
+  const arcs = entries.map((e, i) => {
+    const len = C * e[1] / total, a = `<circle r="${R}" cx="70" cy="70" fill="none" stroke="${COLORS[i % COLORS.length]}" stroke-width="22"
+      stroke-dasharray="${len} ${C - len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)"><title>${esc(nice(e[0]))}: ${e[1]}</title></circle>`;
+    off += len; return a;
+  }).join('');
+  const legend = entries.map((e, i) => `<li><span class="sw" style="background:${COLORS[i % COLORS.length]}"></span>${esc(nice(e[0]))}<span class="n">${e[1]} · ${Math.round(100 * e[1] / total)}%</span></li>`).join('');
+  return `<div class="card chart"><h3>${esc(title)}</h3><div class="sub">${esc(sub)}</div><div class="donut"><svg width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="${esc(title)}">${arcs}<text x="70" y="76" text-anchor="middle" font-size="20" font-weight="650" fill="currentColor">${entries.reduce((s, e) => s + e[1], 0)}</text></svg><ul class="legend">${legend}</ul></div></div>`;
+}
+function bars(title, sub, entries) {
+  const max = Math.max(1, ...entries.map(e => e[1]));
+  const rowsHtml = entries.map((e, i) => `<div class="bar"><span class="name" title="${esc(nice(e[0]))}">${esc(nice(e[0]))}</span><span class="track"><span class="fill" style="display:block;width:${100 * e[1] / max}%;background:${COLORS[i % COLORS.length]}"></span></span><span class="n">${e[1]}</span></div>`).join('');
+  return `<div class="card chart"><h3>${esc(title)}</h3><div class="sub">${esc(sub)}</div><div class="bars">${rowsHtml || '<span class="muted">No reports yet</span>'}</div></div>`;
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function draw() {
+  const rs = rows.filter(r => platform === 'all' || r.os === platform);
+  const people = rs.reduce((s, r) => s + r.people, 0), week = Date.now() - 7 * 864e5;
+  const recent = rs.filter(r => r.when && Date.parse(r.when) > week).length;
+  $('tiles').innerHTML = [
+    ['Computers reporting', rs.length], ['People', people], ['Reported this week', recent],
+    ['Macs · Windows PCs', rows.filter(r => r.os === 'mac').length + ' · ' + rows.filter(r => r.os === 'win').length]
+  ].map(t => `<div class="card tile"><div class="muted small">${t[0]}</div><div class="num">${t[1]}</div></div>`).join('');
+  // Labels, as the reports name them (whatever they are, each gets a chart: lists as bars or a donut, numbers as on/off)
+  const labels = [];
+  rs.forEach(r => Object.keys(r.fields).forEach(k => { if (labels.indexOf(k) < 0) labels.push(k); }));
+  const TITLES = { Showing: ['Backgrounds on screens', 'What each person sees now'], Picked: ['Backgrounds people picked', '"Organization default" means they never picked one'],
+                   Video: ['Intro video choice', 'Per person'], 'Video on': ['Intro video at sign-in', 'People with it on or off'],
+                   'Quiet hours': ['Quiet hours', 'Muting the video during class time'], Greeting: ['Greeting by name', 'People with the greeting on'],
+                   Channel: ['Release channel', 'Stable or Experimental'], 'Light/dark': ['Light or dark', 'Their setting'],
+                   LightDark: ['Light or dark', 'Their setting'], Screensaver: ['TLA screensaver', 'People using it'] };
+  const skip = /^(updated|date|reported|last)/i;
+  $('charts').innerHTML = labels.filter(l => !skip.test(l)).map(l => {
+    const e = tally(rs, l), t = TITLES[l] || [l, 'Per person'];
+    return e.length > 6 ? bars(t[0], t[1], e) : donut(t[0], t[1], e);
+  }).join('') || '<div class="card muted">No reports yet.</div>';
+}
+
+// ---- Starting up -----------------------------------------------------------------------------------------------
+async function start() {
+  if (CLIENT_ID.startsWith('__')) {        // (until the app registration is made)
+    $('signin').classList.remove('hidden'); $('signinBtn').disabled = true;
+    $('signinMsg').textContent = "The staff page isn't set up yet. It will be ready soon.";
+    return;
+  }
+  const q = new URLSearchParams(location.search);
+  try {
+    if (q.get('code')) {
+      const p = JSON.parse(sessionStorage.getItem('pkce') || '{}');
+      history.replaceState(null, '', REDIRECT);
+      if (q.get('state') !== p.state) throw new Error('Sign-in was interrupted. Try again.');
+      await tokenRequest({ grant_type: 'authorization_code', code: q.get('code'), redirect_uri: REDIRECT, code_verifier: p.verifier });
+      sessionStorage.removeItem('pkce');
+    } else if (q.get('error')) {
+      history.replaceState(null, '', REDIRECT);
+      throw new Error(/AADSTS50105/.test(q.get('error_description') || '') ? 'This is for TLA staff who look after BootPaper. Ask ebuskell@schoolathome.ca if you need it.'
+                                                                          : (q.get('error_description') || q.get('error')).split('\n')[0]);
+    }
+  } catch (e) { $('signinMsg').textContent = e.message; }
+  const me = whoFromIdToken();
+  if (!me || !(await accessToken().catch(() => null))) { $('signin').classList.remove('hidden'); return; }
+  if (STAFF.indexOf(me) < 0) {
+    sessionStorage.clear();
+    $('signin').classList.remove('hidden');
+    $('signinMsg').textContent = 'This is for TLA staff who look after BootPaper. Ask ebuskell@schoolathome.ca if you need it.';
+    return;
+  }
+  $('who').textContent = me; $('signout').classList.remove('hidden'); $('app').classList.remove('hidden');
+  loadAnnouncement(); loadAnalytics();
+}
+$('signinBtn').onclick = signIn;
+$('signout').onclick = () => { sessionStorage.clear(); location.href = `https://login.microsoftonline.com/${TENANT}/oauth2/v2.0/logout?post_logout_redirect_uri=` + encodeURIComponent(REDIRECT); };
+$('announce').oninput = () => { $('announceMsg').textContent = ''; };
+$('saveAnnounce').onclick = saveAnnouncement;
+$('platforms').onclick = e => { const b = e.target.closest('button'); if (!b) return; platform = b.dataset.p;
+  [...$('platforms').children].forEach(x => x.classList.toggle('on', x === b)); draw(); };
+start();
+</script>
+</body>
+</html>
