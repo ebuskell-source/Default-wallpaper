@@ -1,0 +1,12 @@
+ok tla
+ok code
+ok pixel
+ok blocks
+ok anime
+ok liquid-glass
+ok space
+ok ocean
+ok claymation
+ok rainy
+ocean frame: 5.96666666666667 ms
+style pixel-dark: a=seq;st=0.06;d=0;e=step;f=mono;c=FFD93D;sh=000000:0:0.07:-0.07;x=step
