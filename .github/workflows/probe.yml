@@ -1,0 +1,16 @@
+name: probe
+on:
+  push:
+    branches: [ci/bootpaper-tests]
+permissions:
+  contents: write
+jobs:
+  mac:
+    runs-on: macos-latest
+    steps:
+      - run: |
+          mkdir out && sw_vers > out/mac.txt && uname -m >> out/mac.txt
+          screencapture -x out/screen.png || echo "screencapture failed" >> out/mac.txt
+          git init -q r && cd r && git checkout -q -b ci/bootpaper-results
+          cp ../out/* . && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "probe mac"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/bootpaper-results-mac
