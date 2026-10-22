@@ -1,0 +1,18 @@
+name: bootpaper-tests
+on:
+  push:
+    branches: [ci/bootpaper-tests]
+permissions:
+  contents: write
+jobs:
+  mac-player:
+    if: contains(github.event.head_commit.message, '[mac-player]')
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash ci/mac-player-test.sh
+      - name: results
+        if: always()
+        run: |
+          cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "mac player ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-mac-player
