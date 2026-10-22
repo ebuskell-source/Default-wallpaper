@@ -1,8 +1,8 @@
-# detect-video-v35.ps1
-# Intune detection script: reports "Installed" only when version 35 is in place.
+# detect-video-v36.ps1
+# Intune detection script: reports "Installed" only when version 36 is in place.
 # When you change the video or settings, raise $Version here AND in install-video.ps1.
 
-$Version    = '35'
+$Version    = '36'
 $InstallDir = Join-Path $env:ProgramData 'WelcomeVideo'
 $task       = Get-ScheduledTask -TaskName 'Welcome Video' -ErrorAction SilentlyContinue
 $videoTask  = Get-ScheduledTask -TaskName 'TLA BootPaper Videos' -ErrorAction SilentlyContinue
@@ -14,7 +14,7 @@ $installed  = Get-Content -LiteralPath (Join-Path $InstallDir 'version.txt') -Ra
 if ($installed) { $installed = $installed.Trim() }
 
 $files = 'play-video.ps1', 'settings.ps1', 'common.ps1', 'whatsnew.ps1', 'report.ps1', 'apply-background.ps1', 'lock-backgrounds.ps1',
-         'sync-videos.ps1', 'release-notes.md', 'care.ps1', 'care-system.ps1', 'session.ps1', 'tour.ps1', 'theme-check.ps1', 'update.ps1',
+         'sync-videos.ps1', 'release-notes.md', 'care.ps1', 'care-system.ps1', 'session.ps1', 'tour.ps1', 'theme-check.ps1', 'update.ps1', 'greeting.ps1',
          'Backgrounds\microsoft-r2.jpg', 'Backgrounds\microsoft-dark.jpg', 'Backgrounds\thumbs\microsoft.jpg' | ForEach-Object { Join-Path $InstallDir $_ }
 $shortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA BootPaper.lnk'
 $report   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Report a problem to TLA.lnk'
