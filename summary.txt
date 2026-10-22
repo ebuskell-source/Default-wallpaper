@@ -1,0 +1,23 @@
+tla: played | covered after 194 ms playing after 335 ms 
+microsoft: played | covered after 326 ms playing after 345 ms 
+liquid-glass: played | covered after 101 ms playing after 126 ms 
+penguins: played | covered after 92 ms playing after 107 ms 
+code: played | covered after 119 ms playing after 156 ms 
+frutiger-aero: played | covered after 106 ms playing after 145 ms 
+solarpunk: played | covered after 104 ms playing after 128 ms 
+rainy: played | covered after 111 ms playing after 130 ms 
+space: played | covered after 103 ms playing after 127 ms 
+ocean: played | covered after 102 ms playing after 121 ms 
+beach: played | covered after 100 ms playing after 118 ms 
+claymation: played | covered after 99 ms playing after 121 ms 
+blocks: played | covered after 100 ms playing after 119 ms 
+bricks: played | covered after 95 ms playing after 141 ms 
+pixel: played | covered after 99 ms playing after 115 ms 
+anime: played | covered after 109 ms playing after 142 ms 
+sky-city: played | covered after 102 ms playing after 131 ms 
+blocks-x86: played | covered after 2894 ms playing after 3188 ms 
+nogreet: played
+error: no video file
+ProductName:		macOS
+ProductVersion:		26.6.2
+BuildVersion:		25G83
