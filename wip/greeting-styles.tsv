@@ -1,0 +1,17 @@
+tla	a=line;t0=0.3;d=0.5;e=lin
+microsoft	a=line;d=0.8;e=out;dy=-0.5;w=semibold
+liquid-glass	a=line;d=0.9;e=back;sc=0.85;p=glass;w=semibold
+penguins	a=seq;st=0.035;d=0.7;e=back;dx=-2.5;sh=0B2545B3:0.12:0:-0.04
+code	a=seq;t0=0.4;st=0.06;d=0;e=step;f=mono;c=4AF626;gl=4AF62699:0.12;p=term;pre=> ;cur=_
+frutiger-aero	a=line;d=0.9;e=elastic;sc=0.4;f=round;gl=4FD8FF:0.25
+solarpunk	a=seq;st=0.045;d=0.6;e=back;sy=0;an=b;c=FFFBEA;gl=7BD389:0.22
+rainy	a=seq;st=0.05;d=0.65;e=bounce;dy=2.2;c=DCEBFF;sh=0A1A33B3:0.1:0:-0.04
+space	a=rand;st=0.05;d=1.0;e=out;sc=2.2;ls=0.1;gl=B28DFF:0.3
+ocean	a=seq;st=0.05;d=1.1;e=out;dy=-1.6;bob=0.06;bp=2.4;c=B8F3FF;gl=0096C8:0.22
+beach	a=seq;st=0.05;d=0.7;e=out;dy=-0.6;bob=0.09;bp=1.8;c=FFF1C9;sh=B4462899:0.12:0:-0.04
+claymation	a=seq;st=0.065;d=0.7;e=elastic;sx=1.5;sy=0.3;an=b;f=round;w=heavy;c=FFB347;sh=5A2D0C:0:0.05:-0.06
+blocks	a=seq;st=0.07;d=0.7;e=bounce;dy=3;w=heavy;c=FF5A5A,FFD93D,5BD66B,4DA6FF;sh=000000B3:0:0.05:-0.05
+bricks	a=seq;st=0.075;d=0.35;e=out;sc=2.2;an=b;w=heavy;sh=B23A1E:0:0.06:-0.06
+pixel	a=seq;st=0.06;d=0;e=step;f=mono;c=FFD93D;sh=000000:0:0.07:-0.07;x=step
+anime	a=line;t0=0.25;d=0.45;e=back;sc=2.6;r=-6;it=1;w=heavy;gl=FF5FA2:0.12
+sky-city	a=line;d=1.6;e=out;dy=1.2;bob=0.05;bp=3.2;gl=7EC8FFCC:0.25
