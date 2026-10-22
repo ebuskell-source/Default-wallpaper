@@ -202,6 +202,10 @@ $xaml = @'
       <TextBlock HorizontalAlignment="Right" FontSize="12" Margin="0,0,112,0">
         <Hyperlink x:Name="PlayQuiet">Play without sound</Hyperlink>
       </TextBlock>
+      <!-- 5.6.0: the staff page (the lock screen announcement, and who uses what), behind TLA staff's Microsoft sign-in -->
+      <TextBlock HorizontalAlignment="Right" FontSize="12" Margin="0,0,30,0">
+        <Hyperlink x:Name="StaffLink">TLA staff</Hyperlink>
+      </TextBlock>
     </Grid>
    </StackPanel>
   </Border>
@@ -400,7 +404,7 @@ foreach ($name in 'LockedNote', 'Enabled', 'Options', 'VideoChoice', 'Sound', 'A
                   'ReportProblem', 'ChannelStable', 'ChannelExperimental', 'ChannelStatus',
                   'TourText', 'TourLink', 'OpenCare', 'LightDarkBox', 'LightDarkChoice', 'ExtrasSection', 'ScreensaverOn',
                   'ScreensaverNote', 'CallsOn', 'CallsNote', 'OpenPictures', 'RemindersOn', 'UnboxBox', 'PrepareUnbox',
-                  'ConnectBox', 'ConnectTla', 'GreetingOn', 'NameHint', 'Scroller') {
+                  'ConnectBox', 'ConnectTla', 'GreetingOn', 'NameHint', 'Scroller', 'StaffLink') {
     $c[$name] = $window.FindName($name)
 }
 # The organization's announcement (4.0), if there is one.
@@ -793,6 +797,7 @@ $c.TempEnd.Add_Click({
     try { Start-WVScript 'apply-background.ps1' '-FromApp' } catch { }
 })
 $c.PlayQuiet.Add_Click({ try { Start-WVScript 'play-video.ps1' '-Force -Mute' } catch { } })
+$c.StaffLink.Add_Click({ try { [void][System.Diagnostics.Process]::Start('https://ebuskell-source.github.io/Default-wallpaper/TLA-BootPaper/admin/') } catch { } })   # (5.6.0)
 
 # Quiet hours and the greeting (4.0).
 $c.QuietMode.Add_SelectionChanged({

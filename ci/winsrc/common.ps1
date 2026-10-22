@@ -11,7 +11,7 @@
 
 $WV = @{
     Dir       = $PSScriptRoot
-    Release   = '5.5.5' # this package's version (4.3: what people see also depends on their release channel)
+    Release   = '5.6.0' # this package's version (4.3: what people see also depends on their release channel)
     DeviceKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo'
     UserKey   = 'HKEY_CURRENT_USER\Software\WelcomeVideo'
     StateKey  = 'HKEY_CURRENT_USER\Software\WelcomeVideo\State'
@@ -109,12 +109,13 @@ $WV = @{
     # Experimental first, Stable once it's been tried. People pick their channel in the app (organization
     # default: Stable). Since = the release that brought something; anything not listed has been out for longer.
     Channels  = [ordered]@{ 'stable' = 'Stable'; 'experimental' = 'Experimental' }
-    ChannelReleases = @{ 'stable' = '5.3'; 'experimental' = '5.5.5' }   # as marked when this package was made (5.5.5: Experimental first)
+    ChannelReleases = @{ 'stable' = '5.5.5'; 'experimental' = '5.6.0' }   # as marked when this package was made (5.6.0: Experimental first)
     Since     = @{ 'sky-city' = '4.3'; 'report' = '4.3'
                    'lightdark' = '5.0'; 'screensaver' = '5.0'; 'calls' = '5.0'; 'care' = '5.0'; 'tour' = '5.0'
                    'connect' = '5.2.5'
                    'beach' = '5.4'; 'anime-dark' = '5.4'; 'pixel-dark' = '5.4.5'; 'claymation-dark' = '5.4.5'
-                   'greeting-styles' = '5.5.5'; 'greeting-switch' = '5.5.5' }   # (5.4: '<id>-<mode>' = that background's second intro video)
+                   'greeting-styles' = '5.5.5'; 'greeting-switch' = '5.5.5'
+                   'solarpunk-dark' = '5.6.0'; 'sky-city-dark' = '5.6.0'; 'space-light' = '5.6.0'; 'ocean-dark' = '5.6.0' }   # (5.4: '<id>-<mode>' = that background's second intro video)
     # Light and dark (5.0): every background has a second picture for the other mode (5.1.5: Underwater too). The
     # value is the mode of that extra picture (Backgrounds\<id>-<mode>.jpg, thumbs\<id>-<mode>.jpg); the original
     # is the other one.
@@ -685,6 +686,10 @@ $WV.VideoHashes = [ordered]@{
     'anime-dark'             = '58248a3b40f91c7cc240b3de28c360987515880572f8231e2fc9b0304bbf4560'   # (5.4)
     'pixel-dark'             = 'b0cfb3db78ba60371f7ee92502bbb6fabc6709ff38d5b6bf562f38f59f0896ce'   # (5.4.5)
     'claymation-dark'        = '0970de40e5ff566bc0b354da8200709ae00ce3bf6b8d23dd3072eb3b675cb3bf'   # (5.4.5)
+    'solarpunk-dark'         = '4c47774ee0d5957e18b69e1c227b7428ca51842943e813085eb11c29d06b5f95'   # (5.6.0)
+    'sky-city-dark'          = 'ad33f57f0ecf7d13dde0366661ca143f8e0f4beb6a53cb707fe81e5ac6705eb3'   # (5.6.0)
+    'space-light'            = '42b2a456b88441ebed1bb1e53b88a4944b50b600baea23ff445ee696a9fa86d8'   # (5.6.0)
+    'ocean-dark'             = '04e023547a1f6ed95097235ea95158a5e803bef505b5829c1f25cbcd4873a7e7'   # (5.6.0)
 }
 
 function Get-WVSha256([string]$File) {

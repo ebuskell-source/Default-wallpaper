@@ -1,3 +1,22 @@
+# [mac] Version 5.6.0
+- [mac] **Four new intro videos.** Solarpunk, Sky City and Underwater each have one for dark mode, and Space has one for light mode, so they follow your Mac's look like the others.
+- [mac] **A TLA staff link** at the bottom of TLA BootPaper, for the people who look after it: they sign in to update the lock screen announcement and see which backgrounds and videos are popular.
+
+# [win] Version 5.6.0
+- [win] **Four new intro videos.** Solarpunk, Sky City and Underwater each have one for dark mode, and Space has one for light mode, so they follow Windows' look like the others.
+- [win] **A TLA staff link** at the bottom of TLA BootPaper, for the people who look after it: they sign in to update the lock screen announcement and see which backgrounds and videos are popular.
+
+# [mac] Version 5.5.5
+- [mac] **Each theme greets you in its own style.** Code types out "Good morning", 8-Bit appears letter by letter, Blocks bounce in, Underwater and Beach bob like waves, and more. TLA Classic keeps its fade.
+- [mac] **Turn the greeting off without losing your name**, with the new switch under Welcome video.
+- [mac] **A fresh look for TLA BootPaper**: settings grouped in cards, with switches for things you turn on and off.
+
+# [win] Version 5.5.5
+- [win] **Each theme greets you in its own style.** Code types out "Good morning", 8-Bit appears letter by letter, Blocks bounce in, Underwater and Beach bob like waves, and more. TLA Classic keeps its fade.
+- [win] **Turn the greeting off without losing your name**, with the new switch under Welcome video.
+- [win] **Gentler scrolling** in TLA BootPaper, especially with a touchpad.
+- [win] **A fresh look for TLA BootPaper**: settings grouped in cards, with switches for things you turn on and off.
+
 # [mac] Version 5.4.5
 - [mac] **8-Bit and Claymation have dark intro videos**, which play while your Mac is in dark mode.
 

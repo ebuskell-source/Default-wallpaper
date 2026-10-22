@@ -34,7 +34,7 @@ $UsersCanChange = 1            # 0 = people can see these settings in the app bu
 $ErrorActionPreference = 'Stop'
 $InstallDir = Join-Path $env:ProgramData 'WelcomeVideo'
 $TaskName   = 'Welcome Video'
-$Version    = '36'   # raise this (and the one in the detection script) whenever you change the video or settings
+$Version    = '37'   # raise this (and the one in the detection script) whenever you change the video or settings
 $Shortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA BootPaper.lnk'
 $ReportShortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Report a problem to TLA.lnk'   # (4.3)
 $CareShortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA Care.lnk'                  # (5.0)

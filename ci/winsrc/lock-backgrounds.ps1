@@ -224,7 +224,7 @@ try {
     Set-Value $pop 'Video' "$(Get-WVSetting 'Video')"
     Set-Value $pop 'VideoOn' "$(Get-WVSetting 'Enabled')"
     Set-Value $pop 'QuietMode' "$(Get-WVSetting 'QuietMode')"
-    Set-Value $pop 'Greeting' $(if ("$(Get-WVSetting 'PreferredName')".Trim()) { '1' } else { '0' })
+    Set-Value $pop 'Greeting' $(if (Get-WVGreeting) { '1' } else { '0' })   # (5.6.0: off when they've turned it off)
     Set-Value $pop 'Channel' (Get-WVChannel)   # (4.3)
     Set-Value $pop 'LightDark' "$(Get-WVSetting 'LightDark')"          # (5.0)
     Set-Value $pop 'Screensaver' "$(Get-WVSetting 'Screensaver')"      # (5.0)
