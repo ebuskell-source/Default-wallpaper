@@ -50,7 +50,8 @@ case "$1" in
     # this person's release channel), the screensaver, Teams, and unboxing.
     mode="$(wv_mode)"
     print -r -- "mode	$mode"
-    for f in lightdark screensaver calls care tour greeting-switch greeting-styles; do   # (5.5.5: the greeting's switch and styles) wv_released $f && print -r -- "feature	$f	1" || print -r -- "feature	$f	0"; done
+    # (5.5.5: and the greeting's switch and styles)
+    for f in lightdark screensaver calls care tour greeting-switch greeting-styles; do wv_released $f && print -r -- "feature	$f	1" || print -r -- "feature	$f	0"; done
     for i in {1..${#WV_LIGHTDARK}}; do print -r -- "lightdark	${WV_LIGHTDARK[$i]}	${WV_LIGHTDARK_LABELS[$i]}"; done
     print -r -- "ssstatus	$(wv_get StateScreensaverStatus)	$(/bin/cat "$WV_DIR/Screensaver/status" 2>/dev/null)"
     wv_teams_installed && print "teams	1" || print "teams	0"
