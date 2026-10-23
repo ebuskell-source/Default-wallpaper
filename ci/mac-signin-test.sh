@@ -16,6 +16,9 @@ sleep 12   # (the guard's first run fetches the real settings; the test ones go 
 python3 ci/signin/prep.py /tmp/signin-test > "$O/prep.txt" 2>&1
 sudo mkdir -p "$D/SignIn"; sudo cp /tmp/signin-test/auth.json /tmp/signin-test/keys.json "$D/SignIn/"; sudo touch "$D/.signin-checked"
 sudo rm -f "$D"/SignIn/state-*
+# (the release channels as they'll be once 5.7.0 is out on Experimental)
+printf 'stable\t5.6.0\nexperimental\t5.7.0\n' | sudo tee "$D/channels.tsv" > /dev/null
+log "channels"; cat "$D/channels.tsv" >> "$O/summary.txt"
 log "files"; ls -la "$D/SignIn" "$D/signin.js" "$D/tla-signin" >> "$O/summary.txt" 2>&1
 file "$D/tla-signin" >> "$O/summary.txt"
 

@@ -198,7 +198,12 @@ function Test-WVOnline {
     $now = Get-WVNow
     if ($c.Count -eq 2 -and $c[0] -match '^\d+$' -and $now - [long]$c[0] -ge 0 -and $now - [long]$c[0] -lt 600) { return $c[1] -eq '1' }
     $ok = $true
-    try { [void](Get-WVWeb $WV.SignInPage 5000 -Head) } catch { $ok = $false }
+    try { [void](Get-WVWeb $WV.SignInPage 5000 -Head) }
+    catch {                                   # (any answer, even "not found", means it's online)
+        $e = $_.Exception
+        while ($e -and $e -isnot [System.Net.WebException]) { $e = $e.InnerException }
+        $ok = [bool]($e -and $null -ne $e.Response)
+    }
     try { [Microsoft.Win32.Registry]::SetValue($WV.StateKey, 'OnlineCheck', "$now $(if ($ok) { 1 } else { 0 })") } catch { }
     return $ok
 }
