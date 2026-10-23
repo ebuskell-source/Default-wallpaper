@@ -1,0 +1,85 @@
+== channels
+stable	5.6.0
+experimental	5.7.0
+== files
+-rw-r--r--  1 root  wheel  23138 Oct 23 18:03 /Library/Application Support/ca.schoolathome.welcomevideo/signin.js
+-rwxr-xr-x  1 root  wheel  84192 Oct 23 17:50 /Library/Application Support/ca.schoolathome.welcomevideo/tla-signin
+
+/Library/Application Support/ca.schoolathome.welcomevideo/SignIn:
+total 16
+drwxr-xr-x   4 root  wheel   128 Oct 23 18:04 .
+drwxr-xr-x  37 root  wheel  1184 Oct 23 18:04 ..
+-rw-r--r--   1 root  wheel   396 Oct 23 18:04 auth.json
+-rw-r--r--   1 root  wheel   925 Oct 23 18:04 keys.json
+/Library/Application Support/ca.schoolathome.welcomevideo/tla-signin: Mach-O universal binary with 2 architectures: [x86_64:Mach-O 64-bit executable x86_64] [arm64:Mach-O 64-bit executable arm64]
+/Library/Application Support/ca.schoolathome.welcomevideo/tla-signin (for architecture x86_64):	Mach-O 64-bit executable x86_64
+/Library/Application Support/ca.schoolathome.welcomevideo/tla-signin (for architecture arm64):	Mach-O 64-bit executable arm64
+== shared checks (JavaScriptCore)
+31 cases, 0 failed, 27 ms
+== signed out
+out						none
+Background=tla Video=tla current=tla channel=experimental save:
+exit 1
+== round trip
+answer file: /tmp/tla-signin.L679r0K0/answer
+url: https://ebuskell-source.github.io/Default-wallpaper/TLA-BootPaper/signin/?state=49217.18v1cgHRaaMqnW3dw3_y1g&n port: 49217
+favicon: 404
+HTTP/1.1 302 Found
+Location: https://ebuskell-source.github.io/Default-wallpaper/TLA-BootPaper/signin/?done=1
+-rw-------  1 runner  wheel  755 Oct 23 18:05 /tmp/tla-signin.L679r0K0/answer
+ok	Signed in as Jane Doe.	0	jdoe	hub
+in	30	1795370719	hub	Jane Doe	jdoe	
+Background=space Video=space current=space
+== wrong state, cancel
+error	That sign-in was for another window. Try again.
+cancelled: ls: /tmp/tla-signin.6tUqa6KN: No such file or directory; helper left:        0
+== time to sign in again (25 days ago), reminders
+renew	5	1793210748	hub	Jane Doe	jdoe	
+Time to sign in to TLA BootPaper again	Your sign-in runs out in 5 days (Wednesday, October 28). Sign in again with your Hub account to keep your video and background.
+(again:) []
+Time to sign in to TLA BootPaper again	Your sign-in runs out in 2 days (Sunday, October 25). Sign in again with your Hub account to keep your video and background.
+== ran out (31 days ago; online), edited token, another account
+out		1792692379	hub	Jane Doe	jdoe	expired
+out						invalid
+out						invalid
+== the guard (root), signed in
+cache: in	28	1795197980	hub	Jane Doe	jdoe	
+== sign out
+out						none
+== status timing (real seconds)
+real 0.21 real 0.13 real 0.28 real 0.12 real 0.10 real 0.15 
+== log
+2026-10-23 18:04:56 Desktop picture set to tla (light) (Fill).
+2026-10-23 18:04:57 Lock screen picture updated.
+2026-10-23 18:05:18 Sign-in: started.
+2026-10-23 18:05:20 Signed in as jdoe (hub).
+2026-10-23 18:05:21 Desktop picture set to space (light) (Fill).
+2026-10-23 18:05:22 Lock screen picture updated.
+2026-10-23 18:05:29 Desktop picture set to rainy (light) (Fill).
+2026-10-23 18:05:29 TLA screensaver set (Aerial, the TLA video).
+2026-10-23 18:05:29 Lock screen picture updated.
+2026-10-23 18:05:34 Lock screen picture updated.
+2026-10-23 18:05:46 Sign-in: started.
+2026-10-23 18:05:47 Sign-in: That sign-in was for another window. Try again.
+2026-10-23 18:05:48 Sign-in: started.
+2026-10-23 18:06:22 Signed out.
+2026-10-23 18:04:43 Downloaded the easter video.
+2026-10-23 18:04:43 Downloaded the space-light video.
+2026-10-23 18:04:44 Downloaded the sky-city video.
+2026-10-23 18:04:45 Downloaded the code video.
+2026-10-23 18:04:46 Downloaded the liquid-glass-original video.
+2026-10-23 18:04:47 Downloaded the anime video.
+2026-10-23 18:04:48 Downloaded the christmas video.
+2026-10-23 18:04:48 Downloaded the liquid-glass video.
+2026-10-23 18:04:49 Downloaded the penguins video.
+2026-10-23 18:04:49 Downloaded the blocks-dark video.
+2026-10-23 18:04:49 Downloaded the ocean video.
+2026-10-23 18:04:50 Downloaded the fall video.
+2026-10-23 18:04:51 Downloaded the sky-city-dark video.
+2026-10-23 18:04:51 Downloaded the pixel video.
+2026-10-23 18:04:52 Downloaded the beach-dark video.
+2026-10-23 18:04:54 Downloaded the screensaver video.
+2026-10-23 18:04:54 Put the TLA video in Aerial's My Videos.
+2026-10-23 18:04:54 Set up Aerial to play the TLA video.
+2026-10-23 18:04:54 Screensaver: ready
+2026-10-23 18:05:31 Lock screen picture for runner set to tla-r2.jpg.
