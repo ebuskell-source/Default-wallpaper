@@ -1,0 +1,498 @@
+{
+ "now": 1793000000,
+ "device": "test:device-1",
+ "user": "jdoe",
+ "salt": "c2FsdHNhbHRzYWx0c2FsdA",
+ "nonce": "gksLoEansgK3tRJz1nLxlFBNMaYUdpLTixC5jGFqahU",
+ "cfg": {
+  "required": true,
+  "provider": "hub",
+  "validDays": 30,
+  "renewDays": 7,
+  "graceDays": 3,
+  "remindDays": [
+   7,
+   3
+  ],
+  "google": {
+   "clientId": "test-client.apps.googleusercontent.com",
+   "domains": [
+    "schoolathome.ca"
+   ]
+  },
+  "hub": {
+   "signInUrl": "https://hub.test.schoolathome.ca/bootpaperSignIn",
+   "issuer": "https://hub.test.schoolathome.ca",
+   "jwksUrl": "https://hub.test.schoolathome.ca/ajax/bootpaperKeys.php"
+  }
+ },
+ "keys": [
+  {
+   "kind": "hub",
+   "kid": "test-hub-1",
+   "n": "qtoWSLw3l-_HVyLFxVygnuAgmuYH_JTezQOa3EzdO1DasA4wQQIq4E6zgrKRImJjPiwpu8oWCEio_2kkbqHk6Z89Xjf7oNQnWK5xQTVVYfXlM3ZQGZYkjPwHSsC5ZrFIuowExbn0R9B6VodT1aBJz4LhP2NNUFIpBIAnVEoJ6W9XJJMfsEoF7jGXOuaMQW9-t3qmfpx--SaK0zrm5CyadQmMajcnTNjhgLL7EJnfibFTiujdhA0KxIKGE7uI1uDvial_eIRntj70AFMdY0FAeT6Zc0Ofcp5vcapUp7YOK9Xp4XebrjRWK_Z1uqTyPa4wjWXU3FT4UhAwO_sm6OM5NQ",
+   "e": "AQAB",
+   "first": 1792568000,
+   "last": 1792568000
+  },
+  {
+   "kind": "google",
+   "kid": "test-google-1",
+   "n": "nDTLiJex9b4XSosol3fdMyNU7PFHtQ4GCCHOfEqS0VMC-aj2Fl4Cq9AynWuaMc7SdZqa9YMxccEjGopsY1z2ziwznspFY33P7hEB0I-6r6NCxm_MN7MiB29Lkqj64A6SepzvEthjVLfVajyXrY9ck6SwvYuu96QR7ljUtjhK07STPjQhSXBAF2qac6BUCQnaXpYCxQTqiQOOyECHfr1FrqsaRmNLpsoXgaHdV-YT-l9bju6Drd6iKHitMzri8RHpPQF6ckijPEEK-cHUycrSkIjPhOslqz6FM-myvlG8HLHaTKIcap-8ia02nNXsUTs53fpl3_3eADbL8FUBJJSj_Q",
+   "e": "AQAB",
+   "first": 1792568000,
+   "last": 1792568000
+  }
+ ],
+ "jwks": {
+  "keys": [
+   {
+    "kty": "RSA",
+    "alg": "RS256",
+    "use": "sig",
+    "kid": "test-hub-1",
+    "n": "qtoWSLw3l-_HVyLFxVygnuAgmuYH_JTezQOa3EzdO1DasA4wQQIq4E6zgrKRImJjPiwpu8oWCEio_2kkbqHk6Z89Xjf7oNQnWK5xQTVVYfXlM3ZQGZYkjPwHSsC5ZrFIuowExbn0R9B6VodT1aBJz4LhP2NNUFIpBIAnVEoJ6W9XJJMfsEoF7jGXOuaMQW9-t3qmfpx--SaK0zrm5CyadQmMajcnTNjhgLL7EJnfibFTiujdhA0KxIKGE7uI1uDvial_eIRntj70AFMdY0FAeT6Zc0Ofcp5vcapUp7YOK9Xp4XebrjRWK_Z1uqTyPa4wjWXU3FT4UhAwO_sm6OM5NQ",
+    "e": "AQAB"
+   },
+   {
+    "kty": "RSA",
+    "alg": "RS256",
+    "use": "sig",
+    "kid": "test-google-1",
+    "n": "nDTLiJex9b4XSosol3fdMyNU7PFHtQ4GCCHOfEqS0VMC-aj2Fl4Cq9AynWuaMc7SdZqa9YMxccEjGopsY1z2ziwznspFY33P7hEB0I-6r6NCxm_MN7MiB29Lkqj64A6SepzvEthjVLfVajyXrY9ck6SwvYuu96QR7ljUtjhK07STPjQhSXBAF2qac6BUCQnaXpYCxQTqiQOOyECHfr1FrqsaRmNLpsoXgaHdV-YT-l9bju6Drd6iKHitMzri8RHpPQF6ckijPEEK-cHUycrSkIjPhOslqz6FM-myvlG8HLHaTKIcap-8ia02nNXsUTs53fpl3_3eADbL8FUBJJSj_Q",
+    "e": "AQAB"
+   }
+  ]
+ },
+ "cases": [
+  {
+   "name": "hub signed in today",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDA1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.LTrHrj-PnYXCQN18rRHQj-DmLDwaM-QafzQDZSS33FZv9Nvj3ML715Sr72z8fQmNqv02w-tf2leeb9A-QJLcXmJpp7AqfYotuO8hL7kXQm-WVJYxEKmdTJ9cuZXupwgIU-L3sgteeZF7pXp66PZ-sUOJR5pJWzrbo2F1dVGXJU_WPS5FFu0tts3MeMC1CJpXiOm4B5hEBz9GdxSGVr2DZOyIVjaN0kmGE-zfNzeGd5Pt_ok62bMZ28ThuDAVkOCdJXXgGk0FzGW7q2XECXYEkqTCiwrTYVlncJND_A2j-U9EIBfS7J3zbsJM1EgnHtTU1IOlTLIg58GiZHl1bhj6FA",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "in",
+    "days": 30,
+    "kind": "hub",
+    "who": "jdoe",
+    "name": "Jane Doe"
+   }
+  },
+  {
+   "name": "google signed in today",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtZ29vZ2xlLTEifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJ0ZXN0LWNsaWVudC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF6cCI6InRlc3QtY2xpZW50LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA5OCIsImhkIjoic2Nob29sYXRob21lLmNhIiwiZW1haWwiOiJqZG9lQHNjaG9vbGF0aG9tZS5jYSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiSmFuZSBEb2UiLCJpYXQiOjE3OTI5OTk5NDAsImV4cCI6MTc5MzAwMzU0MCwibm9uY2UiOiJna3NMb0VhbnNnSzN0Ukp6MW5MeGxGQk5NYVlVZHBMVGl4QzVqR0ZxYWhVIn0.a_wf3n3PX4hce_TjLskl2JfR58mFPNQauVDYujGlm6Yp-dgsHYyAC5eQkFzqV3bRoiJifnOcuRQlqIppAiqWYYjzUp3ws1Mcy81SOvUrT58Oe1yNNPxfzIHsVemvN3vtwydNsJfcRBUnoHyJTzii6LAwNPOznMjVIuzKgtAwdmZeeUHico0Z08K_g2opnotHYcra2huCSOongnVlz-Wq-yMLy-QOlK-qK47z1kR9_BOw65CbY6kN5Ot-yvFNUoWHzkD_ax1A-iX7mXgOKhZKppqm1HFW7i6ychUd4_227GBdMSbg3lta7Yt8bh-XCP-o28SCSUpUQIgIARqqCV7Grg",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "in",
+    "days": 30,
+    "kind": "google",
+    "who": "jdoe@schoolathome.ca"
+   }
+  },
+  {
+   "name": "24 days ago: 6 left, can sign in again",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkwOTI2NDAwLCJleHAiOjE3OTA5MjcwMDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.a1-8Rswvo632lAJ-cfgBeaS4vsIF3rbttn4EXwjq26aypxrS_M-ws1gX6U2FVczbzVgQwAHiteBh-mvfsBwgCnvfsue7ArrsVF7MiTkqyPDpDcz_rPx1p5v_uSIGc5xzrd4t9XHNSftBk764en8Ti47ArYpeZNVE3Ely0fZxCTnek-qDaWhvQnucYUIgKrcM_TgmArgZRjH6TyXhEYCG5Hacs7ZMrd_HWyfCfQKd5gGrT7NJAUktL8hJrsdosUEhPW2hsEH88sg62Vz1VBHfufLf4lQyN4T6K2y4cH5wtXOy0zq1QITy1QXyrDDXmquPP5AN8GnW0W9f-KvmSJ1mPw",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "renew",
+    "days": 6
+   }
+  },
+  {
+   "name": "23 days ago: 7 left, can sign in again",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkxMDEyODAwLCJleHAiOjE3OTEwMTM0MDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.GzNG2V76l2CGb4_F8RFO_o_JEXI28AGbZIj7SnreQ9-dkIVc1vcdsiHoFCjqBdUbPLZQH06uZvV_7ObiWwHmKyd00y158Hsi0cZUaGNUJd704_eEufo56dH5C5tbnV29cnnUvTAmUTMGYKqZSR7mlNKJleQz-sxCE9e1Uzs-0X9q60bnAdA3sEneW0q__wXVA2QOcTUQem2dLCEkv-NdlfWMwdphyQuZl4eWWRujLzBM2IcSMD8JU0KJAfI_GgT3ifJNdeMoaWOUoUjiHbgbVrCvka0hH8Kesr4jj8GMxW7zfe00guFk4lvHaBDVHwRHJ8h5p_v3bxiYB1TRCweMPg",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "renew",
+    "days": 7
+   }
+  },
+  {
+   "name": "a second short of 23 days ago: 8 left",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkxMDEyODAxLCJleHAiOjE3OTEwMTM0MDEsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.gtIsrXUH0X8nSgdqaRn2-pZS3QZWfm0ooHXsDK2BS-dbRSKmunpy268nJ6OrOUNVIlIaraRxQzVP6b2f52g7rttKiDGCAO_kml8ZoHDJEOXWHv122NRJmlHW1dZ7vrS1vlsw5b7SkfOmmHfAPqZChpcHq1fZn02YP2ni0Gex2A0y9hTnQ4S-Tt_HUjcLRhSn7hY1cgqmfGXp9FRA2cX7yT1qEthCg819GMjCV5aXhgfJ-5EP34MG3iOvsVWY6K6h1fdHXRQAatPFhgZBy0sTECSRkLUyDUbjQ6dSnHyFW4CU0rpsz-VQu9Nj4kZ0jbDNmqF6F6J0rI24914diqa4sA",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "in",
+    "days": 8
+   }
+  },
+  {
+   "name": "ran out yesterday, online",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkwMzIxNjAwLCJleHAiOjE3OTAzMjIyMDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.NGkgTfy1awMU3Bbofg5CSeEXYiVF2Ot-PlWV2IFuj1LY9FsxjjMMo5iZyquDamfIcEiBZ6qPu68-WfpkjnDQhwYRZd8CgT1NhAe6vpcrgo0vlu_7ryFegOVuRs5QNSvoxsYR5Dm4mSzE3Bu7Q6Yx5Dal-PQDPwhX1vE5hjNmkD9ZiVJXeHfkwjf9TT3p8RM3uLiFtWC9saFAPrf2kG2Peph33_CkwV2m44BEyxSdSVS6vQN5TfOO10nW8_2VbC1EX5I-qlTXttqjTv_Yq31EqJq6RzaVDkPtRgD-48In3yNcBDMhC0BEOYRYVtLgYNarx-6m7kzjZ78J-7xVvHG_iw",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "expired"
+   }
+  },
+  {
+   "name": "ran out yesterday, offline: grace",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkwMzIxNjAwLCJleHAiOjE3OTAzMjIyMDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.NGkgTfy1awMU3Bbofg5CSeEXYiVF2Ot-PlWV2IFuj1LY9FsxjjMMo5iZyquDamfIcEiBZ6qPu68-WfpkjnDQhwYRZd8CgT1NhAe6vpcrgo0vlu_7ryFegOVuRs5QNSvoxsYR5Dm4mSzE3Bu7Q6Yx5Dal-PQDPwhX1vE5hjNmkD9ZiVJXeHfkwjf9TT3p8RM3uLiFtWC9saFAPrf2kG2Peph33_CkwV2m44BEyxSdSVS6vQN5TfOO10nW8_2VbC1EX5I-qlTXttqjTv_Yq31EqJq6RzaVDkPtRgD-48In3yNcBDMhC0BEOYRYVtLgYNarx-6m7kzjZ78J-7xVvHG_iw",
+   "online": false,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "grace",
+    "days": 2
+   }
+  },
+  {
+   "name": "ran out 4 days ago, offline",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkwMDYyNDAwLCJleHAiOjE3OTAwNjMwMDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.Y2PiP9HyVDEIBC0LyU4FyGNo-T6w_vJY0RxtWR5bMBUeMBhbbQvdOFdM2t9nExuLs-b4j-cZyv09Cg6CLpe2j2E3b_Jgd5WzB8VM-YP5V7VS3ItvhwHL2SvFnL8Qo83I2DdkjCHPVyDL22XmR4Qnv2lC160-14_If60TxBospMERpKDo6zrxfQK9ysMu7VuVJk32ZC5cTVmGLxY3NxdG4r1_5OM30hyIYS2gN8024il6ooenqEhO30cXBt73AfuWUITSxn3YvYVcUcQD1kcX3f5lnxfE2YzKkUWXeEb7RkoabX2P-dS3A5XAMUi7HgyJgmHimEkx6P9Y2nVblq2jyQ",
+   "online": false,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "expired"
+   }
+  },
+  {
+   "name": "edited token",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDA1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyA9.LTrHrj-PnYXCQN18rRHQj-DmLDwaM-QafzQDZSS33FZv9Nvj3ML715Sr72z8fQmNqv02w-tf2leeb9A-QJLcXmJpp7AqfYotuO8hL7kXQm-WVJYxEKmdTJ9cuZXupwgIU-L3sgteeZF7pXp66PZ-sUOJR5pJWzrbo2F1dVGXJU_WPS5FFu0tts3MeMC1CJpXiOm4B5hEBz9GdxSGVr2DZOyIVjaN0kmGE-zfNzeGd5Pt_ok62bMZ28ThuDAVkOCdJXXgGk0FzGW7q2XECXYEkqTCiwrTYVlncJND_A2j-U9EIBfS7J3zbsJM1EgnHtTU1IOlTLIg58GiZHl1bhj6FA",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "another computer or account (nonce)",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDA1NDAsIm5vbmNlIjoieHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eCIsImp0aSI6ImFiYyJ9.nw5p1nNfAsr5eoyPSdWMj6zN1j3OHEaKzWnledtQQZ5pqhourw2ke83ZkjMwKCfUxFuJy7xFDC5CoAKeZ0p6_wKOVQj2xjeuVDgmaGWl-6OmfYMN3JYRdONKGCEF3oHZwKfnQWZu_ZKPblW2YkkhInhk5YCwWCl92Ic_yxHP-P7yU_sDT9l5_jUJk4ZQtLRGR5B4uOrs1uEvj5wWAR--fgGYS9NXgeRd6oKiB1DwcN0VxUbDVJjEs4pM0imse8a8FSEb3ZjXK3zebr3HGbtehe1hNWmQZO5WCzlN3OzuTZc-VsAlwIKeVUythqsNiokkoDq-H9IqzAG8qMwFo3sQlw",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "google, another domain",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtZ29vZ2xlLTEifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJ0ZXN0LWNsaWVudC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF6cCI6InRlc3QtY2xpZW50LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA5OCIsImhkIjoiZ21haWwuY29tIiwiZW1haWwiOiJqZG9lQHNjaG9vbGF0aG9tZS5jYSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiSmFuZSBEb2UiLCJpYXQiOjE3OTI5OTk5NDAsImV4cCI6MTc5MzAwMzU0MCwibm9uY2UiOiJna3NMb0VhbnNnSzN0Ukp6MW5MeGxGQk5NYVlVZHBMVGl4QzVqR0ZxYWhVIn0.AGbHX8Y-IWjuY49emQ1icOJB6KAwqg2r2CKcIiao7_07PvvBIIXEYTci3n2xFBslSKsqgKwOA_sAgEkvSebIl9P5MF2qSoVgqFVNfb8MHWef0yQ94Ytm9f_SuJ6eWRN99Lgfd-qe6mar3ZwhNLo00jKwcw0L2MpyTgztpuoaPC8b41p8Pa3fzMRNstKU728hZYvvtp5y1n9VGoDcLBK2dQzX9QQRlJ5B5ffRZGbkDeONiA0MQZIem1bXmZxqs21gZSn5UNF8v6SfdJbYKrM1A_ZyPLDd6s8FWQPH3DKKJLLY-S4ehlSA5mZ8aFljZCZDm6EgW7QysQzZFoMtjvubYw",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "google, no hd",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtZ29vZ2xlLTEifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJ0ZXN0LWNsaWVudC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF6cCI6InRlc3QtY2xpZW50LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA5OCIsImVtYWlsIjoiamRvZUBzY2hvb2xhdGhvbWUuY2EiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDM1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSJ9.J6GHfwLyLUX-CA5AeUnPhSwkl75KGek8qq99gdG__4B-rxzDTvXCNAdOBOYM39KmIN1hVrG7ftpgNLxP2IuzTdv0LtSAcnZ_N9Sqbt-ir2Ivh7jd63TtYfa_dAFOUBpU81Hehn-Z_CwK2tDdyuvlf6RqQ1hp-MIBGXEdA_YbVcV2jRfHiJ8hQ3Z-UXALvFL_GQiSv5lA0SkT-9XkVuPfNTgjtx70q3wx-K4l-ZuGTiOT2pnR67IltLk46w7Fu17K4p2iwvG8sF9LfadWeM5R1elRYAa05PY54v4yk-RjdxLGB-QqqO3rJnW5_uFKc_c-wzDq_oBrsZdp800H2ddo6g",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "google, another app",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtZ29vZ2xlLTEifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJvdGhlci5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF6cCI6InRlc3QtY2xpZW50LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA5OCIsImhkIjoic2Nob29sYXRob21lLmNhIiwiZW1haWwiOiJqZG9lQHNjaG9vbGF0aG9tZS5jYSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiSmFuZSBEb2UiLCJpYXQiOjE3OTI5OTk5NDAsImV4cCI6MTc5MzAwMzU0MCwibm9uY2UiOiJna3NMb0VhbnNnSzN0Ukp6MW5MeGxGQk5NYVlVZHBMVGl4QzVqR0ZxYWhVIn0.T1z2s4fVl13LHwjOy3caeAEqxlufXUJ-ThlTSsZqwx68vZXcEeYwXpzSnKcB1THhlIbaugfyVQ0WAlSqrNpQ2sz2JyOYdj48b-0DqBCC1tS3--8x8UmTtA2yVrvoi97CCc6viafuh6IqalFK7Vc5u6HLGdPeCVCRlm0AO49c2nDLNV7y4ABFbuHUfxRDqUyJXAQ5blRk4qSpVvKFxaFeTZO29u2em8wRDMtR6JN_Gb4_TaSEAZWkFH-TpVdawmz3Kmsvt9DXUi1U5wc_7435MgzJSaAsNXjV4NOuHfAU_q8dcCK8I06VPXlpWJHX8R2FADzWx6Pczpm52Yab-UXlDA",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "google, email not verified",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtZ29vZ2xlLTEifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJ0ZXN0LWNsaWVudC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF6cCI6InRlc3QtY2xpZW50LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA5OCIsImhkIjoic2Nob29sYXRob21lLmNhIiwiZW1haWwiOiJqZG9lQHNjaG9vbGF0aG9tZS5jYSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IkphbmUgRG9lIiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDM1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSJ9.cIa-NrO87j7wOl5LgqUJAowjv-hS_Q2f5NQ1wBVN0p1vCMJoGG6tyd1Rp9qzJIF5etLb8Z8plBnpUI2_8S01pBe0x5yxQGhPaZ5pjB2IoUI_28oJjWnDcxcXy485zJtQs7LECuVPsara67ET0tAYqEh8J3Vu-cOe2Y5UOqbFMRDGSN4VKN0QKar8YXqMPcv43hNpZKCIzICrIHUc-7qTMhMUtmeKPy6oRaunZO7zQn3HSCflixRoYyDj-7cIN13it9LgaNIJ9JJbXy1HwIUErCxVZRIbDXL8KKdHO3d0MunF2zE0xRzIY5QaMiFPUuC12rM8WL896R-_UxN02v6n5Q",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "hub, unknown key",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTIifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDA1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.evhzz2IKhc00Y2TGFSdSjghqUwXri-ppfGObpNaZa_IExBu77zK59MSs5my6IxOrOZj3bzsGOn56bPFAVHZFAO621l1_8o53uWC47FjDX58-MKNIMqeCdYoV294i_5ZCkscrTSVDX0DESc8L2Mtg2s1swsIBHuTWcnltiz93b5MzsiKGD-4yO3Kb5We0nUJaO7MO7emgzAQdAfKojS6u8PXKxS41KJHS4AjgsWbMIa5ViZGEDI91EQx65-SOwGPY2MtvyMPDpr0S_kZXL_6oQsE2jYpsLW8yKTtPjCPh4S1rvZj6juqqstljCLL1tlArFMCNUMnWo_g5aiaKRy519g",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "pending"
+   }
+  },
+  {
+   "name": "hub, alg none",
+   "token": "eyJhbGciOiJub25lIiwidHlwIjoiSldUIiwia2lkIjoidGVzdC1odWItMSJ9.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDA1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.keA7Zg31pUBmCIaxPpVQAl6aVfJ__pbH1PyT744U_va7VQzglDPHVZMFPulpxv2XuDn4F3aCEECfriYvi7V_4MAIhP7fW7Hr6Hb0Y0oyIrNoS_wBYTSYNEKGTYhRloGhu_OZEaMx8N-F6YxeBmmeQ2sonWY5tZrk7zgDtYSdL-6g4DHditbaCYqBRxTnIyXRNKJExdSewMfV93rZVWn3Rm2EL2KcY2l5FPQ2tqoEbMmnDBctqfCF8G0mlr-1dlL5XYU9s_muKwMWUUtEmNBtzmOV8c6aqncjW0M5pDxIPDYMkjuuOrW5F1gkYe3mjMlCtRM321nlsQZ4hcAgHY7AFg",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "hub, someone else's issuer",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2V2aWwuZXhhbXBsZSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDA1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.M6r365m6egi85wDtBXT3GXcMtsSPxowi1g1oapPnPHoshZlVxr2Tv12qKKA16paJeHzvCbxqw1u7m3lZjO-oxr1jtjjh6qE6Jidbm38kBHiz89qsgV8_2uyLLl3AglVGGgfABbBnZtV52XwB0skoBvTalzo-m4CY4VKXv8VVxN40sVBNcgAqbJJ3qZJ3et3wK541Af1CirURYS2WEzXQzhhsrcgP-fTygLqmyBdRZDjgguPmhPB21bwEX7-fhnxD2kMw29LS1AY25H7RnyeTIsiGudvCvdu9nJQJ3MyT-Yj6TMA74P5NYr_weTL-8MLzwMPGjZ7nxhNv8bHBnMfLiw",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "hub, wrong audience",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InNvbWV0aGluZy1lbHNlIiwic3ViIjoiMTIzNDUiLCJ1c2VybmFtZSI6Impkb2UiLCJuYW1lIjoiSmFuZSBEb2UiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTc5Mjk5OTk0MCwiZXhwIjoxNzkzMDAwNTQwLCJub25jZSI6Imdrc0xvRWFuc2dLM3RSSnoxbkx4bEZCTk1hWVVkcExUaXhDNWpHRnFhaFUiLCJqdGkiOiJhYmMifQ.W90BCm5QAllKW4DfbC1WMC32bBIqNCRqC5pY91Qa1ZaAan25ZxSG1M68C4FfJfI3KZdI2t_HQIyNoWYK9UZGSYKLnO9-q9OrWJWUJgeJq5qXS6PFf29t5YOG1RJjxvYGGSF-okYYPXTvkHd2GCF2F4eiGW2U5W_JxGZp4R1a3h7okj2NTf93QWOhD5k-7QbSupM3funk8uEslxZ_HKpadpMsHDb3aOxmzzUlq8JYzwE0qpoqA4UhP99gDfKL1I2J3-CKPfJxLdqvubFOUdptWXqLI18XlUo4AlRGwJ_gOCsNr-rcOCAEswqPqjW82LzTe2heFzAlSKqhPtNq9IH-5g",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "hub, from the future",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkzMTcyODAwLCJleHAiOjE3OTMxNzM0MDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.ZJgZgidwUTSU2SzCTRBwOZL0COxtTNC0kDZoU7EQSF2ADW7YfwfEPSOs3SzUZh6cosB_lojKa1nBgY9v6H2QxFqZlxFwYRttkVs0pz1V1jVbQrq3a9Wj75R7YvtgtDAdZghu8ia4jZthLUpnTbIXsbps8YVDFbULeJ9VjkJZhux5FBQyUeOX62PeKVxI5XAdByiBE3oqlDUJgbGXuNCwY1YDU8wk556wCYUbuYbG64TzRvhaK3LaXC_D3y5RHZGY0LZtMqLlBI2-8Q7SHG_lAicpQI2_CMyvBCIR06kTx38vCsnzhz-S9fOCX-XZkEBbq03PFxkbNO2DvIuiXlj8dw",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "hub key used for a google token",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJ0ZXN0LWNsaWVudC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjEyMzQ1IiwidXNlcm5hbWUiOiJqZG9lIiwibmFtZSI6IkphbmUgRG9lIiwicm9sZSI6InN0dWRlbnQiLCJpYXQiOjE3OTI5OTk5NDAsImV4cCI6MTc5MzAwMDU0MCwibm9uY2UiOiJna3NMb0VhbnNnSzN0Ukp6MW5MeGxGQk5NYVlVZHBMVGl4QzVqR0ZxYWhVIiwianRpIjoiYWJjIiwiaGQiOiJzY2hvb2xhdGhvbWUuY2EiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.Hk-xNCQDZaxKvD3iBl3KIahgjpUtJ-m0qSl6ptxD72OvarbqiKrCz1oD0GzgtZvsjTUo6TZGi_mp18AZBBlCjFbPk7j5Nn8gibasOhs9pMfOj78_rcN0NYek2laMhCXZSaNd_05XDJnT2xGTFIU8pKga6e7XgoA0oBCN6flR11b3jxMoSf7__BDe57D7SLPfyVvr5sjY6le4bmkJNCDfwAZ528zzdn-0UttwfkvCSrpXxY78hTLt4Ws5A8KDNOv4edSmFxedewGYqhPh0ipenU2RXwn_NL0doBwa1dItwt5Zhy58RFW6WAKLEY1X7pwid7n8QNsLaq0ZuA5Vg0BTNg",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "pending"
+   }
+  },
+  {
+   "name": "garbage",
+   "token": "not.a.token",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "nothing",
+   "token": "",
+   "online": true,
+   "fresh": false,
+   "cfg": null,
+   "expect": {
+    "state": "out",
+    "reason": "none"
+   }
+  },
+  {
+   "name": "not required",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDA1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.LTrHrj-PnYXCQN18rRHQj-DmLDwaM-QafzQDZSS33FZv9Nvj3ML715Sr72z8fQmNqv02w-tf2leeb9A-QJLcXmJpp7AqfYotuO8hL7kXQm-WVJYxEKmdTJ9cuZXupwgIU-L3sgteeZF7pXp66PZ-sUOJR5pJWzrbo2F1dVGXJU_WPS5FFu0tts3MeMC1CJpXiOm4B5hEBz9GdxSGVr2DZOyIVjaN0kmGE-zfNzeGd5Pt_ok62bMZ28ThuDAVkOCdJXXgGk0FzGW7q2XECXYEkqTCiwrTYVlncJND_A2j-U9EIBfS7J3zbsJM1EgnHtTU1IOlTLIg58GiZHl1bhj6FA",
+   "online": true,
+   "fresh": false,
+   "cfg": {
+    "required": false,
+    "provider": "hub",
+    "validDays": 30,
+    "renewDays": 7,
+    "graceDays": 3,
+    "remindDays": [
+     7,
+     3
+    ],
+    "google": {
+     "clientId": "test-client.apps.googleusercontent.com",
+     "domains": [
+      "schoolathome.ca"
+     ]
+    },
+    "hub": {
+     "signInUrl": "https://hub.test.schoolathome.ca/bootpaperSignIn",
+     "issuer": "https://hub.test.schoolathome.ca",
+     "jwksUrl": "https://hub.test.schoolathome.ca/ajax/bootpaperKeys.php"
+    }
+   },
+   "expect": {
+    "state": "off"
+   }
+  },
+  {
+   "name": "required, nothing set up",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDA1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.LTrHrj-PnYXCQN18rRHQj-DmLDwaM-QafzQDZSS33FZv9Nvj3ML715Sr72z8fQmNqv02w-tf2leeb9A-QJLcXmJpp7AqfYotuO8hL7kXQm-WVJYxEKmdTJ9cuZXupwgIU-L3sgteeZF7pXp66PZ-sUOJR5pJWzrbo2F1dVGXJU_WPS5FFu0tts3MeMC1CJpXiOm4B5hEBz9GdxSGVr2DZOyIVjaN0kmGE-zfNzeGd5Pt_ok62bMZ28ThuDAVkOCdJXXgGk0FzGW7q2XECXYEkqTCiwrTYVlncJND_A2j-U9EIBfS7J3zbsJM1EgnHtTU1IOlTLIg58GiZHl1bhj6FA",
+   "online": true,
+   "fresh": false,
+   "cfg": {
+    "required": true
+   },
+   "expect": {
+    "state": "off"
+   }
+  },
+  {
+   "name": "hub token, hub not set up yet",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTQwLCJleHAiOjE3OTMwMDA1NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.LTrHrj-PnYXCQN18rRHQj-DmLDwaM-QafzQDZSS33FZv9Nvj3ML715Sr72z8fQmNqv02w-tf2leeb9A-QJLcXmJpp7AqfYotuO8hL7kXQm-WVJYxEKmdTJ9cuZXupwgIU-L3sgteeZF7pXp66PZ-sUOJR5pJWzrbo2F1dVGXJU_WPS5FFu0tts3MeMC1CJpXiOm4B5hEBz9GdxSGVr2DZOyIVjaN0kmGE-zfNzeGd5Pt_ok62bMZ28ThuDAVkOCdJXXgGk0FzGW7q2XECXYEkqTCiwrTYVlncJND_A2j-U9EIBfS7J3zbsJM1EgnHtTU1IOlTLIg58GiZHl1bhj6FA",
+   "online": true,
+   "fresh": false,
+   "cfg": {
+    "required": true,
+    "provider": "hub",
+    "validDays": 30,
+    "renewDays": 7,
+    "graceDays": 3,
+    "remindDays": [
+     7,
+     3
+    ],
+    "google": {
+     "clientId": "test-client.apps.googleusercontent.com",
+     "domains": [
+      "schoolathome.ca"
+     ]
+    },
+    "hub": {
+     "signInUrl": "",
+     "issuer": "https://hub.test.schoolathome.ca",
+     "jwksUrl": ""
+    }
+   },
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "google token, google switched off",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtZ29vZ2xlLTEifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhdWQiOiJ0ZXN0LWNsaWVudC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF6cCI6InRlc3QtY2xpZW50LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA5OCIsImhkIjoic2Nob29sYXRob21lLmNhIiwiZW1haWwiOiJqZG9lQHNjaG9vbGF0aG9tZS5jYSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiSmFuZSBEb2UiLCJpYXQiOjE3OTI5OTk5NDAsImV4cCI6MTc5MzAwMzU0MCwibm9uY2UiOiJna3NMb0VhbnNnSzN0Ukp6MW5MeGxGQk5NYVlVZHBMVGl4QzVqR0ZxYWhVIn0.a_wf3n3PX4hce_TjLskl2JfR58mFPNQauVDYujGlm6Yp-dgsHYyAC5eQkFzqV3bRoiJifnOcuRQlqIppAiqWYYjzUp3ws1Mcy81SOvUrT58Oe1yNNPxfzIHsVemvN3vtwydNsJfcRBUnoHyJTzii6LAwNPOznMjVIuzKgtAwdmZeeUHico0Z08K_g2opnotHYcra2huCSOongnVlz-Wq-yMLy-QOlK-qK47z1kR9_BOw65CbY6kN5Ot-yvFNUoWHzkD_ax1A-iX7mXgOKhZKppqm1HFW7i6ychUd4_227GBdMSbg3lta7Yt8bh-XCP-o28SCSUpUQIgIARqqCV7Grg",
+   "online": true,
+   "fresh": false,
+   "cfg": {
+    "required": true,
+    "provider": "hub",
+    "validDays": 30,
+    "renewDays": 7,
+    "graceDays": 3,
+    "remindDays": [
+     7,
+     3
+    ],
+    "google": {
+     "clientId": "",
+     "domains": [
+      "schoolathome.ca"
+     ]
+    },
+    "hub": {
+     "signInUrl": "https://hub.test.schoolathome.ca/bootpaperSignIn",
+     "issuer": "https://hub.test.schoolathome.ca",
+     "jwksUrl": "https://hub.test.schoolathome.ca/ajax/bootpaperKeys.php"
+    }
+   },
+   "expect": {
+    "state": "out",
+    "reason": "invalid"
+   }
+  },
+  {
+   "name": "validDays 14",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyMTM2MDAwLCJleHAiOjE3OTIxMzY2MDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.RuO7VnKU0e6GMYW-mY5ZAzNiLcf1yGR2oyNaZNbZ8NGwC5RjP9w5L2LGF8bP2717nReClk7ICd3zDliyXIwlx0saYDg5WrEbKIdrdFFF3EZHSO6XiZJGuz33S1Hu7uRk9DCeyg00s0Q4NYsw62FN6fGj3lMbpFwydz4yODEZhK_toASEQTfSbigVBLstbfMBNBWGHGD_GutqqK_puPFDJVvvE7PYzi4mSntkZ-hFvw3mBCMJNfiBhswvJ4oSfFwbdaOhkxujUS9rIiAhY0xmHuO2w2GPapjrN4XRRisBUrev1eKo6UBd57zQz8YNp5rjOJc4QornGg8oGbYbm0MFOg",
+   "online": true,
+   "fresh": false,
+   "cfg": {
+    "required": true,
+    "provider": "hub",
+    "validDays": 14,
+    "renewDays": 7,
+    "graceDays": 3,
+    "remindDays": [
+     7,
+     3
+    ],
+    "google": {
+     "clientId": "test-client.apps.googleusercontent.com",
+     "domains": [
+      "schoolathome.ca"
+     ]
+    },
+    "hub": {
+     "signInUrl": "https://hub.test.schoolathome.ca/bootpaperSignIn",
+     "issuer": "https://hub.test.schoolathome.ca",
+     "jwksUrl": "https://hub.test.schoolathome.ca/ajax/bootpaperKeys.php"
+    }
+   },
+   "expect": {
+    "state": "renew",
+    "days": 4
+   }
+  },
+  {
+   "name": "fresh: just signed",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTAwLCJleHAiOjE3OTMwMDA1MDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.llQOwNRA58_kJNu5iqx9VM_5Tx8GHM2bNCwXFwGLZ8rZWQ_V7Lu6Sqk4oxhueR5VJhOu25W1-5IAbctYREF6Edg1uzJ1G4pEnEH5pah_9IxnYSttPA79Bv4Iqhm9hv3IiDNeoaqUitgFF6XrY3jRK66hYGcnOmyKmZ5LQvo8scP5CK84P4Wphlh5S654Q-2uHw4breQBJwPrMNWgQX5RpVPXyZxzkjxkWqS94IV2AuJTnIVjsE7ky9jmDKF7GLhgeBYmvjMAbvlYXXBDiJHvMDm9iTeXC4FcL1v5URMEIKP6xgoNWZnBgb6-RHevNQWHoIwp-zBrF5tZdAO6Z2w76g",
+   "online": true,
+   "fresh": true,
+   "cfg": null,
+   "expect": {
+    "ok": true
+   }
+  },
+  {
+   "name": "fresh: 11 minutes old",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5MzQwLCJleHAiOjE3OTI5OTk5NDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.Q2miXkdWAQXp_I1jDhl9tt7dI7Mgu0kHyeuOJ8yEMsNEvPRUMeNNMQCHAiu35hhB781U6qjNLRAAxYLrbkdNCEZIgygPSiZWC2oxDiztFII6xdvVJ5O3ZglZKgrcgb9qxeirJ4LBB7tNCO9EmWL8FlrjbUiyNcUZQFUGeuxQ0qI8yn9PiJeACbTyeQjQVfOXRzEYH5PQFHINMPWglY0zvfW5b_qajDPeRwRSv3BMkjY04Rhh4hpIAvn7NKxMutPmAFzWUZdmEPDpeyF0DjWvAfEqrwyAv_Wpq5En8XDLEqTGnGflEskx08RcU7x7mazHMTNp7IXqL_45Fi4hLZAV1A",
+   "online": true,
+   "fresh": true,
+   "cfg": null,
+   "expect": {
+    "ok": false,
+    "reason": "stale"
+   }
+  },
+  {
+   "name": "fresh: expired",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5NzAwLCJleHAiOjE3OTI5OTk2MDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyJ9.WSl7m9pkl-WWLpaeL4nPu-df3CfyfX-nrLqX2b2AiqW6JDR7zFWKwPjrzoza-0YtvJMRwBNJIVjK8ug1vz8HQQMBgx6sG97sNE38-k2MM628gev8H8RHc1h2tJo7usu8xEpjJbJHI9ua9lBv8Qh-3OeIVata8ck9q5jljxHw-1D9bnND88WeThaY5JaJdmQjKQcendtWHE0tMN6gujjeYJ4YDSjgCN9BCbJ2afWbwJFK3rsd4qIqiENEiVtXuNwjDQZai2NSQ-rtod4tzVkX47qnUPwJYClzX7du-XWbPC-5RuO8DmxAKa7LJMVAqneW2iMjIk2K6yKG8tQ7duSgGg",
+   "online": true,
+   "fresh": true,
+   "cfg": null,
+   "expect": {
+    "ok": false,
+    "reason": "stale"
+   }
+  },
+  {
+   "name": "fresh: bad signature",
+   "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRlc3QtaHViLTEifQ.eyJpc3MiOiJodHRwczovL2h1Yi50ZXN0LnNjaG9vbGF0aG9tZS5jYSIsImF1ZCI6InRsYS1ib290cGFwZXIiLCJzdWIiOiIxMjM0NSIsInVzZXJuYW1lIjoiamRvZSIsIm5hbWUiOiJKYW5lIERvZSIsInJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzkyOTk5OTAwLCJleHAiOjE3OTMwMDA1MDAsIm5vbmNlIjoiZ2tzTG9FYW5zZ0szdFJKejFuTHhsRkJOTWFZVWRwTFRpeEM1akdGcWFoVSIsImp0aSI6ImFiYyA9.llQOwNRA58_kJNu5iqx9VM_5Tx8GHM2bNCwXFwGLZ8rZWQ_V7Lu6Sqk4oxhueR5VJhOu25W1-5IAbctYREF6Edg1uzJ1G4pEnEH5pah_9IxnYSttPA79Bv4Iqhm9hv3IiDNeoaqUitgFF6XrY3jRK66hYGcnOmyKmZ5LQvo8scP5CK84P4Wphlh5S654Q-2uHw4breQBJwPrMNWgQX5RpVPXyZxzkjxkWqS94IV2AuJTnIVjsE7ky9jmDKF7GLhgeBYmvjMAbvlYXXBDiJHvMDm9iTeXC4FcL1v5URMEIKP6xgoNWZnBgb6-RHevNQWHoIwp-zBrF5tZdAO6Z2w76g",
+   "online": true,
+   "fresh": true,
+   "cfg": null,
+   "expect": {
+    "ok": false,
+    "reason": "invalid"
+   }
+  }
+ ]
+}

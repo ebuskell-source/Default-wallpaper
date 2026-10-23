@@ -7,6 +7,8 @@
 #   2. TLA call backgrounds in Microsoft Teams (the new Teams): copied into Teams' own "Uploads" folder under fixed
 #      names, so they show in Teams' background effects. Removed again if the person turns them off.
 #   3. A TLA Care reminder, a few minutes later, if something needs doing (care.ps1).
+#   5.7.0: before that, a reminder to sign in again 7 and 3 days before their sign-in runs out (or, while they're not
+#   signed in, at most once a week). Its "Sign in" button opens the app and starts signing in.
 param([ValidateSet('', 'Screensaver', 'Calls')][string]$Only = '')
 
 $ErrorActionPreference = 'Stop'
@@ -176,6 +178,41 @@ if ($Only -ne 'Screensaver') {
     try { $r = Update-WVCallBackgrounds; Set-State 'CallBackgroundStatus' $r } catch { Write-SessionLog "Call backgrounds: $($_.Exception.Message)" }
 }
 if ($Only) { exit 0 }
+
+# ---- 5.7.0: signing in (again) ---------------------------------------------------------------------------
+function Show-WVSignInReminder([string]$Title, [string]$Text) {
+    foreach ($assembly in 'PresentationFramework', 'PresentationCore', 'WindowsBase') {
+        [void][System.Reflection.Assembly]::Load("$assembly, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35")
+    }
+    $w = [System.Windows.Markup.XamlReader]::Parse(@'
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TLA BootPaper" Width="500" SizeToContent="Height" ResizeMode="NoResize" Topmost="True"
+        WindowStartupLocation="CenterScreen" FontFamily="Segoe UI" FontSize="14" Background="White">
+  <StackPanel Margin="24,20,24,18">
+    <TextBlock x:Name="Heading" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap"/>
+    <TextBlock x:Name="Body" TextWrapping="Wrap" Margin="0,8,0,18" Foreground="#3B3B3B"/>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button x:Name="Later" Content="Later" MinWidth="90" Padding="12,5" Margin="0,0,8,0" IsCancel="True"/>
+      <Button x:Name="Go" Content="Sign in" MinWidth="90" Padding="12,5" IsDefault="True" Foreground="White"
+              Background="#0F6CBD" BorderBrush="#0F6CBD"/>
+    </StackPanel>
+  </StackPanel>
+</Window>
+'@)
+    $w.FindName('Heading').Text = $Title
+    $w.FindName('Body').Text = $Text
+    $w.FindName('Go').Add_Click({ $w.DialogResult = $true })
+    return [bool]$w.ShowDialog()
+}
+$signinNote = $null
+try { $signinNote = Get-WVSignInReminder } catch { Write-SessionLog "Sign-in reminder: $($_.Exception.Message)" }
+if ($signinNote) {
+    $go = $false
+    try { $go = Show-WVSignInReminder $signinNote[0] $signinNote[1] } catch { Write-SessionLog "Sign-in reminder: $($_.Exception.Message)" }
+    Write-SessionLog "Sign-in reminder: $($signinNote[0]) ($(if ($go) { 'signing in' } else { 'later' }))."
+    if ($go) { try { Start-WVScript 'settings.ps1' '-SignIn' } catch { } }
+}
 
 # ---- 3. A TLA Care reminder, once sign-in has settled ---------------------------------------------------
 if (-not (Test-WVReleased 'care') -or -not (Test-WVOn 'CareReminders')) { exit 0 }

@@ -34,7 +34,7 @@ $UsersCanChange = 1            # 0 = people can see these settings in the app bu
 $ErrorActionPreference = 'Stop'
 $InstallDir = Join-Path $env:ProgramData 'WelcomeVideo'
 $TaskName   = 'Welcome Video'
-$Version    = '37'   # raise this (and the one in the detection script) whenever you change the video or settings
+$Version    = '38'   # raise this (and the one in the detection script) whenever you change the video or settings
 $Shortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA BootPaper.lnk'
 $ReportShortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Report a problem to TLA.lnk'   # (4.3)
 $CareShortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA Care.lnk'                  # (5.0)
@@ -86,7 +86,8 @@ foreach ($file in 'play-video.ps1', 'settings.ps1', 'common.ps1', 'whatsnew.ps1'
                   'lock-backgrounds.ps1', 'sync-videos.ps1', 'release-notes.md',
                   'care.ps1', 'care-system.ps1', 'session.ps1', 'tour.ps1', 'theme-check.ps1', 'oem-logo.bmp',
                   'update.ps1', 'uninstall-video.ps1',     # (5.4: updating itself outside Intune, and uninstalling)
-                  'greeting.ps1') {                         # (5.5.5: the greeting in each theme's style)
+                  'greeting.ps1',                           # (5.5.5: the greeting in each theme's style)
+                  'signin.ps1') {                           # (5.7.0: signing in with the Hub account)
     Copy-WVFile (Join-Path $PSScriptRoot $file) (Join-Path $InstallDir $file)
 }
 # The icon may be open at that moment; the old copy keeps working until the next update.

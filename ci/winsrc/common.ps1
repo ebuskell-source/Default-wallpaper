@@ -11,7 +11,7 @@
 
 $WV = @{
     Dir       = $PSScriptRoot
-    Release   = '5.6.0' # this package's version (4.3: what people see also depends on their release channel)
+    Release   = '5.7.0' # this package's version (4.3: what people see also depends on their release channel)
     DeviceKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo'
     UserKey   = 'HKEY_CURRENT_USER\Software\WelcomeVideo'
     StateKey  = 'HKEY_CURRENT_USER\Software\WelcomeVideo\State'
@@ -109,13 +109,14 @@ $WV = @{
     # Experimental first, Stable once it's been tried. People pick their channel in the app (organization
     # default: Stable). Since = the release that brought something; anything not listed has been out for longer.
     Channels  = [ordered]@{ 'stable' = 'Stable'; 'experimental' = 'Experimental' }
-    ChannelReleases = @{ 'stable' = '5.5.5'; 'experimental' = '5.6.0' }   # as marked when this package was made (5.6.0: Experimental first)
+    ChannelReleases = @{ 'stable' = '5.6.0'; 'experimental' = '5.7.0' }   # as marked when this package was made (5.7.0: Experimental first)
     Since     = @{ 'sky-city' = '4.3'; 'report' = '4.3'
                    'lightdark' = '5.0'; 'screensaver' = '5.0'; 'calls' = '5.0'; 'care' = '5.0'; 'tour' = '5.0'
                    'connect' = '5.2.5'
                    'beach' = '5.4'; 'anime-dark' = '5.4'; 'pixel-dark' = '5.4.5'; 'claymation-dark' = '5.4.5'
                    'greeting-styles' = '5.5.5'; 'greeting-switch' = '5.5.5'
-                   'solarpunk-dark' = '5.6.0'; 'sky-city-dark' = '5.6.0'; 'space-light' = '5.6.0'; 'ocean-dark' = '5.6.0' }   # (5.4: '<id>-<mode>' = that background's second intro video)
+                   'solarpunk-dark' = '5.6.0'; 'sky-city-dark' = '5.6.0'; 'space-light' = '5.6.0'; 'ocean-dark' = '5.6.0'
+                   'signin' = '5.7.0' }   # (5.4: '<id>-<mode>' = that background's second intro video)
     # Light and dark (5.0): every background has a second picture for the other mode (5.1.5: Underwater too). The
     # value is the mode of that extra picture (Backgrounds\<id>-<mode>.jpg, thumbs\<id>-<mode>.jpg); the original
     # is the other one.
@@ -174,8 +175,14 @@ function Get-WVOrgSetting([string]$Name) {
 }
 
 # The value in effect for this person. (4.3: a background or video they picked that isn't out on their
-# release channel, e.g. after leaving Experimental, counts as not picked.)
+# release channel, e.g. after leaving Experimental, counts as not picked. 5.7.0: until they sign in, TLA Classic and the
+# organization's settings; their release channel still counts, since that decides whether they need to.)
 function Get-WVSetting([string]$Name) {
+    if ($Name -ne 'Channel' -and (Test-WVSignedOut)) {
+        if ($Name -eq 'Background' -or $Name -eq 'Video') { return 'tla' }
+        if ($Name -eq 'LockBackground') { return 'same' }
+        return Get-WVOrgSetting $Name
+    }
     if (Test-WVUsersCanChange) {
         $v = Get-WVAliased $Name (Get-WVValue $WV.UserKey $Name)
         if ((Test-WVValid $Name $v) -and (Test-WVChoiceReleased $Name $v)) { return $v }
@@ -354,6 +361,7 @@ function Get-WVSeason($Day) {
 
 # True for someone who hasn't picked a background themselves (or can't: the organization decides).
 function Test-WVOnDefaultBackground {
+    if (Test-WVSignedOut) { return $false }               # (5.7.0: TLA Classic, not the seasonal theme)
     if (-not (Test-WVUsersCanChange)) { return $true }
     $v = Get-WVValue $WV.UserKey 'Background'
     return -not ((Test-WVValid 'Background' $v) -and (Test-WVReleased "$v"))
@@ -375,7 +383,7 @@ function Get-WVSurpriseBackground {
 
 # A background picked "just for today" or "for one week" (4.2), while that lasts ('' otherwise).
 function Get-WVTemporaryBackground {
-    if (-not (Test-WVUsersCanChange)) { return '' }
+    if (-not (Test-WVUsersCanChange) -or (Test-WVSignedOut)) { return '' }
     $bg    = "$(Get-WVValue $WV.UserKey 'TempBackground')"
     $until = "$(Get-WVValue $WV.UserKey 'TempUntil')"
     if (-not (Test-WVValid 'TempBackground' $bg) -or -not (Test-WVValid 'TempUntil' $until) -or -not (Test-WVReleased $bg)) { return '' }
@@ -826,3 +834,6 @@ function Start-WVScript([string]$Script, [string]$Arguments = '') {
     $psi.CreateNoWindow  = $true
     [void][System.Diagnostics.Process]::Start($psi)
 }
+
+# 5.7.0: signing in with the Hub account (signin.ps1).
+. ([System.IO.Path]::Combine($PSScriptRoot, 'signin.ps1'))

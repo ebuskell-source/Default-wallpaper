@@ -164,7 +164,7 @@ if ($console) {
     if ($request) {
         Set-Value $state 'CareRequest' ''   # used up, whatever happens next
         $when = ConvertFrom-Stamp $requestAt
-        if ('cleanup', 'audio', 'sync', 'unbox' -notcontains $request -or -not $when -or $when -lt [DateTime]::UtcNow.AddMinutes(-10)) {
+        if ('cleanup', 'audio', 'sync', 'unbox', 'signin' -notcontains $request -or -not $when -or $when -lt [DateTime]::UtcNow.AddMinutes(-10)) {
             Write-Log "Ignored request '$request'."
             $request = ''
         }
@@ -182,6 +182,13 @@ switch ($request) {
         Set-Result $(if (@($done | Where-Object { $_ -like 'started *' -or $_ -like 'restarted *' }).Count) {
                          'Done: the sound service and devices were restarted. If there''s still no sound, report the problem.' }
                      else { 'Done: the sound service is running and TLA Care looked for the speakers. If there''s still no sound, report the problem.' })
+    }
+    'signin' {
+        # 5.7.0: a sign-in came back signed with a key this PC hasn't fetched yet: fetch the keys now (at most once a
+        # minute), then put their own background back.
+        Update-WVSignIn -Force -Log ${function:Write-Log}
+        Set-Result 'Done.'
+        try { Start-WVDeviceBackgroundUpdate } catch { }
     }
     'sync' {
         Set-Result $(if (Start-IntuneSync) { 'Checking in now. New apps and settings can take a few minutes to arrive.' }

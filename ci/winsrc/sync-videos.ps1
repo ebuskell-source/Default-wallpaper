@@ -1,7 +1,8 @@
 # sync-videos.ps1
 # Runs as SYSTEM from the "TLA BootPaper Videos" scheduled task (created by install-video.ps1): at startup and
 # every 30 minutes. Downloads any intro video that's missing or out of date (see Sync-WVVideos in common.ps1),
-# and (4.3) reads which release is on each release channel (Update-WVChannels).
+# and (4.3) reads which release is on each release channel (Update-WVChannels). 5.7.0: and every 6 hours, the
+# sign-in settings and the keys sign-ins are checked against (Update-WVSignIn).
 # 4.0.5: its own task, so a long download never holds up the "TLA BootPaper Backgrounds" task, which sets
 # the background someone has just picked.
 
@@ -17,5 +18,6 @@ function Write-Log([string]$Text) {
 }
 
 Update-WVChannels ${function:Write-Log}   # (4.3: which release is Stable and which is Experimental)
+Update-WVSignIn -Log ${function:Write-Log}   # (5.7.0)
 [void](Sync-WVVideos ${function:Write-Log})
 exit 0

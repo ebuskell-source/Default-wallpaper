@@ -5,7 +5,9 @@
 # right away by apply-background.ps1. The window can be moved and resized, and scrolls when it doesn't fit.
 # 4.3: -Report opens just the "Report a problem" form (the "Report a problem to TLA" Start menu entry).
 # 5.0: -Care opens TLA Care (the "TLA Care" Start menu entry), -Tour the Welcome to TLA tour.
-param([switch]$Report, [switch]$Care, [switch]$Tour)
+# 5.7.0: signing in with the Hub account, at the top; until they do, everything else is greyed out (TLA Classic).
+# -SignIn starts signing in straight away (the reminder's Sign in button).
+param([switch]$Report, [switch]$Care, [switch]$Tour, [switch]$SignIn)
 
 $ErrorActionPreference = 'Stop'
 . ([System.IO.Path]::Combine($PSScriptRoot, 'common.ps1'))
@@ -215,6 +217,24 @@ $xaml = @'
     <TextBlock Text="Choose how your welcome video plays and pick your background for the desktop and lock screen."
                Foreground="#5F6368" TextWrapping="Wrap" Margin="0,4,0,18"/>
 
+    <!-- 5.7.0: signing in with the Hub account -->
+    <Border x:Name="SignInBox" Visibility="Collapsed" Background="#E7F0FD" BorderBrush="#9CC3F5" BorderThickness="1"
+            CornerRadius="4" Padding="12,10" Margin="0,0,0,12">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" Margin="14,0,0,0">
+          <Button x:Name="SignInButton" Style="{StaticResource Primary}" Content="Sign in" MinWidth="110" Padding="14,6"/>
+          <TextBlock x:Name="SignOutText" HorizontalAlignment="Center" Margin="0,6,0,0">
+            <Hyperlink x:Name="SignOut">Sign out</Hyperlink>
+          </TextBlock>
+        </StackPanel>
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock x:Name="SignInTitle" FontWeight="SemiBold" TextWrapping="Wrap"/>
+          <TextBlock x:Name="SignInText" TextWrapping="Wrap" Margin="0,2,0,0"/>
+          <TextBlock x:Name="SignInError" TextWrapping="Wrap" Foreground="#A4262C" FontSize="13" Margin="0,4,0,0" Visibility="Collapsed"/>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
     <Border x:Name="AnnouncementBox" Visibility="Collapsed" Background="#FFF4CE" BorderBrush="#F2D57C"
             BorderThickness="1" CornerRadius="4" Padding="12,9" Margin="0,0,0,12">
       <TextBlock TextWrapping="Wrap"><Run FontWeight="SemiBold">Announcement:</Run> <Run x:Name="AnnouncementText"/></TextBlock>
@@ -404,7 +424,8 @@ foreach ($name in 'LockedNote', 'Enabled', 'Options', 'VideoChoice', 'Sound', 'A
                   'ReportProblem', 'ChannelStable', 'ChannelExperimental', 'ChannelStatus',
                   'TourText', 'TourLink', 'OpenCare', 'LightDarkBox', 'LightDarkChoice', 'ExtrasSection', 'ScreensaverOn',
                   'ScreensaverNote', 'CallsOn', 'CallsNote', 'OpenPictures', 'RemindersOn', 'UnboxBox', 'PrepareUnbox',
-                  'ConnectBox', 'ConnectTla', 'GreetingOn', 'NameHint', 'Scroller', 'StaffLink') {
+                  'ConnectBox', 'ConnectTla', 'GreetingOn', 'NameHint', 'Scroller', 'StaffLink',
+                  'SignInBox', 'SignInButton', 'SignOutText', 'SignOut', 'SignInTitle', 'SignInText', 'SignInError') {
     $c[$name] = $window.FindName($name)
 }
 # The organization's announcement (4.0), if there is one.
@@ -558,9 +579,59 @@ function Update-VideoLabels {
 $ui = @{ Loading = $false }
 
 # Show the settings in effect for this person.
+# 5.7.0: the sign-in box: not there unless sign-in is switched on; otherwise who's signed in and until when, or why to
+# sign in. Blue to sign in, green while signed in, yellow when it's time to sign in again.
+function Update-SignInBox {
+    $si = Get-WVSignIn
+    $c.SignInBox.Visibility = if ($si.state -eq 'off') { 'Collapsed' } else { 'Visible' }
+    if ($si.state -eq 'off') { return }
+    $date = { param($e) [DateTimeOffset]::FromUnixTimeSeconds($e).LocalDateTime.ToString('dddd, MMMM d') }
+    $name = if ($si.name) { $si.name } else { $si.who }
+    $colors = '#E7F0FD', '#9CC3F5', '#102A4C'; $btn = 'Sign in again'; $out = $false
+    if ($ui.SignIn) {
+        $title = 'Finish signing in in your browser'
+        $text = 'Sign in with your Hub account in the browser tab that opened. This window updates when you''re done.'
+        $btn = 'Cancel'
+    } elseif ($ui.SignInWait) {
+        $title = 'Finishing signing in...'; $text = 'This takes a few seconds.'; $btn = ''
+    } elseif ($si.state -eq 'out') {
+        $out = $true; $btn = 'Sign in'
+        if ($si.reason -eq 'expired') {
+            $title = 'Your TLA BootPaper sign-in has run out'
+            $text = 'Sign in again with your Hub account to get your welcome video and background back. Until then you''ll see TLA Classic.'
+        } else {
+            $title = 'Sign in to use TLA BootPaper'
+            $text = 'Sign in with your Hub account to choose your welcome video and background. Until then you''ll see TLA Classic.'
+        }
+    } elseif ($si.state -eq 'grace') {
+        $colors = '#FFF4CE', '#F2D57C', '#3D2E00'
+        $title = 'Your TLA BootPaper sign-in has run out'
+        $text = "This PC is offline, so your settings stay for $($si.days) more day$(if ($si.days -ne 1) { 's' }). Sign in again once you're back online."
+    } elseif ($si.state -eq 'renew') {
+        $colors = '#FFF4CE', '#F2D57C', '#3D2E00'
+        $title = "Signed in as $name"
+        $text = "Your sign-in runs out $(if ($si.days -le 1) { 'tomorrow' } else { "in $($si.days) days" }) ($(& $date $si.until)). Sign in again to keep your settings for another month."
+    } else {
+        $colors = '#DFF6DD', '#9FD89F', '#0E3B0E'; $btn = ''
+        $title = "Signed in as $name"
+        $text = "Until $(& $date $si.until). You can sign in again from $(& $date ($si.until - (Get-WVSignInSettings).renewDays * 86400))."
+    }
+    $bc = [System.Windows.Media.BrushConverter]::new()
+    $c.SignInBox.Background = $bc.ConvertFromString($colors[0]); $c.SignInBox.BorderBrush = $bc.ConvertFromString($colors[1])
+    $c.SignInTitle.Foreground = $bc.ConvertFromString($colors[2])
+    $c.SignInText.Foreground = $bc.ConvertFromString($colors[2])
+    $c.SignInTitle.Text = $title; $c.SignInText.Text = $text
+    $c.SignInError.Text = "$($ui.SignInMessage)"
+    $c.SignInError.Visibility = if ($ui.SignInMessage) { 'Visible' } else { 'Collapsed' }
+    $c.SignInButton.Content = $btn
+    $c.SignInButton.Visibility = if ($btn) { 'Visible' } else { 'Collapsed' }
+    $c.SignOutText.Visibility = if (-not $out -and -not $ui.SignIn -and -not $ui.SignInWait) { 'Visible' } else { 'Collapsed' }
+}
+
 function Update-Controls {
     $ui.Loading = $true
-    $locked      = -not (Test-WVUsersCanChange)
+    Update-SignInBox
+    $locked      = -not (Test-WVUsersCanChange) -or (Test-WVSignedOut)     # (5.7.0: greyed out until they sign in)
     $deskLocked  = Test-WVBackgroundLocked
     $lockScreenLocked = Test-WVLockScreenLocked
     $bgLocked    = $deskLocked -and $lockScreenLocked
@@ -572,7 +643,7 @@ function Update-Controls {
 
     $c.Enabled.IsEnabled     = -not $locked
     $c.Options.IsEnabled     = (-not $locked) -and [bool]$c.Enabled.IsChecked
-    $c.LockedNote.Visibility = if ($locked) { 'Visible' } else { 'Collapsed' }
+    $c.LockedNote.Visibility = if (-not (Test-WVUsersCanChange)) { 'Visible' } else { 'Collapsed' }
     $c.ResetText.Visibility  = if ($locked) { 'Collapsed' } else { 'Visible' }
 
     # Quiet hours and the greeting (4.0).
@@ -716,7 +787,7 @@ function Update-Controls {
 }
 
 function Save-UserSetting([string]$Name, $Value) {
-    if ($ui.Loading) { return }
+    if ($ui.Loading -or (Test-WVSignedOut)) { return }
     try {
         [Microsoft.Win32.Registry]::SetValue($WV.UserKey, $Name, $Value)
     } catch {
@@ -988,6 +1059,67 @@ $c.PlayNow.Add_Click({ try { Start-WVScript 'play-video.ps1' '-Force' } catch { 
 
 $c.CloseButton.Add_Click({ $window.Close() })
 
+# ---- 5.7.0: signing in ------------------------------------------------------------------------------------------
+# Start-WVSignIn (signin.ps1) waits on 127.0.0.1 for the sign-in page's answer; a timer checks for it every 200 ms.
+$script:signinTimer = [System.Windows.Threading.DispatcherTimer]::new()
+$script:signinTimer.Interval = [TimeSpan]::FromMilliseconds(200)
+$script:signinTimer.Add_Tick({
+    if ($ui.SignIn) {
+        $answer = $null
+        try { $answer = Receive-WVSignIn $ui.SignIn } catch { $answer = @{} }
+        if ($null -eq $answer) { return }
+        $pending = $ui.SignIn; $ui.SignIn = $null
+        $r = Complete-WVSignIn $pending $answer
+        $ui.SignInMessage = if ($r.ok) { '' } else { $r.message }
+        if ($r.ok -and $r.needKeys) {
+            [void](Invoke-WVCareRequest 'signin')       # (the key it was signed with: TLA Care fetches the keys now)
+            $ui.SignInWait = [DateTime]::UtcNow.AddSeconds(75); $ui.SignInNextCheck = [DateTime]::UtcNow.AddSeconds(3)
+        } else {
+            $script:signinTimer.Stop()
+            if ($r.ok) { try { Start-WVScript 'apply-background.ps1' } catch { } }
+        }
+        Update-Controls
+        try { $window.Activate() | Out-Null } catch { }
+    } elseif ($ui.SignInWait) {
+        if ([DateTime]::UtcNow -lt $ui.SignInNextCheck) { return }
+        $ui.SignInNextCheck = [DateTime]::UtcNow.AddSeconds(2)
+        $state = (Get-WVSignIn -Fresh).state
+        if ($state -ne 'out' -or [DateTime]::UtcNow -gt $ui.SignInWait) {
+            if ($state -eq 'out') { $ui.SignInMessage = 'Couldn''t finish signing in. Try again in a minute.' }
+            else { try { Start-WVScript 'apply-background.ps1' } catch { } }
+            $ui.SignInWait = $null; $script:signinTimer.Stop()
+            Update-Controls
+        }
+    } else { $script:signinTimer.Stop() }
+})
+function Start-SignIn {
+    if ($ui.SignIn) {                         # (the button says Cancel meanwhile)
+        try { $ui.SignIn.Listener.Stop() } catch { }
+        $ui.SignIn = $null; $script:signinTimer.Stop(); Update-Controls; return
+    }
+    try {
+        $ui.SignIn = Start-WVSignIn
+        $ui.SignInMessage = ''
+        [void][System.Diagnostics.Process]::Start($ui.SignIn.Url)     # (their default browser)
+        $script:signinTimer.Start()
+    } catch {
+        $ui.SignIn = $null
+        $ui.SignInMessage = "Couldn't start signing in ($($_.Exception.Message)). Try again."
+    }
+    Update-Controls
+}
+$c.SignInButton.Add_Click({ Start-SignIn })
+$c.SignOut.Add_Click({
+    $a = [System.Windows.MessageBox]::Show($window, 'Your choices stay saved. Until you sign in again, you''ll see TLA Classic.',
+                                           'Sign out of TLA BootPaper?', 'YesNo', 'Question')
+    if ("$a" -ne 'Yes') { return }
+    Remove-WVSignIn
+    $ui.SignInMessage = ''
+    try { Start-WVScript 'apply-background.ps1' } catch { }
+    Update-Controls
+})
+$window.Add_Closed({ if ($ui.SignIn) { try { $ui.SignIn.Listener.Stop() } catch { } } })
+
 # Opens at the height of its contents, but never taller than the screen (it scrolls instead). After that
 # it can be resized freely.
 $workArea = [System.Windows.SystemParameters]::WorkArea
@@ -1049,7 +1181,15 @@ if ($env:TB_TEST) {
     $c.GreetingOn.IsChecked = $false; & $shot 'win3-greeting-off.png'; $c.GreetingOn.IsChecked = $true
     $c.Scroller.ScrollToVerticalOffset(1500); & $shot 'win4-middle.png'
     $c.Scroller.ScrollToBottom(); & $shot 'win5-bottom.png'
+    # 5.7.0: the sign-in box as it is, waiting for the browser, and with an error.
+    $c.Scroller.ScrollToTop(); & $shot 'win6-signin.png'
+    if ((Get-WVSignIn).state -ne 'off') {
+        $ui.SignIn = @{ Listener = $null }; Update-Controls; & $shot 'win7-signin-waiting.png'
+        $ui.SignIn = $null; $ui.SignInMessage = 'That sign-in couldn''t be checked. Try again.'; Update-Controls; & $shot 'win8-signin-error.png'
+        $ui.SignInMessage = ''
+    }
     $window.Close()
     return
 }
+if ($SignIn -and (Get-WVSignIn).state -notin 'off', 'in') { $window.Add_ContentRendered({ Start-SignIn }) }   # (5.7.0)
 [void]$window.ShowDialog()

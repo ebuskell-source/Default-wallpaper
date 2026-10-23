@@ -205,6 +205,7 @@ $WV.UserKey  = "HKEY_USERS\$sid\Software\WelcomeVideo"
 $userState   = "HKEY_USERS\$sid\Software\WelcomeVideo\State"
 $WV.StateKey = $userState                        # (where "Surprise me" keeps today's pick)
 $WV.ThemeKey = "HKEY_USERS\$sid\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"   # (5.0: their light or dark mode)
+$WV.SignInSid = $sid                             # (5.7.0: whether they've signed in: TLA Classic until they do)
 $id   = Get-WVCurrentBackground                  # only ever an id from the preset (or seasonal) list
 $path = Get-WVShownPath $id                      # (5.0: the picture for their light or dark mode)
 if (-not $path -or -not [System.IO.File]::Exists($path)) { Write-Log "No preset file for '$id'."; exit 1 }

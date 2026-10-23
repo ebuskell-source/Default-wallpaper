@@ -11,7 +11,7 @@
 
 $WV.CareKey      = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Care'
 $WV.CareTask     = 'TLA Care'
-$WV.CareRequests = 'cleanup', 'audio', 'sync', 'unbox'
+$WV.CareRequests = 'cleanup', 'audio', 'sync', 'unbox', 'signin'   # (5.7.0: signin)
 
 function Format-WVCareAgo([TimeSpan]$Span) {
     if ($Span.TotalMinutes -lt 2) { return 'just now' }
