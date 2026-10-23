@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>TLA BootPaper Sign-in</title>
+<link rel="icon" href="../newtab/icon.png">
+<!--
+  TLA BootPaper sign-in (5.7.0). The TLA BootPaper app opens this page; it never sees a password.
+
+  1. Start: ?state=<port>.<random>&nonce=<nonce>&v=1 (from the app). Reads ../auth.json and sends the person to
+     the Hub's BootPaper sign-in page ("provider": "hub"), or to Google while the Hub page isn't ready
+     ("provider": "google"; Google signs TLA accounts in through the Hub anyway).
+  2. Return: the Hub or Google sends the person back here with #token=... (Hub) or #id_token=... (Google) and
+     #state=... in the fragment, which never reaches any server. This page hands them to the app, which is listening
+     on 127.0.0.1:<port>, and the app checks the signature itself. Nothing here is trusted by the app.
+  3. Done: ?done=1, where the app sends the browser once it has the answer.
+-->
+<style>
+  :root {
+    --bg: #f3f4f7; --card: #ffffff; --ink: #1c1f26; --muted: #5d6472; --line: #e3e6ec; --accent: #0f6cbd;
+    --bad: #c42b1c; --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15171c; --card: #1f2229; --ink: #eceef2; --muted: #a2a9b6; --line: #30343d; --accent: #4ca3ff;
+      --bad: #ff8a80; --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15171c; --card: #1f2229; --ink: #eceef2; --muted: #a2a9b6; --line: #30343d; --accent: #4ca3ff;
+    --bad: #ff8a80; --shadow: none;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.5 -apple-system, "Segoe UI", system-ui, Ubuntu, sans-serif;
+         display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .card { width: 100%; max-width: 440px; background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+          padding: 32px 28px; box-shadow: var(--shadow); text-align: center; }
+  .card img { width: 64px; height: 64px; border-radius: 14px; }
+  h1 { font-size: 21px; margin: 16px 0 6px; }
+  p { margin: 6px 0; color: var(--muted); }
+  p.bad { color: var(--bad); }
+  .spin { width: 22px; height: 22px; margin: 18px auto 4px; border-radius: 50%; border: 3px solid var(--line);
+          border-top-color: var(--accent); animation: spin .9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+  a.button { display: inline-block; margin-top: 18px; padding: 9px 20px; border-radius: 8px; background: var(--accent);
+             color: #fff; text-decoration: none; font-weight: 600; }
+  a.button:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .hidden, a.button.hidden { display: none; }
+</style>
+</head>
+<body>
+<main class="card" aria-live="polite">
+  <img src="../newtab/icon.png" alt="">
+  <h1 id="title">TLA BootPaper</h1>
+  <p id="text">One moment…</p>
+  <div id="spin" class="spin" aria-hidden="true"></div>
+  <a id="go" class="button hidden" href="#">Continue</a>
+</main>
+<script>
+(() => {
+  'use strict';
+  const STATE_RE = /^(\d{4,5})\.[A-Za-z0-9_-]{16,64}$/;
+  const NONCE_RE = /^[A-Za-z0-9_-]{16,128}$/;
+  const here = location.origin + location.pathname.replace(/index\.html$/, '');   // also where Google sends people back
+  const $ = id => document.getElementById(id);
+
+  function show(title, text, opts) {
+    opts = opts || {};
+    $('title').textContent = title;
+    $('text').textContent = text;
+    $('text').className = opts.bad ? 'bad' : '';
+    $('spin').classList.toggle('hidden', !opts.busy);
+    const go = $('go');
+    if (opts.href) { go.href = opts.href; go.textContent = opts.button || 'Continue'; go.classList.remove('hidden'); }
+    else go.classList.add('hidden');
+  }
+
+  function portOf(state) {
+    const m = STATE_RE.exec(state || '');
+    if (!m) return 0;
+    const port = Number(m[1]);
+    return port >= 1024 && port <= 65535 ? port : 0;
+  }
+
+  // ---- 3. Done ------------------------------------------------------------------------------------------------
+  const query = new URLSearchParams(location.search);
+  if (query.get('done')) {
+    show("You're all set", 'Go back to TLA BootPaper to finish. You can close this tab.');
+    return;
+  }
+
+  // ---- 2. Back from the Hub or Google ---------------------------------------------------------------------------
+  const frag = new URLSearchParams(location.hash.replace(/^#/, ''));
+  if (frag.has('state') && (frag.has('token') || frag.has('id_token') || frag.has('error'))) {
+    const state = frag.get('state');
+    const port = portOf(state);
+    history.replaceState(null, '', here);                     // the token doesn't stay in the address bar or history
+    if (!port) { show("That didn't work", 'Open TLA BootPaper and choose Sign in again.', { bad: true }); return; }
+    const back = new URLSearchParams({ state: state });
+    const token = frag.get('token') || frag.get('id_token');
+    if (token) back.set('token', token);
+    if (frag.get('error')) back.set('error', frag.get('error').slice(0, 60));
+    const url = 'http://127.0.0.1:' + port + '/callback?' + back.toString();
+    show('Signing you in', 'Taking you back to TLA BootPaper…', { busy: true, href: url, button: 'Back to TLA BootPaper' });
+    location.replace(url);
+    // If TLA BootPaper was closed in the meantime, nothing answers: say so instead of spinning forever.
+    setTimeout(() => show('TLA BootPaper is waiting', 'If nothing happened, open TLA BootPaper and choose Sign in again.',
+                          { href: url, button: 'Try again' }), 8000);
+    return;
+  }
+
+  // ---- 1. Start ----------------------------------------------------------------------------------------------------
+  const state = query.get('state'), nonce = query.get('nonce');
+  if (!portOf(state) || !NONCE_RE.test(nonce || '')) {
+    show('Sign in from TLA BootPaper', 'Open the TLA BootPaper app and choose Sign in. This page takes it from there.');
+    return;
+  }
+  show('Signing in to TLA BootPaper', 'Taking you to the Hub sign-in…', { busy: true });
+  fetch('../auth.json', { cache: 'no-store' }).then(r => r.json()).then(cfg => {
+    const hub = cfg.hub || {}, google = cfg.google || {};
+    let url = '';
+    if (cfg.provider === 'hub' && /^https:\/\//.test(hub.signInUrl || '')) {
+      const p = new URLSearchParams({ state: state, nonce: nonce, v: '1' });
+      url = hub.signInUrl + (hub.signInUrl.includes('?') ? '&' : '?') + p.toString();
+    } else if (google.clientId) {
+      const p = new URLSearchParams({
+        client_id: google.clientId, redirect_uri: here, response_type: 'id_token', scope: 'openid email profile',
+        state: state, nonce: nonce, prompt: 'select_account'
+      });
+      if (google.domains && google.domains[0]) p.set('hd', google.domains[0]);
+      url = 'https://accounts.google.com/o/oauth2/v2/auth?' + p.toString();
+    }
+    if (!url) { show("Sign-in isn't ready yet", 'TLA BootPaper sign-in is still being set up. Try again later.', { bad: true }); return; }
+    show('Signing in to TLA BootPaper', 'Taking you to the Hub sign-in…', { busy: true, href: url });
+    location.replace(url);
+  }).catch(() => {
+    show("Can't reach the sign-in", 'Check that this computer is online, then try again.',
+         { bad: true, href: location.href, button: 'Try again' });
+  });
+})();
+</script>
+</body>
+</html>
