@@ -1,0 +1,9 @@
+{
+ "sub": "repo:ebuskell-source@319570557/Default-wallpaper@1342105342:ref:refs/heads/ci/bootpaper-tests",
+ "iss": "https://token.actions.githubusercontent.com",
+ "aud": "api://AzureADTokenExchange",
+ "repository": "ebuskell-source/Default-wallpaper",
+ "repository_id": "1342105342",
+ "repository_owner_id": "319570557",
+ "ref": "refs/heads/ci/bootpaper-tests"
+}
