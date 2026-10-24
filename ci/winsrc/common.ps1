@@ -11,7 +11,7 @@
 
 $WV = @{
     Dir       = $PSScriptRoot
-    Release   = '5.7.5' # this package's version (4.3: what people see also depends on their release channel)
+    Release   = '5.8.0' # this package's version (4.3: what people see also depends on their release channel)
     DeviceKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo'
     UserKey   = 'HKEY_CURRENT_USER\Software\WelcomeVideo'
     StateKey  = 'HKEY_CURRENT_USER\Software\WelcomeVideo\State'
@@ -109,14 +109,14 @@ $WV = @{
     # Experimental first, Stable once it's been tried. People pick their channel in the app (organization
     # default: Stable). Since = the release that brought something; anything not listed has been out for longer.
     Channels  = [ordered]@{ 'stable' = 'Stable'; 'experimental' = 'Experimental' }
-    ChannelReleases = @{ 'stable' = '5.6.0'; 'experimental' = '5.7.5' }   # as marked when this package was made (5.7.x: Experimental first)
+    ChannelReleases = @{ 'stable' = '5.6.0'; 'experimental' = '5.8.0' }   # as marked when this package was made (5.7.x, 5.8.0: Experimental first)
     Since     = @{ 'sky-city' = '4.3'; 'report' = '4.3'
                    'lightdark' = '5.0'; 'screensaver' = '5.0'; 'calls' = '5.0'; 'care' = '5.0'; 'tour' = '5.0'
                    'connect' = '5.2.5'
                    'beach' = '5.4'; 'anime-dark' = '5.4'; 'pixel-dark' = '5.4.5'; 'claymation-dark' = '5.4.5'
                    'greeting-styles' = '5.5.5'; 'greeting-switch' = '5.5.5'
                    'solarpunk-dark' = '5.6.0'; 'sky-city-dark' = '5.6.0'; 'space-light' = '5.6.0'; 'ocean-dark' = '5.6.0'
-                   'signin' = '5.7.0' }   # (5.4: '<id>-<mode>' = that background's second intro video)
+                   'signin' = '5.7.0'; 'checkupdates' = '5.8.0' }   # (5.4: '<id>-<mode>' = that background's second intro video)
     # Light and dark (5.0): every background has a second picture for the other mode (5.1.5: Underwater too). The
     # value is the mode of that extra picture (Backgrounds\<id>-<mode>.jpg, thumbs\<id>-<mode>.jpg); the original
     # is the other one.
@@ -414,8 +414,12 @@ function Get-WVLockBackground {
 }
 
 # The organization's announcement: one line, at most 300 characters ('' when there's none).
+# 5.8.0: Intune's policy (HKLM\SOFTWARE\Policies\TLA\BootPaper) where it has been set; otherwise, on a PC Intune
+# doesn't give it to, the copy from GitHub (Update-WVAnnouncementCopy).
 function Get-WVAnnouncement {
-    $text = "$(Get-WVValue $WV.AnnouncementKey 'Announcement')"
+    $fromIntune = $false
+    try { $k = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SOFTWARE\Policies\TLA\BootPaper'); if ($k) { $fromIntune = $true; $k.Close() } } catch { }
+    $text = if ($fromIntune) { "$(Get-WVValue $WV.AnnouncementKey 'Announcement')" } else { "$(Get-WVValue $WV.AnnouncementCopyKey 'Text')" }
     $text = ($text -replace '[\p{C}]+', ' ' -replace '\s+', ' ').Trim()
     if ($text.Length -gt 300) { $text = $text.Substring(0, 300).Trim() }
     return $text
@@ -850,6 +854,49 @@ $WV.ConnectPage = 'ms-settings:workplace'
 # installer, TLA-BootPaper-Setup-<version>.exe) check windows/latest.json in the organization's GitHub repository
 # ({"version", "url", "sha256"}) and run the newer installer: see update.ps1.
 $WV.UpdateSource = 'https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/windows'
+
+# The newest version there (5.8.0: shared by update.ps1 and "Check for updates"): @{ Version; Url; Sha256 }. Throws if
+# GitHub can't be reached, or if latest.json doesn't look right or points outside the TLA repository (the message
+# says which).
+function Get-WVLatestUpdate {
+    try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
+    $client = [System.Net.WebClient]::new()
+    try { $json = $client.DownloadString("$($WV.UpdateSource)/latest.json?t=$([DateTime]::UtcNow.Ticks)") } finally { $client.Dispose() }
+    $data = $json | ConvertFrom-Json
+    $version = "$($data.version)".Trim(); $url = "$($data.url)".Trim(); $want = "$($data.sha256)".Trim().ToLowerInvariant()
+    if (-not (Test-WVVersionText $version) -or $want -notmatch '^[0-9a-f]{64}$') { throw [System.IO.InvalidDataException]::new("latest.json doesn't look right") }
+    if (-not $url.StartsWith("$($WV.UpdateSource)/", [StringComparison]::Ordinal) -or $url -notmatch '/[A-Za-z0-9._-]+\.exe$') {
+        throw [System.IO.InvalidDataException]::new('latest.json points outside the TLA repository')
+    }
+    return @{ Version = $version; Url = $url; Sha256 = $want }
+}
+
+# ---- The announcement from GitHub (5.8.0) ------------------------------------------------------------
+# For PCs Intune doesn't give the announcement to: windows/announcement.txt in the organization's GitHub repository,
+# which the repository keeps the same as Intune's (its "announcement" job copies it from Intune about every 10 minutes).
+# Read by the "TLA BootPaper Videos" task (sync-videos.ps1, as SYSTEM, every 30 minutes). Offline, the last one stays.
+$WV.AnnouncementCopyKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Announcement'
+function Update-WVAnnouncementCopy([scriptblock]$Log = { param($t) }) {
+    $raw = $null
+    try {
+        try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
+        $client = [System.Net.WebClient]::new()
+        $client.Encoding = [System.Text.Encoding]::UTF8
+        try { $raw = $client.DownloadString("$($WV.UpdateSource)/announcement.txt?t=$([DateTime]::UtcNow.Ticks)") } finally { $client.Dispose() }
+    } catch {
+        $e = $_.Exception
+        while ($e -and -not ($e -is [System.Net.WebException])) { $e = $e.InnerException }
+        if ($e -and $e.Response -and [int]$e.Response.StatusCode -eq 404) { $raw = '' } else { return }   # (404: no announcement)
+    }
+    # Lines starting with # are notes; the rest, joined, up to 300 characters (as Get-WVAnnouncement shows it).
+    $text = @("$raw" -split "\r?\n" | Where-Object { $_.Trim() -and -not $_.TrimStart().StartsWith('#') }) -join ' '
+    $text = ($text -replace '[\p{C}]+', ' ' -replace '\s+', ' ').Trim()
+    if ($text.Length -gt 300) { $text = $text.Substring(0, 300).Trim() }
+    if ("$(Get-WVValue $WV.AnnouncementCopyKey 'Text')" -ne $text) {
+        [Microsoft.Win32.Registry]::SetValue($WV.AnnouncementCopyKey, 'Text', $text)
+        & $Log "Announcement from GitHub: $(if ($text) { $text } else { 'none' })"
+    }
+}
 
 # ---- Starting the other scripts, with no console window ---------------------------------------
 function Start-WVScript([string]$Script, [string]$Arguments = '') {

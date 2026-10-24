@@ -20,15 +20,9 @@ function Write-Log([string]$Text) {
 if (Test-WVIntuneManaged) { exit 0 }   # (Intune looks after it; also when it can't tell)
 
 try {
-    try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
-    $client = [System.Net.WebClient]::new()
-    try { $json = $client.DownloadString("$($WV.UpdateSource)/latest.json?t=$([DateTime]::UtcNow.Ticks)") } finally { $client.Dispose() }
-    $data = $json | ConvertFrom-Json
-    $version = "$($data.version)".Trim(); $url = "$($data.url)".Trim(); $want = "$($data.sha256)".Trim().ToLowerInvariant()
-    if (-not (Test-WVVersionText $version) -or $want -notmatch '^[0-9a-f]{64}$') { Write-Log "latest.json doesn't look right; no update."; exit 0 }
-    if (-not $url.StartsWith("$($WV.UpdateSource)/", [StringComparison]::Ordinal) -or $url -notmatch '/[A-Za-z0-9._-]+\.exe$') {
-        Write-Log "latest.json points outside the TLA repository; no update."; exit 0
-    }
+    try { $latest = Get-WVLatestUpdate }
+    catch [System.IO.InvalidDataException] { Write-Log "$($_.Exception.Message); no update."; exit 0 }
+    $version = $latest.Version; $url = $latest.Url; $want = $latest.Sha256
     if ((ConvertTo-WVVersion $version) -le (ConvertTo-WVVersion $WV.Release)) { exit 0 }
 
     Write-Log "TLA BootPaper $version is out (this computer has $($WV.Release)): downloading it."

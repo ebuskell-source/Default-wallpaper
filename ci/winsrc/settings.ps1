@@ -392,6 +392,13 @@ $xaml = @'
       <TextBlock TextWrapping="Wrap"><Run FontWeight="SemiBold">Experimental</Run><LineBreak/><Run Foreground="#5F6368" FontSize="12">Get new backgrounds and features first. They might still have rough edges.</Run></TextBlock>
     </RadioButton>
     <TextBlock x:Name="ChannelStatus" Foreground="#5F6368" TextWrapping="Wrap" Margin="0,4,0,0"/>
+    <!-- 5.8.0: Check for updates -->
+    <DockPanel x:Name="UpdateCheckRow" Margin="0,12,0,0">
+      <Button x:Name="CheckUpdates" DockPanel.Dock="Right" Content="Check for updates" Padding="14,5" Margin="14,0,0,0"
+              VerticalAlignment="Center" Cursor="Hand"/>
+      <TextBlock x:Name="UpdateCheckText" Foreground="#5F6368" TextWrapping="Wrap" VerticalAlignment="Center"
+                 Text="New versions install by themselves. To get one straight away, check now."/>
+    </DockPanel>
     </StackPanel>
     </Border>
 
@@ -425,7 +432,8 @@ foreach ($name in 'LockedNote', 'Enabled', 'Options', 'VideoChoice', 'Sound', 'A
                   'TourText', 'TourLink', 'OpenCare', 'LightDarkBox', 'LightDarkChoice', 'ExtrasSection', 'ScreensaverOn',
                   'ScreensaverNote', 'CallsOn', 'CallsNote', 'OpenPictures', 'RemindersOn', 'UnboxBox', 'PrepareUnbox',
                   'ConnectBox', 'ConnectTla', 'GreetingOn', 'NameHint', 'Scroller', 'StaffLink',
-                  'SignInBox', 'SignInButton', 'SignOutText', 'SignOut', 'SignInTitle', 'SignInText', 'SignInError') {
+                  'SignInBox', 'SignInButton', 'SignOutText', 'SignOut', 'SignInTitle', 'SignInText', 'SignInError',
+                  'UpdateCheckRow', 'CheckUpdates', 'UpdateCheckText') {
     $c[$name] = $window.FindName($name)
 }
 # The organization's announcement (4.0), if there is one.
@@ -699,6 +707,7 @@ function Update-Controls {
     }
     $c.VersionText.Text = "Version $(Get-WVShownRelease) $([char]0x00B7) $($WV.Channels[$channel])"
     $c.ReportProblem.Visibility = if (Test-WVReleased 'report') { 'Visible' } else { 'Collapsed' }
+    $c.UpdateCheckRow.Visibility = if (Test-WVReleased 'checkupdates') { 'Visible' } else { 'Collapsed' }   # (5.8.0)
 
     # 5.0: light and dark, the screensaver, call backgrounds, TLA Care, the tour, unboxing.
     $c.LightDarkBox.Visibility = if (Test-WVReleased 'lightdark') { 'Visible' } else { 'Collapsed' }
@@ -966,6 +975,28 @@ function Set-WVChannel([string]$Channel) {
 }
 $c.ChannelStable.Add_Checked({ Set-WVChannel 'stable' })
 $c.ChannelExperimental.Add_Checked({ Set-WVChannel 'experimental' })
+
+# Check for updates (5.8.0): the TLA Care task (as SYSTEM) checks GitHub and starts the update, or asks Intune to check
+# in on a PC it manages. Works signed in or not: it's for the whole computer.
+$c.CheckUpdates.Add_Click({
+    $at = Invoke-WVCareRequest 'update'
+    if (-not $at) { $c.UpdateCheckText.Text = "Couldn't check for updates. Try again in a moment."; return }
+    $c.CheckUpdates.IsEnabled = $false
+    $c.UpdateCheckText.Text = 'Checking...'
+    $timer = [System.Windows.Threading.DispatcherTimer]::new()
+    $timer.Interval = [TimeSpan]::FromSeconds(1)
+    $timer.Tag = @{ At = $at; Until = [DateTime]::Now.AddSeconds(90) }
+    $timer.Add_Tick({
+        param($s, $e)
+        $result = Get-WVCareResult 'update' $s.Tag.At
+        if ($result -or [DateTime]::Now -gt $s.Tag.Until) {
+            $s.Stop()
+            $c.CheckUpdates.IsEnabled = $true
+            $c.UpdateCheckText.Text = if ($result) { $result.Text } else { "The check is taking longer than usual. Try again in a few minutes." }
+        }
+    })
+    $timer.Start()
+})
 
 # ---- 5.0 -------------------------------------------------------------------------------------------------
 $c.LightDarkChoice.Add_SelectionChanged({

@@ -19,5 +19,6 @@ function Write-Log([string]$Text) {
 
 Update-WVChannels ${function:Write-Log}   # (4.3: which release is Stable and which is Experimental)
 Update-WVSignIn -Log ${function:Write-Log}   # (5.7.0)
+Update-WVAnnouncementCopy ${function:Write-Log}   # (5.8.0: for PCs Intune doesn't give the announcement to)
 [void](Sync-WVVideos ${function:Write-Log})
 exit 0

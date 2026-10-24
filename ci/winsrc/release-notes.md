@@ -1,3 +1,11 @@
+# [mac] Version 5.8.0
+- [mac] **Check for updates**, under Updates in TLA BootPaper: get a new version straight away instead of waiting for it.
+- [mac] **TLA BootPaper is in the Dock while it's open**, like your other apps, with the usual menus, so copying and pasting work in it too.
+
+# [win] Version 5.8.0
+- [win] **Check for updates**, under Updates in TLA BootPaper: get a new version straight away instead of waiting for it.
+- [win] **TLA announcements on every PC**, including PCs that aren't connected to TLA.
+
 # [win] Version 5.7.5
 - [win] **Your intro video waits for you.** When Windows signs you in by itself, for example to finish an update overnight, the video now plays once you unlock your PC instead of behind the lock screen.
 - [win] **TLA BootPaper sees your school account.** On a PC you connected under Access work or school, it no longer asks you to connect it to TLA.
