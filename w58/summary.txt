@@ -1,0 +1,6 @@
+﻿latest: 5.7.5 https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/windows/TLA-BootPaper-Setup-5.7.5.exe newer than 5.8.0? False
+managed: False
+  log: Announcement from GitHub: Remember to set up your Pacing & Progress Tool if you haven't before!
+announcement shown: 'Remember to set up your Pacing & Progress Tool if you haven't before!'
+settings exit 
+done
