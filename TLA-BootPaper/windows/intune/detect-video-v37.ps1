@@ -1,5 +1,6 @@
 # detect-video-v37.ps1
-# Intune detection script: reports "Installed" only when version 37 is in place.
+# Intune detection script: reports "Installed" when version 37 or newer is in place. (Newer counts too, so Intune
+# never puts this version back over a newer one, for example on a computer on the Experimental channel.)
 # When you change the video or settings, raise $Version here AND in install-video.ps1.
 
 $Version    = '37'
@@ -21,7 +22,7 @@ $report   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Re
 $care     = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA Care.lnk'
 
 if ($task -and $videoTask -and $applyTask -and $careTask -and $themeTask -and $updateTask -and
-    $installed -eq $Version -and
+    $installed -match '^\d{1,6}$' -and [int]$installed -ge [int]$Version -and
     -not ($files | Where-Object { -not (Test-Path -LiteralPath $_) }) -and
     (Test-Path -LiteralPath $shortcut) -and (Test-Path -LiteralPath $report) -and (Test-Path -LiteralPath $care)) {
     Write-Output 'Installed'
