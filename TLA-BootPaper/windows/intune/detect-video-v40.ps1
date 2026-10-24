@@ -1,9 +1,9 @@
-# detect-video-v39.ps1
-# Intune detection script: reports "Installed" when version 39 or newer is in place. (Newer counts too, so Intune
+# detect-video-v40.ps1
+# Intune detection script: reports "Installed" when version 40 or newer is in place. (Newer counts too, so Intune
 # never puts this version back over a newer one, for example on a computer on the Experimental channel.)
 # When you change the video or settings, raise $Version here AND in install-video.ps1.
 
-$Version    = '39'
+$Version    = '40'
 $InstallDir = Join-Path $env:ProgramData 'WelcomeVideo'
 $task       = Get-ScheduledTask -TaskName 'Welcome Video' -ErrorAction SilentlyContinue
 $videoTask  = Get-ScheduledTask -TaskName 'TLA BootPaper Videos' -ErrorAction SilentlyContinue
