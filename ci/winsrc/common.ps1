@@ -11,7 +11,7 @@
 
 $WV = @{
     Dir       = $PSScriptRoot
-    Release   = '5.7.0' # this package's version (4.3: what people see also depends on their release channel)
+    Release   = '5.7.5' # this package's version (4.3: what people see also depends on their release channel)
     DeviceKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo'
     UserKey   = 'HKEY_CURRENT_USER\Software\WelcomeVideo'
     StateKey  = 'HKEY_CURRENT_USER\Software\WelcomeVideo\State'
@@ -109,7 +109,7 @@ $WV = @{
     # Experimental first, Stable once it's been tried. People pick their channel in the app (organization
     # default: Stable). Since = the release that brought something; anything not listed has been out for longer.
     Channels  = [ordered]@{ 'stable' = 'Stable'; 'experimental' = 'Experimental' }
-    ChannelReleases = @{ 'stable' = '5.6.0'; 'experimental' = '5.7.0' }   # as marked when this package was made (5.7.0: Experimental first)
+    ChannelReleases = @{ 'stable' = '5.6.0'; 'experimental' = '5.7.5' }   # as marked when this package was made (5.7.x: Experimental first)
     Since     = @{ 'sky-city' = '4.3'; 'report' = '4.3'
                    'lightdark' = '5.0'; 'screensaver' = '5.0'; 'calls' = '5.0'; 'care' = '5.0'; 'tour' = '5.0'
                    'connect' = '5.2.5'
@@ -806,14 +806,41 @@ function Get-WVVideoPath([string]$Id, [switch]$Pick) {
 # A computer Intune doesn't manage misses what TLA sends through it (the TLA new tab page in Chrome and Edge, apps,
 # updates and settings: browsers only take a new tab page from a managed computer). TLA BootPaper offers to connect
 # it: Settings > Accounts > Access work or school, signed in with the person's TLA account. Managed = it has
-# Intune's device certificate (anyone can see the computer's certificates).
+# Intune's certificate, or Windows has a record of the enrollment (5.7.5). A computer someone connected with their
+# own account under Access work or school can keep the certificate in that person's store instead of the
+# computer's, which the SYSTEM tasks can't see, so the record counts too. Anyone can read both.
 function Test-WVIntuneManaged {
+    $checked = $false
+    foreach ($where in 'LocalMachine', 'CurrentUser') {
+        try {
+            $store = [System.Security.Cryptography.X509Certificates.X509Store]::new('My', $where)
+            $store.Open('ReadOnly, OpenExistingOnly')
+            try {
+                if (@($store.Certificates | Where-Object { $_.Issuer -like '*Microsoft Intune MDM Device CA*' }).Count) { return $true }
+                $checked = $true
+            } finally { $store.Close() }
+        } catch { }
+    }
+    # HKLM\SOFTWARE\Microsoft\Enrollments\<id>: ProviderID "MS DM Server" is Intune; EnrollmentState 1 = enrolled.
     try {
-        $store = [System.Security.Cryptography.X509Certificates.X509Store]::new('My', 'LocalMachine')
-        $store.Open('ReadOnly, OpenExistingOnly')
-        try { return [bool]@($store.Certificates | Where-Object { $_.Issuer -like '*Microsoft Intune MDM Device CA*' }).Count }
-        finally { $store.Close() }
-    } catch { return $true }   # (can't tell: don't offer it)
+        $base = [Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine', 'Registry64')
+        $key = $base.OpenSubKey('SOFTWARE\Microsoft\Enrollments')
+        if ($key) {
+            try {
+                foreach ($name in $key.GetSubKeyNames()) {
+                    try {
+                        $sub = $key.OpenSubKey($name)
+                        if (-not $sub) { continue }
+                        try {
+                            if ("$($sub.GetValue('ProviderID'))" -eq 'MS DM Server' -and "$($sub.GetValue('EnrollmentState'))" -eq '1') { return $true }
+                        } finally { $sub.Close() }
+                    } catch { }
+                }
+                $checked = $true
+            } finally { $key.Close() }
+        }
+    } catch { }
+    return -not $checked   # (can't tell: don't offer it)
 }
 function Test-WVConnectNeeded { return (Test-WVReleased 'connect') -and -not (Test-WVIntuneManaged) }
 $WV.ConnectPage = 'ms-settings:workplace'

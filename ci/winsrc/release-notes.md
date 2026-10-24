@@ -1,3 +1,7 @@
+# [win] Version 5.7.5
+- [win] **Your intro video waits for you.** When Windows signs you in by itself, for example to finish an update overnight, the video now plays once you unlock your PC instead of behind the lock screen.
+- [win] **TLA BootPaper sees your school account.** On a PC you connected under Access work or school, it no longer asks you to connect it to TLA.
+
 # [mac] Version 5.7.0
 - [mac] **Sign in with your Hub account.** TLA BootPaper asks you to sign in once with your Hub account, in your browser. Until you do, your choices are greyed out and you see TLA Classic.
 - [mac] **One sign-in lasts a month.** A reminder comes 7 days and again 3 days before it runs out, and you can sign in again any time in that last week. If it runs out while your Mac is offline, you get 3 extra days.

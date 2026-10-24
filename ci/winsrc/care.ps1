@@ -164,15 +164,9 @@ function Get-WVBatteryCheck {
 }
 
 function Get-WVManagementCheck {
-    # Only for PCs Intune manages (they have its certificate).
-    $managed = $false
-    try {
-        $store = [System.Security.Cryptography.X509Certificates.X509Store]::new('My', 'LocalMachine')
-        $store.Open('ReadOnly, OpenExistingOnly')
-        try { $managed = [bool]@($store.Certificates | Where-Object { $_.Issuer -like '*Microsoft Intune MDM Device CA*' }).Count }
-        finally { $store.Close() }
-    } catch { }
-    if (-not $managed) {
+    # Only for PCs Intune manages (5.7.5: the same check as everywhere else, which also finds a computer someone
+    # connected with their own account).
+    if (-not (Test-WVIntuneManaged)) {
         # 5.2.5: Connect to TLA, on computers Intune doesn't manage.
         if (Test-WVConnectNeeded) {
             return New-WVCareCheck 'connect' 'Connect this computer to TLA' 'info' "It's missing what TLA sends, like the TLA new tab page in Chrome and Edge, apps and updates. Sign in with your TLA account under Access work or school." 'connect' 'Connect'

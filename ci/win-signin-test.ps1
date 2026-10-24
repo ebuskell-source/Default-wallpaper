@@ -105,3 +105,42 @@ Remove-WVSignIn; Show-State 'signed out'
 Log 'fetching the real settings (GitHub) into a copy'
 $WV.SignInDir = "$out\fetched"; Update-WVSignIn -Force -Log { param($t) Say "  $t" }
 Get-ChildItem $WV.SignInDir | ForEach-Object { Say "  $($_.Name) $($_.Length)" }
+
+# 5.7.5: the "connected to TLA" check (certificates in both stores, then Windows' enrollment record) and the
+# player's wait for the lock screen.
+Log '5.7.5 managed check'
+$sw = [Diagnostics.Stopwatch]::StartNew()
+Say "not enrolled: managed=$(Test-WVIntuneManaged) connectNeeded=$(Test-WVConnectNeeded) ($($sw.ElapsedMilliseconds) ms)"
+$enr = 'HKLM:\SOFTWARE\Microsoft\Enrollments\{0F0E0D0C-1111-2222-3333-444455556666}'
+New-Item -Path $enr -Force | Out-Null
+New-ItemProperty -Path $enr -Name ProviderID -Value 'MS DM Server' -Force | Out-Null
+New-ItemProperty -Path $enr -Name EnrollmentState -Value 1 -PropertyType DWord -Force | Out-Null
+Say "Intune record: managed=$(Test-WVIntuneManaged) connectNeeded=$(Test-WVConnectNeeded)"
+& powershell -NoProfile -ExecutionPolicy Bypass -Command ". '$src\common.ps1'; 'as a new 64-bit PowerShell: ' + (Test-WVIntuneManaged)" *>> $sum
+& "$env:SystemRoot\SysWOW64\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -Command ". '$src\common.ps1'; 'as 32-bit PowerShell: ' + (Test-WVIntuneManaged)" *>> $sum
+Set-ItemProperty -Path $enr -Name EnrollmentState -Value 3
+Say "record not finished (state 3): managed=$(Test-WVIntuneManaged)"
+Set-ItemProperty -Path $enr -Name EnrollmentState -Value 1
+Set-ItemProperty -Path $enr -Name ProviderID -Value 'Other MDM'
+Say "another provider: managed=$(Test-WVIntuneManaged)"
+Remove-Item -Path $enr -Recurse -Force
+Say "record removed: managed=$(Test-WVIntuneManaged)"
+
+Log '5.7.5 lock screen wait (a stand-in LogonUI in this session)'
+Copy-Item "$env:SystemRoot\System32\PING.EXE" "$out\LogonUI.exe" -Force
+$fake = Start-Process "$out\LogonUI.exe" -ArgumentList '-n', '9', '127.0.0.1' -PassThru -WindowStyle Hidden
+$sessionId = [System.Diagnostics.Process]::GetCurrentProcess().SessionId
+function Test-InSession([string]$ProcessName) {
+    foreach ($p in [System.Diagnostics.Process]::GetProcessesByName($ProcessName)) { if ($p.SessionId -eq $sessionId) { return $true } }
+    return $false
+}
+$sw.Restart()
+while (Test-InSession 'LogonUI') { [System.Threading.Thread]::Sleep(1000) }
+Say "waited $([int]($sw.ElapsedMilliseconds / 1000)) s for the stand-in to end (expect about 8); sessions: test $sessionId, stand-in $($fake.SessionId)"
+$real = @([System.Diagnostics.Process]::GetProcessesByName('LogonUI') | ForEach-Object { "$($_.Id)@$($_.SessionId)" })
+Say "real LogonUI processes on the runner: $($real -join ', ')"
+$t = $null; $e = $null
+foreach ($f in 'play-video.ps1', 'care.ps1', 'install-video.ps1', 'common.ps1') {
+    [void][System.Management.Automation.Language.Parser]::ParseFile("$src\$f", [ref]$t, [ref]$e)
+    Say "$f parse errors: $($e.Count)"
+}

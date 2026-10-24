@@ -113,6 +113,24 @@ if ($needBackground -and -not $playVideo) {
 
 if (-not $playVideo -and -not $showNews -and -not $unbox) { Start-WVSession; exit 0 }
 
+$sessionId = [System.Diagnostics.Process]::GetCurrentProcess().SessionId
+function Test-InSession([string]$ProcessName) {
+    foreach ($p in [System.Diagnostics.Process]::GetProcessesByName($ProcessName)) {
+        if ($p.SessionId -eq $sessionId) { return $true }
+    }
+    return $false
+}
+# 5.7.5: Windows sometimes signs in by itself and locks straight away, for example to finish an update after a
+# restart ("Use my sign-in info to automatically finish setting up"). The lock screen (LogonUI, which only runs in
+# this session while it's locked or still signing in) then covers everything, so the video waits until the person
+# unlocks the computer; the quiet hours and greeting below are worked out for then. Up to 20 hours (the "Welcome
+# Video" task allows a day); still locked after that: no video this time.
+$lockDeadline = [DateTime]::Now.AddHours(20)
+while (-not $Force -and (Test-InSession 'LogonUI')) {
+    if ([DateTime]::Now -ge $lockDeadline) { Start-WVSession; exit 0 }
+    [System.Threading.Thread]::Sleep(1000)
+}
+
 $AllowSkip = $Force -or (Test-WVOn 'AllowSkip')   # "Play now" can always be closed early
 $Sound     = (Test-WVOn 'Sound') -and -not $Mute
 # Quiet hours (4.0): no sound while Do Not Disturb is on, or during the hours they set.
@@ -122,13 +140,6 @@ $GreetingStyle = ''   # (5.5.5: in the style of the video's theme, once that's o
 
 # On someone's very first sign-in to a device, wait for the "Hi" / "getting things ready"
 # screens to finish so the video isn't hidden behind them. Every other sign-in starts right away.
-$sessionId = [System.Diagnostics.Process]::GetCurrentProcess().SessionId
-function Test-InSession([string]$ProcessName) {
-    foreach ($p in [System.Diagnostics.Process]::GetProcessesByName($ProcessName)) {
-        if ($p.SessionId -eq $sessionId) { return $true }
-    }
-    return $false
-}
 $deadline = [DateTime]::Now.AddMinutes(10)
 while (-not $Force -and [DateTime]::Now -lt $deadline -and (Test-InSession 'FirstLogonAnim')) {
     [System.Threading.Thread]::Sleep(500)

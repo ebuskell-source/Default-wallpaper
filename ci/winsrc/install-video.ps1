@@ -34,7 +34,7 @@ $UsersCanChange = 1            # 0 = people can see these settings in the app bu
 $ErrorActionPreference = 'Stop'
 $InstallDir = Join-Path $env:ProgramData 'WelcomeVideo'
 $TaskName   = 'Welcome Video'
-$Version    = '38'   # raise this (and the one in the detection script) whenever you change the video or settings
+$Version    = '39'   # raise this (and the one in the detection script) whenever you change the video or settings
 $Shortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA BootPaper.lnk'
 $ReportShortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Report a problem to TLA.lnk'   # (4.3)
 $CareShortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA Care.lnk'                  # (5.0)
@@ -209,8 +209,9 @@ $principal = New-ScheduledTaskPrincipal -GroupId 'S-1-5-32-545' -RunLevel Limite
 # -Priority 4 = normal priority, like an app the user opens. Without it, scheduled tasks run at
 # priority 7: below-normal CPU AND low disk priority, which slows the player down at sign-in,
 # when everything else is loading at the same time.
+# 5.7.5: a day, not 30 minutes: when Windows signs in by itself and locks, the player waits for the person to unlock.
 $settings  = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
-    -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -MultipleInstances IgnoreNew -Priority 4
+    -ExecutionTimeLimit (New-TimeSpan -Days 1) -MultipleInstances IgnoreNew -Priority 4
 
 Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger `
     -Principal $principal -Settings $settings -Force | Out-Null
