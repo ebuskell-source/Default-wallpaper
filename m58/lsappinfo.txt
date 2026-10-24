@@ -1,0 +1,261 @@
+ 1) "loginwindow" ASN:0x0-0x3003: 
+    bundleID="com.apple.loginwindow"
+    bundle path="/System/Library/CoreServices/loginwindow.app"
+    executable path="/System/Library/CoreServices/loginwindow.app/Contents/MacOS/loginwindow"
+    pid = 156 type="UIElement" flavor=3 Version="3085.6.3" fileType="APPL" creator="lgnw" Arch=ARM64 
+    coalition: 146
+    checkin time = 123 seconds ago, 2026/10/24 20:17:58 ( 2 minutes, 3.14318 seconds ago )
+ 2) "universalaccessd" ASN:0x0-0x6006: 
+    bundleID=[ NULL ] 
+    bundle path="/usr/sbin/universalaccessd"
+    executable path="/usr/sbin/universalaccessd"
+    pid = 346 !signalled type="BackgroundOnly" flavor=3 Version=[ NULL ]  fileType="????" creator="????" Arch=ARM64 
+    coalition: 378
+    checkin time = 120 seconds ago, 2026/10/24 20:18:01 ( 2 minutes, 0.053082 seconds ago )
+ 3) "CoreServicesUIAgent" ASN:0x0-0x7007: 
+    bundleID="com.apple.coreservices.uiagent"
+    bundle path="/System/Library/CoreServices/CoreServicesUIAgent.app"
+    executable path="/System/Library/CoreServices/CoreServicesUIAgent.app/Contents/MacOS/CoreServicesUIAgent"
+    pid = 345 type="UIElement" flavor=3 Version="369" fileType="????" creator="????" Arch=ARM64 
+    coalition: 376
+    checkin time = 120 seconds ago, 2026/10/24 20:18:01 ( 1 minutes, 59.9962 seconds ago )
+ 4) "SystemUIServer" ASN:0x0-0x8008: 
+    bundleID="com.apple.systemuiserver"
+    bundle path="/System/Library/CoreServices/SystemUIServer.app"
+    executable path="/System/Library/CoreServices/SystemUIServer.app/Contents/MacOS/SystemUIServer"
+    pid = 355 type="UIElement" flavor=3 Version="544" fileType="APPL" creator="syui" Arch=ARM64 
+    coalition: 396
+    checkin time = 120 seconds ago, 2026/10/24 20:18:02 ( 1 minutes, 59.8981 seconds ago )
+ 5) "Dock" ASN:0x0-0x9009: 
+    bundleID="com.apple.dock"
+    bundle path="/System/Library/CoreServices/Dock.app"
+    executable path="/System/Library/CoreServices/Dock.app/Contents/MacOS/Dock"
+    pid = 353 type="UIElement" flavor=4 Version="2427.6" fileType="APPL" creator="dock" Arch=ARM64 
+    coalition: 392  { 353 473 }
+    checkin time = 120 seconds ago, 2026/10/24 20:18:02 ( 1 minutes, 59.8713 seconds ago )
+ 6) "talagentd" ASN:0x0-0xa00a: 
+    bundleID="com.apple.talagent"
+    bundle path="/System/Library/CoreServices/talagentd"
+    executable path="/System/Library/CoreServices/talagentd"
+    pid = 352 type="UIElement" flavor=2 Version="255" fileType="APPL" creator="????" Arch=ARM64 sandboxed 
+    coalition: 390
+    checkin time = 120 seconds ago, 2026/10/24 20:18:02 ( 1 minutes, 59.8241 seconds ago )
+ 7) "WindowManager" ASN:0x0-0xb00b: 
+    bundleID="com.apple.WindowManager"
+    bundle path="/System/Library/CoreServices/WindowManager.app"
+    executable path="/System/Library/CoreServices/WindowManager.app/Contents/MacOS/WindowManager"
+    pid = 351 type="UIElement" flavor=3 Version="341.6.1" fileType="APPL" Arch=ARM64 sandboxed 
+    coalition: 388
+    checkin time = 120 seconds ago, 2026/10/24 20:18:02 ( 1 minutes, 59.7223 seconds ago )
+ 8) "Control Center" ASN:0x0-0xc00c: 
+    bundleID="com.apple.controlcenter"
+    bundle path="/System/Library/CoreServices/ControlCenter.app"
+    executable path="/System/Library/CoreServices/ControlCenter.app/Contents/MacOS/ControlCenter"
+    pid = 354 type="UIElement" flavor=3 Version="1" fileType="APPL" creator="????" Arch=ARM64 
+    coalition: 394  { 354 490 }
+    checkin time = 120 seconds ago, 2026/10/24 20:18:02 ( 1 minutes, 59.6624 seconds ago )
+ 9) "Finder" ASN:0x0-0xd00d: 
+    bundleID="com.apple.finder"
+    bundle path="/System/Library/CoreServices/Finder.app"
+    executable path="/System/Library/CoreServices/Finder.app/Contents/MacOS/Finder"
+    pid = 356 type="Foreground" flavor=3 Version="1828.6.1" fileType="FNDR" creator="MACS" Arch=ARM64 
+    coalition: 398  { 356 364 }
+    checkin time = 119 seconds ago, 2026/10/24 20:18:02 ( 1 minutes, 59.4761 seconds ago )
+10) "Wallpaper" ASN:0x0-0xe00e: 
+    bundleID="com.apple.wallpaper.agent"
+    bundle path="/System/Library/CoreServices/WallpaperAgent.app"
+    executable path="/System/Library/CoreServices/WallpaperAgent.app/Contents/MacOS/WallpaperAgent"
+    pid = 372 type="UIElement" flavor=3 Version="245.6" fileType="APPL" Arch=ARM64 sandboxed 
+    coalition: 424  { 372 399 402 498 3125 }
+    checkin time = 119 seconds ago, 2026/10/24 20:18:02 ( 1 minutes, 59.1474 seconds ago )
+11) "ViewBridgeAuxiliary" ASN:0x0-0xf00f: 
+    bundleID="com.apple.ViewBridgeAuxiliary"
+    bundle path="/System/Library/PrivateFrameworks/ViewBridge.framework/Versions/A/XPCServices/ViewBridgeAuxiliary.xpc"
+    executable path="/System/Library/PrivateFrameworks/ViewBridge.framework/Versions/A/XPCServices/ViewBridgeAuxiliary.xpc/Contents/MacOS/ViewBridgeAuxiliary"
+    pid = 392 !signalled type="BackgroundOnly" flavor=2 Version=[ NULL ]  fileType="XPC!" creator="????" Arch=ARM64 
+    coalition: 464
+    checkin time = 119 seconds ago, 2026/10/24 20:18:03 ( 1 minutes, 58.9415 seconds ago )
+12) "QuickLookUIService (Finder)" ASN:0x0-0x10010: 
+    bundleID="com.apple.quicklook.QuickLookUIService"
+    bundle path="/System/Library/Frameworks/QuickLookUI.framework/Versions/A/XPCServices/QuickLookUIService.xpc"
+    executable path="/System/Library/Frameworks/QuickLookUI.framework/Versions/A/XPCServices/QuickLookUIService.xpc/Contents/MacOS/QuickLookUIService"
+    pid = 364 type="BackgroundOnly" flavor=2 Version="1" fileType="XPC!" Arch=ARM64 sandboxed 
+    checkin time = 119 seconds ago, 2026/10/24 20:18:03 ( 1 minutes, 58.8698 seconds ago )
+13) "chronod" ASN:0x0-0x11011: 
+    bundleID="com.apple.chronod"
+    bundle path="/System/Library/PrivateFrameworks/ChronoCore.framework/Support/chronod"
+    executable path="/System/Library/PrivateFrameworks/ChronoCore.framework/Support/chronod"
+    pid = 401 !signalled type="BackgroundOnly" flavor=2 Version="1" fileType="com.apple.product-type.tool" Arch=ARM64 sandboxed 
+    coalition: 480  { 401 460 461 499 506 546 547 560 }
+    checkin time = 119 seconds ago, 2026/10/24 20:18:03 ( 1 minutes, 58.7215 seconds ago )
+14) "TextInputMenuAgent" ASN:0x0-0x12012: 
+    bundleID="com.apple.TextInputMenuAgent"
+    bundle path="/System/Library/CoreServices/TextInputMenuAgent.app"
+    executable path="/System/Library/CoreServices/TextInputMenuAgent.app/Contents/MacOS/TextInputMenuAgent"
+    pid = 433 type="UIElement" flavor=3 Version="306" fileType="APPL" creator="????" Arch=ARM64 
+    coalition: 541
+    checkin time = 119 seconds ago, 2026/10/24 20:18:03 ( 1 minutes, 58.5265 seconds ago )
+15) "AirPlay Screen Mirroring" ASN:0x0-0x13013: 
+    bundleID="com.apple.AirPlayUIAgent"
+    bundle path="/System/Library/CoreServices/AirPlayUIAgent.app"
+    executable path="/System/Library/CoreServices/AirPlayUIAgent.app/Contents/MacOS/AirPlayUIAgent"
+    pid = 429 type="UIElement" flavor=3 Version="960.13.1" fileType="APPL" creator="????" Arch=ARM64 sandboxed 
+    coalition: 533
+    checkin time = 118 seconds ago, 2026/10/24 20:18:03 ( 1 minutes, 58.457 seconds ago )
+16) "Spotlight" ASN:0x0-0x14014: 
+    bundleID="com.apple.Spotlight"
+    bundle path="/System/Library/CoreServices/Spotlight.app"
+    executable path="/System/Library/CoreServices/Spotlight.app/Contents/MacOS/Spotlight"
+    pid = 452 type="UIElement" flavor=3 Version="181.4.6" fileType="APPL" creator="????" Arch=ARM64 
+    coalition: 579  { 452 737 }
+    checkin time = 118 seconds ago, 2026/10/24 20:18:03 ( 1 minutes, 58.0137 seconds ago )
+17) "Single Sign-On" ASN:0x0-0x15015: 
+    bundleID="com.apple.AppSSOAgent"
+    bundle path="/System/Library/PrivateFrameworks/AppSSO.framework/Support/AppSSOAgent.app"
+    executable path="/System/Library/PrivateFrameworks/AppSSO.framework/Support/AppSSOAgent.app/Contents/MacOS/AppSSOAgent"
+    pid = 455 type="UIElement" flavor=3 Version="1" fileType="APPL" Arch=ARM64 sandboxed 
+    coalition: 585
+    checkin time = 117 seconds ago, 2026/10/24 20:18:05 ( 1 minutes, 56.8534 seconds ago )
+18) "CursorUIViewService" ASN:0x0-0x16016: 
+    bundleID="com.apple.TextInputUI.xpc.CursorUIViewService"
+    bundle path="/System/Library/PrivateFrameworks/TextInputUIMacHelper.framework/Versions/A/XPCServices/CursorUIViewService.xpc"
+    executable path="/System/Library/PrivateFrameworks/TextInputUIMacHelper.framework/Versions/A/XPCServices/CursorUIViewService.xpc/Contents/MacOS/CursorUIViewService"
+    pid = 466 type="BackgroundOnly" flavor=2 Version="1" fileType="XPC!" creator="????" Arch=ARM64 
+    coalition: 604
+    checkin time = 117 seconds ago, 2026/10/24 20:18:05 ( 1 minutes, 56.7736 seconds ago )
+19) "SoftwareUpdateNotificationManager" ASN:0x0-0x17017: 
+    bundleID="com.apple.SoftwareUpdateNotificationManager"
+    bundle path="/System/Library/PrivateFrameworks/SoftwareUpdate.framework/Versions/A/Resources/SoftwareUpdateNotificationManager.app"
+    executable path="/System/Library/PrivateFrameworks/SoftwareUpdate.framework/Versions/A/Resources/SoftwareUpdateNotificationManager.app/Contents/MacOS/SoftwareUpdateNotificationManager"
+    pid = 438 type="UIElement" flavor=3 Version="1" fileType="APPL" creator="????" Arch=ARM64 
+    coalition: 551  { 438 6388 6395 6396 6397 6399 6400 }
+    checkin time = 117 seconds ago, 2026/10/24 20:18:05 ( 1 minutes, 56.6944 seconds ago )
+20) "CoreLocationAgent" ASN:0x0-0x18018: 
+    bundleID="com.apple.CoreLocationAgent"
+    bundle path="/System/Library/CoreServices/CoreLocationAgent.app"
+    executable path="/System/Library/CoreServices/CoreLocationAgent.app/Contents/MacOS/CoreLocationAgent"
+    pid = 374 type="UIElement" flavor=3 Version="3077.0.4" fileType="APPL" creator="????" Arch=ARM64 
+    coalition: 428
+    checkin time = 117 seconds ago, 2026/10/24 20:18:05 ( 1 minutes, 56.6909 seconds ago )
+21) "TextInputSwitcher" ASN:0x0-0x19019: 
+    bundleID="com.apple.TextInputSwitcher"
+    bundle path="/System/Library/CoreServices/TextInputSwitcher.app"
+    executable path="/System/Library/CoreServices/TextInputSwitcher.app/Contents/MacOS/TextInputSwitcher"
+    pid = 445 type="UIElement" flavor=3 Version="306" fileType="APPL" creator="????" Arch=ARM64 
+    coalition: 565
+    checkin time = 117 seconds ago, 2026/10/24 20:18:05 ( 1 minutes, 56.6885 seconds ago )
+22) "Dock Extra" ASN:0x0-0x1a01a: 
+    bundleID="com.apple.dock.extra"
+    bundle path="/System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.extra.xpc"
+    executable path="/System/Library/CoreServices/Dock.app/Contents/XPCServices/com.apple.dock.extra.xpc/Contents/MacOS/com.apple.dock.extra"
+    pid = 473 type="UIElement" flavor=3 Version="2427.6" fileType="XPC!" creator="????" Arch=ARM64 
+    checkin time = 116 seconds ago, 2026/10/24 20:18:05 ( 1 minutes, 56.1521 seconds ago )
+23) "Accessibility" ASN:0x0-0x1b01b: 
+    bundleID="com.apple.AccessibilityUIServer"
+    bundle path="/System/Library/CoreServices/AccessibilityUIServer.app"
+    executable path="/System/Library/CoreServices/AccessibilityUIServer.app/Contents/MacOS/AccessibilityUIServer"
+    pid = 463 type="UIElement" flavor=3 Version="1" fileType="APPL" creator="????" Arch=ARM64 
+    coalition: 598
+    checkin time = 116 seconds ago, 2026/10/24 20:18:06 ( 1 minutes, 55.6341 seconds ago )
+24) "UIKitSystem" ASN:0x0-0x1d01d: 
+    bundleID="com.apple.UIKitSystemApp"
+    bundle path="/System/Library/CoreServices/UIKitSystem.app"
+    executable path="/System/Library/CoreServices/UIKitSystem.app/Contents/MacOS/UIKitSystem"
+    pid = 492 type="BackgroundOnly" flavor=2 Version="618" fileType="APPL" creator="????" Arch=ARM64 
+    coalition: 644
+    checkin time = 114 seconds ago, 2026/10/24 20:18:07 ( 1 minutes, 54.1656 seconds ago )
+25) "IOUIAgent" ASN:0x0-0x1e01e: 
+    bundleID="com.apple.IOUIAgent"
+    bundle path="/System/Library/CoreServices/IOUIAgent.app"
+    executable path="/System/Library/CoreServices/IOUIAgent.app/Contents/MacOS/IOUIAgent"
+    pid = 504 type="UIElement" flavor=3 Version="1" fileType="APPL" Arch=ARM64 sandboxed 
+    coalition: 658
+    checkin time = 113 seconds ago, 2026/10/24 20:18:08 ( 1 minutes, 53.2198 seconds ago )
+26) "AppSSODaemon" ASN:0x0-0x1f01f: 
+    bundleID=[ NULL ] 
+    bundle path="/System/Library/PrivateFrameworks/AppSSO.framework/Support/AppSSODaemon"
+    executable path="/System/Library/PrivateFrameworks/AppSSO.framework/Support/AppSSODaemon"
+    pid = 457 type="BackgroundOnly" flavor=3 Version=[ NULL ]  Arch=ARM64 sandboxed 
+    coalition: 589
+    checkin time = 105 seconds ago, 2026/10/24 20:18:17 ( 1 minutes, 44.5624 seconds ago )
+27) "Wi-Fi" ASN:0x0-0x20020: 
+    bundleID="com.apple.wifi.WiFiAgent"
+    bundle path="/System/Library/CoreServices/WiFiAgent.app"
+    executable path="/System/Library/CoreServices/WiFiAgent.app/Contents/MacOS/WiFiAgent"
+    pid = 706 type="UIElement" flavor=3 Version="19155.3" fileType="????" creator="????" Arch=ARM64 
+    coalition: 791  { 706 707 }
+    checkin time = 102 seconds ago, 2026/10/24 20:18:19 ( 1 minutes, 42.0486 seconds ago )
+28) "GamePolicyAgent" ASN:0x0-0x21021: 
+    bundleID=[ NULL ] 
+    bundle path="/usr/libexec/GamePolicyAgent"
+    executable path="/usr/libexec/GamePolicyAgent"
+    pid = 730 type="BackgroundOnly" flavor=3 Version=[ NULL ]  fileType="????" creator="????" Arch=ARM64 
+    coalition: 821  { 730 731 }
+    checkin time = 94 seconds ago, 2026/10/24 20:18:27 ( 1 minutes, 34.2356 seconds ago )
+29) "Shortcuts" ASN:0x0-0x22022: 
+    bundleID="com.apple.WorkflowKit.ShortcutsViewService"
+    bundle path="/System/Library/PrivateFrameworks/WorkflowKit.framework/XPCServices/ShortcutsViewService.xpc"
+    executable path="/System/Library/PrivateFrameworks/WorkflowKit.framework/XPCServices/ShortcutsViewService.xpc/Contents/MacOS/ShortcutsViewService"
+    pid = 738 type="UIElement" flavor=3 Version="1" fileType="XPC!" Arch=ARM64 sandboxed 
+    coalition: 831
+    checkin time = 93 seconds ago, 2026/10/24 20:18:29 ( 1 minutes, 32.5412 seconds ago )
+30) "BackgroundTaskManagementAgent" ASN:0x0-0x23023: 
+    bundleID="com.apple.backgroundtaskmanagement.agent"
+    bundle path="/System/Library/PrivateFrameworks/BackgroundTaskManagement.framework/Support/BackgroundTaskManagementAgent.app"
+    executable path="/System/Library/PrivateFrameworks/BackgroundTaskManagement.framework/Support/BackgroundTaskManagementAgent.app/Contents/MacOS/BackgroundTaskManagementAgent"
+    pid = 949 type="UIElement" flavor=3 Version="1" fileType="APPL" creator="????" Arch=ARM64 
+    coalition: 862
+    checkin time = 81 seconds ago, 2026/10/24 20:18:41 ( 1 minutes, 20.8918 seconds ago )
+31) "TLA BootPaper" ASN:0x0-0x2d02d: (in front) 
+    bundleID="ca.schoolathome.welcomevideo.app"
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 5576 type="Foreground" flavor=3 Version="5.8.0" fileType="APPL" creator="????" Arch=ARM64 
+    launch time =  10 seconds ago, 2026/10/24 20:19:51 ( 10.1291 seconds ago )
+    checkin time = 10 seconds ago, 2026/10/24 20:19:51 ( 10.0486 seconds ago )
+    launch to checkin time: 0.0805769 seconds
+32) "AutoFill (TLA BootPaper)" ASN:0x0-0x2f02f: 
+    bundleID="com.apple.SafariPlatformSupport.Helper"
+    bundle path="/System/Volumes/Preboot/Cryptexes/OS/System/Library/PrivateFrameworks/SafariPlatformSupport.framework/Versions/A/XPCServices/com.apple.SafariPlatformSupport.Helper.xpc"
+    executable path="/System/Volumes/Preboot/Cryptexes/OS/System/Library/PrivateFrameworks/SafariPlatformSupport.framework/Versions/A/XPCServices/com.apple.SafariPlatformSupport.Helper.xpc/Contents/MacOS/com.apple.SafariPlatformSupport.Helper"
+    pid = 6260 type="BackgroundOnly" flavor=2 Version="21624.5.1.11.3" fileType="XPC!" Arch=ARM64 sandboxed 
+    checkin time = 7 seconds ago, 2026/10/24 20:19:55 ( 6.75502 seconds ago )
+33) "nsattributedstringagent" ASN:0x0-0x36036: 
+    bundleID="com.apple.textkit.nsattributedstringagent"
+    bundle path="/System/Library/PrivateFrameworks/UIFoundation.framework/Versions/A/XPCServices/nsattributedstringagent.xpc"
+    executable path="/System/Library/PrivateFrameworks/UIFoundation.framework/Versions/A/XPCServices/nsattributedstringagent.xpc/Contents/MacOS/nsattributedstringagent"
+    pid = 6388 type="BackgroundOnly" flavor=3 Version="1019.1" fileType="XPC!" Arch=ARM64 sandboxed 
+    checkin time = 1 seconds ago, 2026/10/24 20:20:00 ( 1.1447 seconds ago )
+34) "nsattributedstringagent Graphics and Media" ASN:0x0-0x37037: 
+    bundleID="com.apple.WebKit.GPU"
+    bundle path="/System/Volumes/Preboot/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.GPU.xpc"
+    executable path="/System/Volumes/Preboot/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.GPU.xpc/Contents/MacOS/com.apple.WebKit.GPU"
+    pid = 6395 !cgsConnection !signalled type="UIElement" flavor=[ NULL ]  Version="21624.5.1.11.3" fileType="XPC!" creator="????" Arch=ARM64 sandboxed 
+    checkin time = now-ish 2026/10/24 20:20:01 ( 0.907356 seconds ago )
+35) "nsattributedstringagent Networking" ASN:0x0-0x38038: 
+    bundleID="com.apple.WebKit.Networking"
+    bundle path="/System/Volumes/Preboot/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.Networking.xpc"
+    executable path="/System/Volumes/Preboot/Cryptexes/OS/System/Library/Frameworks/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.Networking.xpc/Contents/MacOS/com.apple.WebKit.Networking"
+    pid = 6396 !cgsConnection !signalled type="UIElement" flavor=[ NULL ]  Version="21624.5.1.11.3" fileType="XPC!" creator="????" Arch=ARM64 sandboxed 
+    childASNs: ASN:0x0-0x39039: ASN:0x0-0x3a03a: 
+    checkin time = now-ish 2026/10/24 20:20:01 ( 0.905898 seconds ago )
+36) "nsattributedstringagent Web Content" ASN:0x0-0x39039: 
+    bundleID="com.apple.WebKit.WebContent"
+    bundle path=[ NULL ] 
+    executable path="com.apple.WebKit.WebContent"
+    pid = 6399 !cgsConnection !signalled type="UIElement" flavor=[ NULL ]  Version="21624.5.1.11.3" fileType="XPC!" creator="????" Arch=ARM64 
+    parentASN="nsattributedstringagent Networking" ASN:0x0-0x38038: 
+    checkin time = now-ish 2026/10/24 20:20:01 ( 0.825357 seconds ago )
+37) "nsattributedstringagent Web Content" ASN:0x0-0x3a03a: 
+    bundleID="com.apple.WebKit.WebContent"
+    bundle path=[ NULL ] 
+    executable path="/System/Library/Frameworks/WebKit.framework/XPCServices/com.apple.WebKit.WebContent.xpc/Contents/MacOS/com.apple.WebKit.WebContent"
+    pid = 6397 !cgsConnection !signalled type="UIElement" flavor=[ NULL ]  Version="21624.5.1.11.3" fileType="XPC!" creator="????" Arch=ARM64 
+    parentASN="nsattributedstringagent Networking" ASN:0x0-0x38038: 
+    checkin time = now-ish 2026/10/24 20:20:01 ( 0.824209 seconds ago )
+38) "osascript" ASN:0x0-0x3b03b: 
+    bundleID=[ NULL ] 
+    bundle path="/usr/bin/osascript"
+    executable path="/usr/bin/osascript"
+    pid = 6394 !signalled type="BackgroundOnly" flavor=2 Version=[ NULL ]  fileType="????" creator="????" Arch=ARM64 
+    checkin time = now-ish 2026/10/24 20:20:01 ( 0.236822 seconds ago )

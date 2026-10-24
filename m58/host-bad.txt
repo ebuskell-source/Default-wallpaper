@@ -1,0 +1,9 @@
+host-error: compile: {
+    NSLocalizedDescription = "Error on line 1: SyntaxError: Unexpected token '}'";
+    NSLocalizedFailureReason = "Error on line 1: SyntaxError: Unexpected token '}'";
+    OSAScriptErrorBriefMessageKey = "Error on line 1: SyntaxError: Unexpected token '}'";
+    OSAScriptErrorMessageKey = "Error on line 1: SyntaxError: Unexpected token '}'";
+    OSAScriptErrorNumberKey = "-2700";
+    OSAScriptErrorRangeKey = "NSRange: {0, 35}";
+}
+rc 3

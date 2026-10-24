@@ -1,0 +1,22 @@
+Problem report: Sound, speakers or microphone (dsm41-ai256-26027968-bdef-4f49-b96f-c57948dada4a-FEE1D7BEE7C1)
+What it's about: Sound, speakers or microphone
+How much it's getting in the way: I can still work around it
+
+What happened:
+Sound stops after a few minutes.
+
+-- Details about this Mac (added by TLA BootPaper) --
+Computer: dsm41-ai256-26027968-bdef-4f49-b96f-c57948dada4a-FEE1D7BEE7C1
+Model: Apple Virtual Machine 1 (VirtualMac2,1)
+Processor: Apple M2 Pro (Virtual)
+Memory: 14 GB
+Serial number: ZW15P49YWY
+System: macOS 26.6.2 (25G83)
+Last restart: Sat Oct 24, 8:17 PM (1 minutes ago)
+Storage: 101 GB free of 335 GB
+TLA BootPaper: 5.8.0 (Experimental)
+Background: Rainy
+Intro video: Match my desktop background
+Reported: Saturday, October 24, 2026 8:19 PM
+
+send enabled: true

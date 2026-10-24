@@ -1,0 +1,2 @@
+args=["one","two words"] bundle=ca.schoolathome.welcomevideo.app
+rc 0
