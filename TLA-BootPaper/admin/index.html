@@ -252,17 +252,25 @@ async function saveAnnouncement() {
     } catch (e) { failed.push('Macs (' + e.message + ')'); }
   }
   if (where.win && (where.win.pv || where.win.box)) {
+    // Changed one piece at a time (the text value, then whether the setting is on), which Intune takes for imported
+    // administrative templates; its "updateDefinitionValues" shortcut fails on them with a bare "An error has occurred".
     try {
-      const w = where.win, bind = `${GRAPH}/deviceManagement/groupPolicyDefinitions('${w.def && w.def.id}')`;
+      const w = where.win, cfg = `/deviceManagement/groupPolicyConfigurations/${w.id}`;
+      const bind = `${GRAPH}/deviceManagement/groupPolicyDefinitions('${w.def && w.def.id}')`;
       const type = w.pv ? w.pv['@odata.type'] : (w.box['@odata.type'] || '').replace(/MultiTextBox$/, 'ValueMultiText').replace(/TextBox$/, 'ValueText');
-      const multi = /MultiText$/.test(type);
-      const value = Object.assign({ '@odata.type': type }, multi ? { values: text ? text.split('\n') : [] } : { value: text },
-                                  w.pv ? { id: w.pv.id } : { 'presentation@odata.bind': `${bind}/presentations('${w.box.id}')` });
-      // Empty: the setting is switched off (no announcement), as the policy's description says.
-      const change = Object.assign({ enabled: !!text }, text ? { presentationValues: [value] } : {});
-      await graph(`/deviceManagement/groupPolicyConfigurations/${w.id}/updateDefinitionValues`, { method: 'POST', body: JSON.stringify(
-        w.dv ? { added: [], deletedIds: [], updated: [Object.assign({ id: w.dv.id }, change)] }
-             : { added: [Object.assign({ 'definition@odata.bind': bind }, change)], updated: [], deletedIds: [] }) });
+      const value = Object.assign({ '@odata.type': type }, /MultiText$/.test(type) ? { values: text ? text.split('\n') : [] } : { value: text });
+      const box = { 'presentation@odata.bind': `${bind}/presentations('${w.box && w.box.id}')` };
+      const on = !!text;   // (empty: the setting is switched off, so no announcement, as the policy's description says)
+      if (!w.dv) {
+        await graph(`${cfg}/definitionValues`, { method: 'POST', body: JSON.stringify({
+          '@odata.type': '#microsoft.graph.groupPolicyDefinitionValue', enabled: on, 'definition@odata.bind': bind,
+          presentationValues: on ? [Object.assign(value, box)] : [] }) });
+      } else {
+        if (on && w.pv) await graph(`${cfg}/definitionValues/${w.dv.id}/presentationValues/${w.pv.id}`, { method: 'PATCH', body: JSON.stringify(value) });
+        else if (on) await graph(`${cfg}/definitionValues/${w.dv.id}/presentationValues`, { method: 'POST', body: JSON.stringify(Object.assign(value, box)) });
+        if (w.dv.enabled !== on) await graph(`${cfg}/definitionValues/${w.dv.id}`, { method: 'PATCH', body: JSON.stringify({
+          '@odata.type': '#microsoft.graph.groupPolicyDefinitionValue', enabled: on }) });
+      }
       done.push('Windows PCs');
       loadAnnouncement();   // (what's there now, with the ids of anything just added)
     } catch (e) { failed.push('Windows PCs (' + e.message + ')'); }
@@ -316,7 +324,11 @@ function tally(rs, label) {        // {value: people}, or {On, Off} for number f
     const v = r.fields[label];
     if (v === undefined || v === '') return;
     if (/^\d+$/.test(v)) { const on = Math.min(+v, r.people); out.On = (out.On || 0) + on; out.Off = (out.Off || 0) + (r.people - on); }
-    else v.split(',').map(s => s.trim()).filter(Boolean).forEach(x => { out[x] = (out[x] || 0) + 1; });
+    // (a list: one value per person, or "<value> x<how many>" for several people with the same one)
+    else v.split(',').map(s => s.trim()).filter(Boolean).forEach(x => {
+      const m = /^(.*\S)\s*[x×](\d+)$/.exec(x), k = m ? m[1] : x;
+      out[k] = (out[k] || 0) + (m ? +m[2] : 1);
+    });
   });
   return Object.entries(out).sort((a, b) => b[1] - a[1]);
 }
