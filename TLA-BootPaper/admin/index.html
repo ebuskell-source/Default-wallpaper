@@ -86,8 +86,8 @@
 <main id="app" class="hidden">
   <h2>Lock screen announcement</h2>
   <div class="card">
-    <p class="muted small" style="margin-top:0">Shown on every Mac's and Windows PC's lock screen, and at the top of TLA BootPaper. Computers pick up a change the next time they check in with Intune (usually within a few hours). Leave it empty for no announcement.</p>
-    <textarea id="announce" maxlength="500" placeholder="For example: The TLA Hub will be closed on Friday from 6 am to 10 pm."></textarea>
+    <p class="muted small" style="margin-top:0">Shown on every Mac's, Windows PC's and Linux computer's lock screen, and at the top of TLA BootPaper (up to 300 characters). Computers Intune manages pick up a change the next time they check in (usually within a few hours); the others within about half an hour. Leave it empty for no announcement.</p>
+    <textarea id="announce" maxlength="300" placeholder="For example: The TLA Hub will be closed on Friday from 6 am to 10 pm."></textarea>
     <div class="row">
       <button class="primary" id="saveAnnounce" disabled>Save for Macs and Windows PCs</button>
       <span class="status" id="announceMsg"></span>
@@ -113,7 +113,8 @@ const STAFF = ['ebuskell@schoolathome.ca', 'rcroft@schoolathome.ca', 'kjohnson@s
                'helpdesk@schoolathome.ca'];   // (Entra enforces who can sign in; this only words the message for anyone else)
 const SCOPES = 'openid profile offline_access https://graph.microsoft.com/User.Read ' +
                'https://graph.microsoft.com/DeviceManagementConfiguration.ReadWrite.All ' +
-               'https://graph.microsoft.com/DeviceManagementManagedDevices.Read.All';
+               'https://graph.microsoft.com/DeviceManagementManagedDevices.Read.All ' +
+               'https://graph.microsoft.com/DeviceManagementScripts.Read.All';   // (the "Who uses what" reports)
 const MAC_POLICY = 'TLA Announcement (Mac lock screen)', WIN_POLICY = 'TLA Announcement (Windows lock screen)';
 const REPORT = 'TLA BootPaper popularity';
 const GRAPH = 'https://graph.microsoft.com/beta';
@@ -203,22 +204,38 @@ async function loadAnnouncement() {
     } else msgs.push('Mac: no policy named "' + MAC_POLICY + '"');
   } catch (e) { msgs.push('Mac: ' + e.message); }
   try {
+    // An imported administrative template (TLA > BootPaper > Lock screen announcement), with a text box. Its setting may
+    // not be switched on yet, or be on without a text value: then saving switches it on and adds the text.
     const win = (await graphAll(`/deviceManagement/groupPolicyConfigurations?$select=id,displayName`)).find(p => p.displayName === WIN_POLICY);
     if (win) {
-      const dvs = await graphAll(`/deviceManagement/groupPolicyConfigurations/${win.id}/definitionValues?$expand=presentationValues`);
-      let dv = null, pv = null;
-      for (const d of dvs) {
-        const t = (d.presentationValues || []).find(p => (p['@odata.type'] || '').endsWith('groupPolicyPresentationValueText') ||
-                                                         (p['@odata.type'] || '').endsWith('groupPolicyPresentationValueMultiText'));
-        if (t) { dv = d; pv = t; break; }
+      const isText = t => /groupPolicyPresentationValue(Text|MultiText)$/.test(t || '');     // a text value
+      const isBox = t => /groupPolicyPresentation(TextBox|MultiTextBox)$/.test(t || '');      // a text box (not a label)
+      const dvs = await graphAll(`/deviceManagement/groupPolicyConfigurations/${win.id}/definitionValues?$expand=definition($select=id,displayName),presentationValues($expand=presentation)`);
+      const dv = dvs.find(d => /announce/i.test((d.definition || {}).displayName || '')) || dvs[0] || null;
+      let pv = dv ? (dv.presentationValues || []).find(p => isText(p['@odata.type'])) : null;
+      if (dv && !pv) {
+        const pvs = await graphAll(`/deviceManagement/groupPolicyConfigurations/${win.id}/definitionValues/${dv.id}/presentationValues?$expand=presentation`);
+        pv = pvs.find(p => isText(p['@odata.type'])) || null;
       }
-      where.win = { id: win.id, dv, pv };
+      // Without a text value yet: the setting's definition and its text box, to add one.
+      let def = dv && dv.definition, box = null;
+      if (!def) def = (await graphAll(`/deviceManagement/groupPolicyDefinitions?$filter=${encodeURIComponent("displayName eq 'Lock screen announcement'")}&$select=id,displayName`))[0] || null;
+      if (!pv && def) box = (await graphAll(`/deviceManagement/groupPolicyDefinitions/${def.id}/presentations`)).find(p => isBox(p['@odata.type'])) || null;
+      where.win = { id: win.id, dv, pv, def, box };
       if (pv && !$('announce').value) $('announce').value = Array.isArray(pv.values) ? pv.values.join('\n') : (pv.value || '');
-      msgs.push(pv ? 'Windows: "' + WIN_POLICY + '"' : 'Windows: found the policy, but not its text');
+      msgs.push(pv || box ? 'Windows: "' + WIN_POLICY + '"'
+        : 'Windows: found the policy, but not its text box (' + (dvs.map(d => (d.definition || {}).displayName || d.id).join(', ') || 'no settings') + ')');
     } else msgs.push('Windows: no policy named "' + WIN_POLICY + '"');
   } catch (e) { msgs.push('Windows: ' + e.message); }
+  // The copy on GitHub, for Linux and the computers Intune doesn't manage (copied from Intune every 10 minutes).
+  try {
+    const raw = await (await fetch('https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/announcement.txt?t=' + Date.now())).text();
+    const copy = raw.split('\n').filter(l => l.trim() && !l.trim().startsWith('#')).join(' ').replace(/\s+/g, ' ').trim();
+    const now = (where.mac && where.mac.value ? where.mac.value.simpleSettingValue.value || '' : $('announce').value).replace(/\s+/g, ' ').trim();
+    msgs.push('Linux and other computers: ' + (copy === now ? 'up to date' : 'copied within about 10 minutes'));
+  } catch (e) { }
   $('announceWhere').textContent = 'Saves to ' + msgs.join(' · ');
-  $('saveAnnounce').disabled = !(where.mac && where.mac.value) && !(where.win && where.win.pv);
+  $('saveAnnounce').disabled = !(where.mac && where.mac.value) && !(where.win && (where.win.pv || where.win.box));
 }
 async function saveAnnouncement() {
   const text = $('announce').value.trim(), done = [], failed = [];
@@ -234,13 +251,20 @@ async function saveAnnouncement() {
       done.push('Macs');
     } catch (e) { failed.push('Macs (' + e.message + ')'); }
   }
-  if (where.win && where.win.pv) {
+  if (where.win && (where.win.pv || where.win.box)) {
     try {
-      const pv = where.win.pv, multi = (pv['@odata.type'] || '').endsWith('MultiText');
-      await graph(`/deviceManagement/groupPolicyConfigurations/${where.win.id}/updateDefinitionValues`, { method: 'POST', body: JSON.stringify({
-        added: [], deletedIds: [], updated: [{ id: where.win.dv.id, enabled: true, presentationValues: [Object.assign(
-          { '@odata.type': pv['@odata.type'], id: pv.id }, multi ? { values: text ? text.split('\n') : [] } : { value: text })] }] }) });
+      const w = where.win, bind = `${GRAPH}/deviceManagement/groupPolicyDefinitions('${w.def && w.def.id}')`;
+      const type = w.pv ? w.pv['@odata.type'] : (w.box['@odata.type'] || '').replace(/MultiTextBox$/, 'ValueMultiText').replace(/TextBox$/, 'ValueText');
+      const multi = /MultiText$/.test(type);
+      const value = Object.assign({ '@odata.type': type }, multi ? { values: text ? text.split('\n') : [] } : { value: text },
+                                  w.pv ? { id: w.pv.id } : { 'presentation@odata.bind': `${bind}/presentations('${w.box.id}')` });
+      // Empty: the setting is switched off (no announcement), as the policy's description says.
+      const change = Object.assign({ enabled: !!text }, text ? { presentationValues: [value] } : {});
+      await graph(`/deviceManagement/groupPolicyConfigurations/${w.id}/updateDefinitionValues`, { method: 'POST', body: JSON.stringify(
+        w.dv ? { added: [], deletedIds: [], updated: [Object.assign({ id: w.dv.id }, change)] }
+             : { added: [Object.assign({ 'definition@odata.bind': bind }, change)], updated: [], deletedIds: [] }) });
       done.push('Windows PCs');
+      loadAnnouncement();   // (what's there now, with the ids of anything just added)
     } catch (e) { failed.push('Windows PCs (' + e.message + ')'); }
   }
   $('announceMsg').className = 'status ' + (failed.length ? 'bad' : 'ok');

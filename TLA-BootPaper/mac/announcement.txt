@@ -1,6 +1,5 @@
-# TLA BootPaper announcement for Macs that Intune doesn't manage (Intune-managed Macs get theirs from Intune).
-# Write the announcement on the line below (up to 300 characters). Delete it to show no announcement.
-# Lines starting with # are notes like these and are never shown.
-# Macs pick up a change within about 15 minutes. It shows in TLA BootPaper and on the login window.
-# Remember this file is public: anyone can read it.
-The TLA Hub will be closed from October 20 at 6 am to October 21 at 10 pm. If you need to do work in Brightspace, make sure you download your work beforehand!
+# TLA BootPaper announcement, for Macs that Intune doesn't manage.
+# Copied here from Intune about every 10 minutes (the "announcement" job in this repository). To change it, use the
+# TLA BootPaper staff page: a change made here is replaced. An empty line below means no announcement.
+# Lines starting with # are notes like these and are never shown. Remember this file is public: anyone can read it.
+Remember to set up your Pacing & Progress Tool if you haven't before!

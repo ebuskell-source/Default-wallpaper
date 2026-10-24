@@ -1,0 +1,5 @@
+# TLA BootPaper announcement, for Windows PCs that Intune doesn't manage.
+# Copied here from Intune about every 10 minutes (the "announcement" job in this repository). To change it, use the
+# TLA BootPaper staff page: a change made here is replaced. An empty line below means no announcement.
+# Lines starting with # are notes like these and are never shown. Remember this file is public: anyone can read it.
+Remember to set up your Pacing & Progress Tool if you haven't before!
