@@ -67,3 +67,21 @@ jobs:
         run: |
           cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "win signin ${{ github.sha }}"
           git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-win-signin
+  oidc:
+    if: contains(github.event.head_commit.message, '[oidc]')
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: claims
+        run: |
+          mkdir -p out
+          t="$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" | python3 -c 'import sys,json; print(json.load(sys.stdin)["value"])')"
+          printf '%s' "$t" | cut -d. -f2 | python3 -c 'import sys,base64,json; s=sys.stdin.read().strip(); s+="="*(-len(s)%4); d=json.loads(base64.urlsafe_b64decode(s)); print(json.dumps({k: d.get(k) for k in ("sub","iss","aud","repository","repository_id","repository_owner_id","ref")}, indent=1))' > out/claims.json
+          cat out/claims.json
+      - name: results
+        if: always()
+        run: |
+          cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "oidc ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-oidc
