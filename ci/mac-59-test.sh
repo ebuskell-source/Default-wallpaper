@@ -11,7 +11,14 @@ sudo installer -pkg ci/test.pkg -target / > "$O/install.txt" 2>&1; echo "install
 defaults write ca.schoolathome.welcomevideo Channel experimental
 defaults write ca.schoolathome.welcomevideo PreferredName Sevilen
 pip3 install --quiet --break-system-packages cryptography > "$O/pip.txt" 2>&1 || pip3 install --quiet cryptography >> "$O/pip.txt" 2>&1
-sleep 15   # (the guard's first run: real sign-in settings and channels, and how this Mac is enrolled)
+# The guard's first run (videos, the real sign-in settings and channels, how this Mac is enrolled) has to be over
+# before the test settings go in, or it puts the real ones back.
+for i in $(seq 1 90); do
+  sudo grep -q 'Release channels:' /Library/Logs/ca.schoolathome.welcomevideo.log 2>/dev/null &&
+    sudo grep -q 'Sign-in settings:' /Library/Logs/ca.schoolathome.welcomevideo.log 2>/dev/null && break
+  sleep 2
+done
+sleep 5; echo "guard's first run over after about $((i * 2 + 5))s" >> "$O/summary.txt"
 
 log "how this Mac is enrolled (macOS, then the guard's note)"
 sudo profiles status -type enrollment >> "$O/summary.txt" 2>&1

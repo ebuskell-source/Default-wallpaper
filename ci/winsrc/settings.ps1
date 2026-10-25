@@ -672,6 +672,18 @@ function Add-WVOwnPicture([string]$File) {
     if ($long -gt 3840) { $f = 3840 / $long; $group.Children.Add([System.Windows.Media.ScaleTransform]::new($f, $f)) }
     if ($turn) { $group.Children.Add([System.Windows.Media.RotateTransform]::new($turn)) }
     if ($group.Children.Count) { $source = [System.Windows.Media.Imaging.TransformedBitmap]::new($source, $group) }
+    # A see-through picture (PNG, GIF and so on) goes onto white, so the clear parts don't come out black.
+    if ("$($source.Format)" -match '^P?(Bgra|Rgba)' -or ($source.Palette -and @($source.Palette.Colors | Where-Object { $_.A -lt 255 }).Count)) {
+        $rect = [System.Windows.Rect]::new(0, 0, $source.PixelWidth, $source.PixelHeight)
+        $visual = [System.Windows.Media.DrawingVisual]::new()
+        $dc = $visual.RenderOpen()
+        $dc.DrawRectangle([System.Windows.Media.Brushes]::White, $null, $rect)
+        $dc.DrawImage($source, $rect)
+        $dc.Close()
+        $flat = [System.Windows.Media.Imaging.RenderTargetBitmap]::new($source.PixelWidth, $source.PixelHeight, 96, 96, [System.Windows.Media.PixelFormats]::Pbgra32)
+        $flat.Render($visual)
+        $source = $flat
+    }
     $source = [System.Windows.Media.Imaging.FormatConvertedBitmap]::new($source, [System.Windows.Media.PixelFormats]::Bgr24, $null, 0)
     if ($source.PixelWidth -lt 200 -or $source.PixelHeight -lt 200) { throw 'That picture is too small.' }
     $encoder = [System.Windows.Media.Imaging.JpegBitmapEncoder]::new()
