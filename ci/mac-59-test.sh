@@ -68,6 +68,8 @@ osascript -e 'tell application "System Events" to get picture of every desktop' 
 sudo grep -h "own" /Library/Logs/ca.schoolathome.welcomevideo.log 2>/dev/null | tail -5 >> "$O/summary.txt"
 sudo zsh -c 'source "$1/common.zsh"; for f in "$1"/Care/*(N.); do print -r -- "${f:t}: $(head -c 300 "$f" | tr "\n" " ")"; done' t "$D" >> "$O/summary.txt" 2>&1
 
+log "filling a tile (debug)"
+for p in "$OWN"/own-*.jpg; do osascript -l JavaScript ci/fill-debug.js "$p" "$O/fill-${p:t:r}.png" >> "$O/summary.txt" 2>&1; done
 log "pictures of the app"
 TB_TEST="$O/app" zsh "$D/settings.zsh" > "$O/app/result.txt" 2>&1; echo "self-test exit $?" >> "$O/summary.txt"
 
