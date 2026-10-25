@@ -40,6 +40,7 @@ c 'print -r -- "release=$WV_RELEASE channel=$(wv_channel) animals=$(for a in $WV
 
 log "the animal videos (downloaded and checked by the guard)"
 sudo zsh "$D/sync-videos.zsh" >> "$O/sync.txt" 2>&1; echo "sync exit $?" >> "$O/summary.txt"
+printf 'stable\t5.8.0\nexperimental\t5.9.0\n' | sudo tee "$D/channels.tsv" > /dev/null   # (sync-videos.zsh fetched the real ones again)
 c 'for v in grumpy-cat grumpy-cat-dark bonjovi bonjovi-dark; do /bin/ls -la "$(wv_video_path $v)"; done' >> "$O/summary.txt" 2>&1
 c 'for b in grumpy-cat bonjovi raccoon; do print -r -- "$b: $(wv_background_path $b) | $(wv_background_path $b dark) | video: $(wv_has_video $b && print yes || print no) | style: $(wv_greeting_style "$(wv_video_path $b)")"; done' >> "$O/summary.txt" 2>&1
 
