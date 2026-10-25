@@ -1,0 +1,22 @@
+Problem report: Sound, speakers or microphone (sat12-bq161-b2dbe8d9-8943-42ec-b294-a2e57633005b-86E0706C02C4)
+What it's about: Sound, speakers or microphone
+How much it's getting in the way: I can still work around it
+
+What happened:
+Sound stops after a few minutes.
+
+-- Details about this Mac (added by TLA BootPaper) --
+Computer: sat12-bq161-b2dbe8d9-8943-42ec-b294-a2e57633005b-86E0706C02C4
+Model: Apple Virtual Machine 1 (VirtualMac2,1)
+Processor: Apple M1 (Virtual)
+Memory: 7 GB
+Serial number: ZW15P49YWY
+System: macOS 26.6.2 (25G83)
+Last restart: Sun Oct 25, 1:37 AM (12 minutes ago)
+Storage: 101 GB free of 335 GB
+TLA BootPaper: 5.9.0 (Experimental)
+Background: Rainy
+Intro video: Match my desktop background
+Reported: Sunday, October 25, 2026 1:49 AM
+
+send enabled: true

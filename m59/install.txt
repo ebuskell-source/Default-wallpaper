@@ -1,0 +1,4 @@
+installer: Package name is TLA BootPaper
+installer: Installing at base path /
+installer: The install was successful.
+installer: 0

@@ -1,0 +1,75 @@
+guard's first run over after about 19s
+== how this Mac is enrolled (macOS, then the guard's note)
+Enrolled via DEP: No
+MDM enrollment: No
+none
+== sign-in, channel, what's out
+in	30	1795484907	hub	Jane Doe	jdoe	
+release=5.9.0 channel=experimental animals=grumpy-cat bonjovi raccoon  own allowed=yes owned by TLA=no
+== the animal videos (downloaded and checked by the guard)
+sync exit 0
+-rw-r--r--  1 root  wheel  5701728 Oct 25 01:48 /Library/Application Support/ca.schoolathome.welcomevideo/Videos/grumpy-cat.mp4
+-rw-r--r--  1 root  wheel  4570734 Oct 25 01:48 /Library/Application Support/ca.schoolathome.welcomevideo/Videos/grumpy-cat-dark.mp4
+-rw-r--r--  1 root  wheel  4036226 Oct 25 01:48 /Library/Application Support/ca.schoolathome.welcomevideo/Videos/bonjovi.mp4
+-rw-r--r--  1 root  wheel  3018226 Oct 25 01:48 /Library/Application Support/ca.schoolathome.welcomevideo/Videos/bonjovi-dark.mp4
+grumpy-cat: /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/grumpy-cat-r2.jpg | /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/grumpy-cat-dark.jpg | video: yes | style: a=line;t0=0.6;d=1.4;e=lin;dy=0.3;c=DCE6F2;sh=0A1220B3:0.12:0:-0.04;x=drop
+bonjovi: /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/bonjovi-r2.jpg | /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/bonjovi-dark.jpg | video: yes | style: a=seq;st=0.06;d=0.6;e=bounce;dy=2.4;f=round;w=bold;c=FFD54A;sh=1B2A6BB3:0.1:0:-0.04
+raccoon: /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/raccoon-r2.jpg | /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/raccoon-dark.jpg | video: no | style: 
+== adding pictures
+sideways-exif6.jpg -> 'own-667ed684' (exit 0)
+portrait-clear.png -> 'own-c806e6e8' (exit 0)
+tiny.png -> 'small' (exit 1)
+not-a-picture.jpg -> '' (exit 1)
+sideways-exif6.jpg -> 'own-667ed684' (exit 0)
+total 144
+drwxr-xr-x  4 runner  staff    128 Oct 25 01:48 .
+drwxr-xr-x  3 runner  staff     96 Oct 25 01:48 ..
+-rw-r--r--  1 runner  staff  17961 Oct 25 01:48 own-667ed684.jpg
+-rw-r--r--  1 runner  staff  52421 Oct 25 01:48 own-c806e6e8.jpg
+/Users/runner/Library/Application Support/TLA BootPaper/Pictures/own-667ed684.jpg
+  pixelWidth: 800
+  pixelHeight: 500
+  format: jpeg
+/Users/runner/Library/Application Support/TLA BootPaper/Pictures/own-c806e6e8.jpg
+  pixelWidth: 900
+  pixelHeight: 1400
+  format: jpeg
+pictures: own-667ed684 own-c806e6e8 
+== using one
+save exit 0
+apply exit 0
+Background=own-667ed684 current=own-667ed684 path=/Users/runner/Library/Application Support/TLA BootPaper/Pictures/own-667ed684.jpg video=/Library/Application Support/ca.schoolathome.welcomevideo/Videos/tla.mp4
+/Users/runner/Library/Application Support/TLA BootPaper/Pictures/own-667ed684.jpg
+== the guard keeps it (and reports 'own', never the picture)
+/Users/runner/Library/Application Support/TLA BootPaper/Pictures/own-667ed684.jpg
+2026-10-25 01:48:18 Downloaded the fall video.
+2026-10-25 01:48:18 Downloaded the sky-city-dark video.
+2026-10-25 01:48:18 Downloaded the pixel video.
+2026-10-25 01:48:18 Downloaded the beach-dark video.
+2026-10-25 01:48:19 Downloaded the screensaver video.
+enrollment: none 
+mdm: enrolled=no 
+unbox: state=ready changed=1792892882 
+== pictures of the app
+self-test exit 0
+== removing the one in use
+remove exit 0
+Background=rainy (saved: rainy) current=rainy pictures: own-c806e6e8 
+/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/rainy-r2.jpg
+== at most 12
+p1 -> 'own-874685b7' (exit 0)
+p2 -> 'own-16492f5a' (exit 0)
+p3 -> 'own-587c2b64' (exit 0)
+p4 -> 'own-9d5fd0da' (exit 0)
+p5 -> 'own-df035f89' (exit 0)
+p6 -> 'own-c0d847eb' (exit 0)
+p7 -> 'own-004be60f' (exit 0)
+p8 -> 'own-9d1ac9f8' (exit 0)
+p9 -> 'own-395a6a52' (exit 0)
+p10 -> 'own-ff6168b2' (exit 0)
+p11 -> 'own-c84adadf' (exit 0)
+p12 -> 'full' (exit 1)
+count:       12
+== on a Mac that's TLA's (the guard's note says dep)
+own allowed=no current=rainy
+add -> '' (exit 1)
