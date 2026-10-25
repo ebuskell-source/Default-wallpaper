@@ -1,0 +1,7 @@
+﻿added sideways-exif6.jpg: own-91bb176f
+added portrait-clear.png: own-73f3c915
+not added tiny.png: That picture is too small.
+not added not-a-picture.jpg: Exception calling "Create" with "3" argument(s): "No imaging component suitable to complete this operation was found."
+added sideways-exif6.jpg: own-91bb176f
+pictures: own-91bb176f, own-73f3c915 allowed: True owned by TLA: False
+Background: own-91bb176f current: own-91bb176f path: C:\Users\runneradmin\AppData\Local\TLA BootPaper\Pictures\own-91bb176f.jpg

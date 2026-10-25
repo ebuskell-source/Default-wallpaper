@@ -1,0 +1,26 @@
+﻿release 5.9.0, experimental 5.9.0, channel experimental
+animals out: grumpy-cat, bonjovi, raccoon
+owned by TLA: False  own pictures allowed: True  own folder: C:\Users\runneradmin\AppData\Local\TLA BootPaper\Pictures
+  AzureAdJoined : NO
+  DomainJoined : NO
+  WorkplaceJoined : NO
+grumpy-cat: D:\a\Default-wallpaper\Default-wallpaper\ci\winsrc\Backgrounds\grumpy-cat-r2.jpg | dark D:\a\Default-wallpaper\Default-wallpaper\ci\winsrc\Backgrounds\grumpy-cat-r2.jpg | thumb D:\a\Default-wallpaper\Default-wallpaper\ci\winsrc\Backgrounds\thumbs\grumpy-cat.jpg | style a=line;t0=0.6;d=1.4;e=lin;dy=0.3;c=DCE6F2;sh=0A1220B3:0.12:0:-0.04;x=drop
+bonjovi: D:\a\Default-wallpaper\Default-wallpaper\ci\winsrc\Backgrounds\bonjovi-r2.jpg | dark D:\a\Default-wallpaper\Default-wallpaper\ci\winsrc\Backgrounds\bonjovi-r2.jpg | thumb D:\a\Default-wallpaper\Default-wallpaper\ci\winsrc\Backgrounds\thumbs\bonjovi.jpg | style a=seq;st=0.06;d=0.6;e=bounce;dy=2.4;f=round;w=bold;c=FFD54A;sh=1B2A6BB3:0.1:0:-0.04
+raccoon: D:\a\Default-wallpaper\Default-wallpaper\ci\winsrc\Backgrounds\raccoon-r2.jpg | dark D:\a\Default-wallpaper\Default-wallpaper\ci\winsrc\Backgrounds\raccoon-r2.jpg | thumb D:\a\Default-wallpaper\Default-wallpaper\ci\winsrc\Backgrounds\thumbs\raccoon.jpg | style 
+settings exit 
+  added sideways-exif6.jpg: own-91bb176f
+  added portrait-clear.png: own-73f3c915
+  not added tiny.png: That picture is too small.
+  not added not-a-picture.jpg: Exception calling "Create" with "3" argument(s): "No imaging component suitable to complete this operation was found."
+  added sideways-exif6.jpg: own-91bb176f
+  pictures: own-91bb176f, own-73f3c915 allowed: True owned by TLA: False
+  Background: own-91bb176f current: own-91bb176f path: C:\Users\runneradmin\AppData\Local\TLA BootPaper\Pictures\own-91bb176f.jpg
+  own-73f3c915.jpg 900x1400 43420 bytes
+  own-91bb176f.jpg 500x800 15827 bytes
+valid as Background: True  as LockBackground: True  a made-up one: False
+reported as: own / bonjovi
+our picture? True
+announcement on own-91bb176f: ok
+announcement on own-73f3c915: ok
+with OwnPictures 0: allowed False, valid False, current microsoft
+done
