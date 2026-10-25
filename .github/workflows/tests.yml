@@ -111,3 +111,29 @@ jobs:
         run: |
           cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "win 5.8.0 ${{ github.sha }}"
           git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-win-58
+  mac59:
+    if: contains(github.event.head_commit.message, '[mac-59]')
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash ci/mac-59-test.sh
+      - name: results
+        if: always()
+        run: |
+          cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "mac 5.9.0 ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-mac-59
+  win59:
+    if: contains(github.event.head_commit.message, '[win-59]')
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - shell: powershell
+        run: ./ci/win-59-test.ps1
+      - name: results
+        if: always()
+        shell: bash
+        run: |
+          cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "win 5.9.0 ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-win-59

@@ -1,3 +1,11 @@
+# [mac] Version 5.9.0
+- [mac] **Animals: three new backgrounds.** Grumpy Cat, Bonjovi and Raccoon, in their own Animals section. Each has a light and a dark picture, and Grumpy Cat and Bonjovi have their own intro videos for both.
+- [mac] **Your own pictures, on your own Mac.** On a Mac that's yours rather than TLA's, add pictures of your own under **Your own pictures** and use them for your desktop and lock screen.
+
+# [win] Version 5.9.0
+- [win] **Animals: three new backgrounds.** Grumpy Cat, Bonjovi and Raccoon, in their own Animals section. Each has a light and a dark picture, and Grumpy Cat and Bonjovi have their own intro videos for both.
+- [win] **Your own pictures, on your own PC.** On a PC that's yours rather than TLA's, add pictures of your own under **Your own pictures** and use them for your desktop and lock screen.
+
 # [mac] Version 5.8.0
 - [mac] **Check for updates**, under Updates in TLA BootPaper: get a new version straight away instead of waiting for it.
 - [mac] **TLA BootPaper is in the Dock while it's open**, like your other apps, with the usual menus, so copying and pasting work in it too.

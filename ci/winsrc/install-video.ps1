@@ -15,6 +15,7 @@ $Defaults = [ordered]@{
     Sound     = 1              # 1 = with sound, 0 = muted
     AllowSkip = 0              # 1 = Esc or a click closes it early, 0 = it can't be closed
     Background = 'microsoft'   # tla | frutiger-aero | liquid-glass | microsoft | rainy | code | bricks | blocks | space | claymation | solarpunk | anime | ocean | beach | penguins
+                               # | grumpy-cat | bonjovi | raccoon (5.9.0)
                                # Everyone gets this on their desktop and lock screen at their next sign-in
                                # unless they pick another preset.
     Video     = 'match'        # match (the video that goes with their background) | tla | frutiger-aero
@@ -29,12 +30,14 @@ $Defaults = [ordered]@{
     CareReminders = 1          # 1 = TLA Care reminders, like when it's time to restart (5.0)
 }
 $UsersCanChange = 1            # 0 = people can see these settings in the app but not change them
+$OwnPictures    = ''           # (5.9.0) their own pictures in the app: '' = on PCs that belong to the person (not joined to
+                               # TLA's Microsoft Entra ID or a domain), 1 = on every PC, 0 = on none
 # -------------------------------------------------------------------------------------------------
 
 $ErrorActionPreference = 'Stop'
 $InstallDir = Join-Path $env:ProgramData 'WelcomeVideo'
 $TaskName   = 'Welcome Video'
-$Version    = '39'   # raise this (and the one in the detection script) whenever you change the video or settings
+$Version    = '41'   # raise this (and the one in the detection script) whenever you change the video or settings
 $Shortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA BootPaper.lnk'
 $ReportShortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Report a problem to TLA.lnk'   # (4.3)
 $CareShortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA Care.lnk'                  # (5.0)
@@ -64,6 +67,7 @@ $thumbDir = Join-Path $bgDir 'thumbs'
 [void][System.IO.Directory]::CreateDirectory($thumbDir)
 # (4.0: and the seasonal themes Fall, Christmas and Easter, and the "Surprise me" tile's picture.)
 foreach ($id in 'microsoft', 'liquid-glass', 'penguins', 'code', 'frutiger-aero', 'solarpunk', 'rainy', 'space', 'ocean', 'beach', 'claymation', 'blocks', 'bricks', 'pixel', 'anime', 'sky-city', 'tla',
+                'grumpy-cat', 'bonjovi', 'raccoon',   # (5.9.0: Animals)
                 'fall', 'christmas', 'easter') {
     $r = if ($id -eq 'anime') { 'r5' } else { 'r2' }
     Copy-WVFile (Join-Path $PSScriptRoot "bg-$id.jpg")    (Join-Path $bgDir "$id-$r.jpg")
@@ -130,7 +134,8 @@ $wideThumbs = Join-Path $InstallDir 'WideThumbs'
 [void][System.IO.Directory]::CreateDirectory($wideDir)
 [void][System.IO.Directory]::CreateDirectory($wideThumbs)
 $wideNames = @{}
-foreach ($id in 'microsoft', 'liquid-glass', 'penguins', 'code', 'frutiger-aero', 'solarpunk', 'rainy', 'space', 'ocean', 'beach', 'claymation', 'blocks', 'bricks', 'pixel', 'anime', 'sky-city', 'tla') {
+foreach ($id in 'microsoft', 'liquid-glass', 'penguins', 'code', 'frutiger-aero', 'solarpunk', 'rainy', 'space', 'ocean', 'beach', 'claymation', 'blocks', 'bricks', 'pixel', 'anime', 'sky-city', 'tla',
+                'grumpy-cat', 'bonjovi', 'raccoon') {
     $r = if ($id -eq 'anime') { 'r5' } else { 'r2' }
     $sources = [ordered]@{ $id = Join-Path $bgDir "$id-$r.jpg" }
     foreach ($mode in 'light', 'dark') {
@@ -167,6 +172,8 @@ foreach ($name in $Defaults.Keys) {
     [Microsoft.Win32.Registry]::SetValue($deviceKey, $name, $Defaults[$name])
 }
 [Microsoft.Win32.Registry]::SetValue($deviceKey, 'UsersCanChange', [int]$UsersCanChange)
+if ("$OwnPictures" -eq '0' -or "$OwnPictures" -eq '1') { [Microsoft.Win32.Registry]::SetValue($deviceKey, 'OwnPictures', "$OwnPictures") }
+else { try { $k = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey('SOFTWARE\WelcomeVideo', $true); if ($k) { $k.DeleteValue('OwnPictures', $false); $k.Close() } } catch { } }
 
 # Start menu entry for the settings app (called "Welcome Video" before 3.1).
 Remove-Item -LiteralPath (Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Welcome Video.lnk') -Force -ErrorAction SilentlyContinue

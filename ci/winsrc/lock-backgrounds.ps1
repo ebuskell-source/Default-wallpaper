@@ -128,6 +128,8 @@ function Update-AnnouncementPictures {
     if ([System.IO.Directory]::Exists($dir)) {
         foreach ($file in [System.IO.Directory]::GetFiles($dir)) {
             if ($keep.Contains($file.ToLowerInvariant())) { continue }
+            # (5.9.0: the copy of someone's own picture with this announcement: made below, for whoever is signed in)
+            if ($code -and [System.IO.Path]::GetFileName($file) -cmatch "^own-[0-9a-f]{8}-$code\.jpg$") { continue }
             try { [System.IO.File]::Delete($file) } catch { }   # an older announcement (Windows has its own copy)
         }
     }
@@ -206,11 +208,27 @@ $userState   = "HKEY_USERS\$sid\Software\WelcomeVideo\State"
 $WV.StateKey = $userState                        # (where "Surprise me" keeps today's pick)
 $WV.ThemeKey = "HKEY_USERS\$sid\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"   # (5.0: their light or dark mode)
 $WV.SignInSid = $sid                             # (5.7.0: whether they've signed in: TLA Classic until they do)
-$id   = Get-WVCurrentBackground                  # only ever an id from the preset (or seasonal) list
+# 5.9.0: their profile folder, where any pictures of their own are (on a PC of their own: Test-WVOwnPicturesAllowed).
+$WV.OwnProfile = "$(Get-WVValue "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList\$sid" 'ProfileImagePath')"
+if (-not $WV.OwnProfile -or -not [System.IO.Directory]::Exists($WV.OwnProfile)) { $WV.OwnProfile = '' }
+$id   = Get-WVCurrentBackground                  # only ever an id from the preset (or seasonal) list, or one of their own pictures
 $path = Get-WVShownPath $id                      # (5.0: the picture for their light or dark mode)
 if (-not $path -or -not [System.IO.File]::Exists($path)) { Write-Log "No preset file for '$id'."; exit 1 }
 $lockId   = Get-WVLockBackground                 # (4.2: the lock screen can have its own)
 $lockPlain = Get-WVShownPath $lockId
+# 5.9.0: one of their own pictures on the lock screen gets the announcement written on too (a copy in announce\, named
+# after it, like the presets' copies above). Only their own JPEG copy, at a sensible size.
+$announceText = Get-WVAnnouncement
+if ((Test-WVOwnId $lockId) -and $announceText -and $lockPlain -and [System.IO.File]::Exists($lockPlain) -and
+    ([System.IO.FileInfo]::new($lockPlain)).Length -lt 40MB) {
+    $ownCopy = [System.IO.Path]::Combine($WV.Dir, 'Backgrounds', 'announce', "$lockId-$(Get-WVAnnouncementCode $announceText).jpg")
+    if (-not [System.IO.File]::Exists($ownCopy)) {
+        try {
+            [void][System.IO.Directory]::CreateDirectory([System.IO.Path]::GetDirectoryName($ownCopy))
+            New-AnnouncementPicture $lockPlain $ownCopy $announceText
+        } catch { Write-Log "Couldn't write the announcement on their own picture: $($_.Exception.Message)" }
+    }
+}
 $lockPath = Get-WVLockScreenPath $lockId
 Set-DefaultLockScreen $lockId                    # (4.1: the lock screen shows their pick)
 $fit      = "$(Get-WVSetting 'WallpaperFit')"     # (4.2: fill, fit or span)
@@ -219,8 +237,8 @@ $fit      = "$(Get-WVSetting 'WallpaperFit')"     # (4.2: fill, fit or span)
 # detection script reads HKLM\SOFTWARE\WelcomeVideo\Popularity). Choices only: no names.
 try {
     $pop = "HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Popularity\$sid"
-    $chosen = if (Test-WVOnDefaultBackground) { 'default' } else { "$(Get-WVSetting 'Background')" }
-    Set-Value $pop 'Background' $id
+    $chosen = if (Test-WVOnDefaultBackground) { 'default' } else { Get-WVReportedBackground "$(Get-WVSetting 'Background')" }
+    Set-Value $pop 'Background' (Get-WVReportedBackground $id)   # (5.9.0: "own" for their own pictures, never a file name)
     Set-Value $pop 'Chosen' $chosen
     Set-Value $pop 'Video' "$(Get-WVSetting 'Video')"
     Set-Value $pop 'VideoOn' "$(Get-WVSetting 'Enabled')"

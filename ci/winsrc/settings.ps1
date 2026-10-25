@@ -177,6 +177,59 @@ $xaml = @'
         </Setter.Value>
       </Setter>
     </Style>
+    <!-- 5.9.0: the remove button on one of their own pictures, and the tile that adds one -->
+    <Style x:Key="RemoveButton" TargetType="Button">
+      <Setter Property="Width" Value="24"/>
+      <Setter Property="Height" Value="24"/>
+      <Setter Property="HorizontalAlignment" Value="Right"/>
+      <Setter Property="VerticalAlignment" Value="Top"/>
+      <Setter Property="Margin" Value="0,5,5,0"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Disc" CornerRadius="12" Background="#B3000000" BorderBrush="#E6FFFFFF" BorderThickness="1.5">
+              <Path Data="M 0,0 L 8,8 M 8,0 L 0,8" Stroke="White" StrokeThickness="1.8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Disc" Property="Background" Value="#E6C42B1C"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="AddTile" TargetType="Button">
+      <Setter Property="Margin" Value="0,0,12,12"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <StackPanel Width="164">
+              <Border x:Name="Frame" BorderThickness="3" BorderBrush="Transparent" CornerRadius="9" Padding="2">
+                <Border x:Name="Box" Width="154" Height="87" CornerRadius="4" Background="#FFFFFF" BorderBrush="#B8C4D6" BorderThickness="1.5">
+                  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="+" FontSize="30" FontWeight="Light" Foreground="#0F6CBD" HorizontalAlignment="Center" Margin="0,-8,0,-4"/>
+                    <TextBlock Text="Add a picture" Foreground="#0F6CBD" HorizontalAlignment="Center"/>
+                  </StackPanel>
+                </Border>
+              </Border>
+              <TextBlock Text=" " Margin="0,5,0,0"/>
+            </StackPanel>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Frame" Property="BorderBrush" Value="#C8C8C8"/>
+                <Setter TargetName="Box" Property="Background" Value="#F2F7FD"/>
+              </Trigger>
+              <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.55"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
   </Window.Resources>
 
   <DockPanel Background="#F3F3F3">
@@ -356,11 +409,25 @@ $xaml = @'
     </StackPanel>
     <TextBlock Text="With an intro video" Foreground="#5F6368" Margin="0,0,0,8"/>
     <WrapPanel x:Name="Tiles" Margin="0,0,-12,0"/>
+    <!-- 5.9.0: the animal backgrounds -->
+    <StackPanel x:Name="AnimalSection" Visibility="Collapsed">
+      <TextBlock Text="Animals" Foreground="#5F6368" Margin="0,6,0,8"/>
+      <WrapPanel x:Name="AnimalTiles" Margin="0,0,-12,0"/>
+    </StackPanel>
     <StackPanel x:Name="MoreSection">
       <TextBlock Text="Intro videos coming soon" Foreground="#5F6368" Margin="0,6,0,2"/>
       <TextBlock Text="Until their own video is ready, these play the TLA Classic video." FontSize="12"
                  Foreground="#8A8A8A" TextWrapping="Wrap" Margin="0,0,0,8"/>
       <WrapPanel x:Name="MoreTiles" Margin="0,0,-12,0"/>
+    </StackPanel>
+    <!-- 5.9.0: their own pictures, on a PC of their own -->
+    <StackPanel x:Name="OwnSection" Visibility="Collapsed">
+      <TextBlock Text="Your own pictures" Foreground="#5F6368" Margin="0,6,0,2"/>
+      <TextBlock FontSize="12" Foreground="#8A8A8A" TextWrapping="Wrap" Margin="0,0,0,8"
+                 Text="This is your own computer, so you can use your own pictures too. They play the TLA Classic video."/>
+      <WrapPanel x:Name="OwnTiles" Margin="0,0,-12,0">
+        <Button x:Name="AddPicture" Style="{StaticResource AddTile}" ToolTip="Add a picture of your own (JPEG, PNG and most other kinds)"/>
+      </WrapPanel>
     </StackPanel>
 
     <!-- 5.0: screensaver, call backgrounds, TLA Care reminders -->
@@ -433,7 +500,8 @@ foreach ($name in 'LockedNote', 'Enabled', 'Options', 'VideoChoice', 'Sound', 'A
                   'ScreensaverNote', 'CallsOn', 'CallsNote', 'OpenPictures', 'RemindersOn', 'UnboxBox', 'PrepareUnbox',
                   'ConnectBox', 'ConnectTla', 'GreetingOn', 'NameHint', 'Scroller', 'StaffLink',
                   'SignInBox', 'SignInButton', 'SignOutText', 'SignOut', 'SignInTitle', 'SignInText', 'SignInError',
-                  'UpdateCheckRow', 'CheckUpdates', 'UpdateCheckText') {
+                  'UpdateCheckRow', 'CheckUpdates', 'UpdateCheckText',
+                  'AnimalSection', 'AnimalTiles', 'OwnSection', 'OwnTiles', 'AddPicture') {
     $c[$name] = $window.FindName($name)
 }
 # The organization's announcement (4.0), if there is one.
@@ -542,11 +610,123 @@ function New-WVTile([string]$Id, [string]$Name) {
 $tiles = [ordered]@{}
 foreach ($id in $WV.Backgrounds.Keys) {
     $tile = New-WVTile $id $WV.Backgrounds[$id]
-    if ($WV.Videos.Contains($id)) { [void]$c.Tiles.Children.Add($tile) } else { [void]$c.MoreTiles.Children.Add($tile) }
+    if ($WV.Animals -contains $id) { [void]$c.AnimalTiles.Children.Add($tile) }   # (5.9.0: their own section)
+    elseif ($WV.Videos.Contains($id)) { [void]$c.Tiles.Children.Add($tile) } else { [void]$c.MoreTiles.Children.Add($tile) }
     $tiles[$id] = $tile
 }
 $tiles['surprise'] = New-WVTile 'surprise' 'Surprise me'
 $tiles['surprise'].ToolTip = 'A different background every day'
+
+# ---- 5.9.0: their own pictures (on a PC of their own) ------------------------------------------------------
+# A tile for each picture in their folder (Get-WVOwnDir), with a button to remove it; "Add a picture" after them.
+$ownTiles = [ordered]@{}
+# The tile for a background id: a preset's, one of their own, or (gone) the organization's.
+function Get-WVTileFor([string]$Id) {
+    if ($ownTiles.Contains($Id)) { return $ownTiles[$Id] }
+    if ($tiles.Contains($Id)) { return $tiles[$Id] }
+    return $tiles["$(Get-WVOrgSetting 'Background')"]
+}
+function New-WVOwnTile([string]$Id) {
+    $tile = New-WVTile $Id 'Your picture'
+    $image = $tile.Content
+    $tile.Content = $null
+    $grid = [System.Windows.Controls.Grid]::new()
+    [void]$grid.Children.Add($image)
+    $remove = [System.Windows.Controls.Button]::new()
+    $remove.Style   = $window.FindResource('RemoveButton')
+    $remove.Tag     = $Id
+    $remove.ToolTip = 'Remove this picture'
+    $remove.Add_Click({ param($s, $e) $e.Handled = $true; Remove-WVOwnPicture "$($s.Tag)" })
+    [void]$grid.Children.Add($remove)
+    $tile.Content = $grid
+    $tile.Add_Checked($onTileChecked)
+    return $tile
+}
+# Keeps the tiles in step with their folder.
+function Sync-WVOwnTiles {
+    $want = @(Get-WVOwnPictures)
+    foreach ($id in @($ownTiles.Keys)) {
+        if ($want -notcontains $id) { [void]$c.OwnTiles.Children.Remove($ownTiles[$id]); $ownTiles.Remove($id) }
+    }
+    foreach ($id in $want) {
+        if ($ownTiles.Contains($id)) { continue }
+        $t = New-WVOwnTile $id
+        $c.OwnTiles.Children.Insert($c.OwnTiles.Children.IndexOf($c.AddPicture), $t)
+        $ownTiles[$id] = $t
+    }
+    $c.AddPicture.Visibility = if ($want.Count -lt $WV.OwnMax) { 'Visible' } else { 'Collapsed' }
+}
+# A JPEG copy of a picture in their folder: the right way up (as the camera saw it), at most 3840 pixels across.
+# Returns its id (own- and the start of the copy's SHA-256). Throws if it isn't a picture Windows can open.
+function Add-WVOwnPicture([string]$File) {
+    $stream = [System.IO.File]::OpenRead($File)
+    try {
+        $decoder = [System.Windows.Media.Imaging.BitmapDecoder]::Create($stream, 'IgnoreColorProfile', 'OnLoad')
+        $frame = $decoder.Frames[0]
+    } finally { $stream.Dispose() }
+    $turn = 0
+    try { $turn = switch ([int]$frame.Metadata.GetQuery('/app1/ifd/{ushort=274}')) { 3 { 180 } 6 { 90 } 8 { 270 } default { 0 } } } catch { }
+    [System.Windows.Media.Imaging.BitmapSource]$source = $frame
+    $long = [Math]::Max($source.PixelWidth, $source.PixelHeight)
+    $group = [System.Windows.Media.TransformGroup]::new()
+    if ($long -gt 3840) { $f = 3840 / $long; $group.Children.Add([System.Windows.Media.ScaleTransform]::new($f, $f)) }
+    if ($turn) { $group.Children.Add([System.Windows.Media.RotateTransform]::new($turn)) }
+    if ($group.Children.Count) { $source = [System.Windows.Media.Imaging.TransformedBitmap]::new($source, $group) }
+    $source = [System.Windows.Media.Imaging.FormatConvertedBitmap]::new($source, [System.Windows.Media.PixelFormats]::Bgr24, $null, 0)
+    if ($source.PixelWidth -lt 200 -or $source.PixelHeight -lt 200) { throw 'That picture is too small.' }
+    $encoder = [System.Windows.Media.Imaging.JpegBitmapEncoder]::new()
+    $encoder.QualityLevel = 90
+    $encoder.Frames.Add([System.Windows.Media.Imaging.BitmapFrame]::Create($source))
+    $ms = [System.IO.MemoryStream]::new()
+    try { $encoder.Save($ms); $bytes = $ms.ToArray() } finally { $ms.Dispose() }
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try { $hash = $sha.ComputeHash($bytes) } finally { $sha.Dispose() }
+    $id = 'own-' + (-join ($hash[0..3] | ForEach-Object { $_.ToString('x2') }))
+    $dir = Get-WVOwnDir
+    [void][System.IO.Directory]::CreateDirectory($dir)
+    $target = [System.IO.Path]::Combine($dir, "$id.jpg")
+    if (-not [System.IO.File]::Exists($target)) { [System.IO.File]::WriteAllBytes($target, $bytes) }
+    return $id
+}
+# Removes one (after asking). If it's in use, they're back on what the organization picked.
+function Remove-WVOwnPicture([string]$Id) {
+    if (-not (Test-WVOwnId $Id)) { return }
+    $answer = [System.Windows.MessageBox]::Show("Remove this picture from TLA BootPaper?`n`nThe picture you added it from stays where it is.",
+                                                'TLA BootPaper', 'OKCancel', 'Question')
+    if ("$answer" -ne 'OK') { return }
+    try {
+        $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Software\WelcomeVideo', $true)
+        if ($key) {
+            if ("$($key.GetValue('Background'))" -eq $Id) { $key.DeleteValue('Background', $false) }
+            if ("$($key.GetValue('LockBackground'))" -eq $Id) { $key.DeleteValue('LockBackground', $false) }
+            if ("$($key.GetValue('TempBackground'))" -eq $Id) { $key.DeleteValue('TempBackground', $false); $key.DeleteValue('TempUntil', $false) }
+            $key.Close()
+        }
+    } catch { }
+    try { [System.IO.File]::Delete((Get-WVOwnPicturePath $Id)) } catch { }
+    Update-Controls
+    try { Start-WVScript 'apply-background.ps1' '-FromApp' } catch { }
+}
+$c.AddPicture.Add_Click({
+    if ((Test-WVSignedOut) -or -not (Test-WVOwnPicturesAllowed)) { return }
+    if (@(Get-WVOwnPictures).Count -ge $WV.OwnMax) {
+        [void][System.Windows.MessageBox]::Show("You can have up to $($WV.OwnMax) pictures. Remove one to add another.", 'TLA BootPaper')
+        return
+    }
+    $dialog = [Microsoft.Win32.OpenFileDialog]::new()
+    $dialog.Title  = 'Add a picture'
+    $dialog.Filter = 'Pictures|*.jpg;*.jpeg;*.png;*.bmp;*.gif;*.tif;*.tiff;*.heic;*.heif;*.webp;*.jxr|All files|*.*'
+    if (-not $dialog.ShowDialog($window)) { return }
+    try { $id = Add-WVOwnPicture $dialog.FileName }
+    catch {
+        $why = if ("$($_.Exception.Message)" -match 'too small') { 'That picture is too small. Try a bigger one.' }
+               else { "That picture couldn't be used. Try a JPEG or PNG picture." }
+        [void][System.Windows.MessageBox]::Show($why, 'TLA BootPaper')
+        return
+    }
+    Update-Controls
+    if ($ownTiles.Contains($id)) { $ownTiles[$id].IsChecked = $true }   # (picks it: saved and put on the desktop)
+})
 [void]$c.Tiles.Children.Add($tiles['surprise'])
 if ($c.MoreTiles.Children.Count -eq 0) { $c.MoreSection.Visibility = 'Collapsed' }
 $season = Get-WVSeason
@@ -686,6 +866,13 @@ function Update-Controls {
     foreach ($id in $lockItems.Keys) {
         $lockItems[$id].Visibility = if ((Test-WVReleased $id) -or $id -eq $orgBackground) { 'Visible' } else { 'Collapsed' }
     }
+    # 5.9.0: the Animals section (once one is out on their channel) and their own pictures (on a PC of their own).
+    $c.AnimalSection.Visibility = if (@($WV.Animals | Where-Object { $tiles[$_].Visibility -eq 'Visible' }).Count) { 'Visible' } else { 'Collapsed' }
+    $ownOk = Test-WVOwnPicturesAllowed
+    $c.OwnSection.Visibility = if ($ownOk) { 'Visible' } else { 'Collapsed' }
+    if ($ownOk) { Sync-WVOwnTiles }
+    foreach ($t in $ownTiles.Values) { $t.IsEnabled = -not ($locked -or $bgLocked) }
+    $c.AddPicture.IsEnabled = -not ($locked -or $bgLocked)
     foreach ($id in $videoItems.Keys) {
         $videoItems[$id].Visibility = if ((Test-WVReleased $id) -or $id -eq "$(Get-WVOrgSetting 'Video')") { 'Visible' } else { 'Collapsed' }
     }
@@ -742,9 +929,9 @@ function Update-Controls {
     $temp       = Get-WVTemporaryBackground
     $seasonalOn = $seasonTile -and $current -eq $season -and -not $temp
     if ($seasonTile) { $seasonTile.IsEnabled = -not ($locked -or $bgLocked) }
-    if ($temp) { $tiles[$temp].IsChecked = $true }
+    if ($temp) { (Get-WVTileFor $temp).IsChecked = $true }
     elseif ($seasonalOn) { $seasonTile.IsChecked = $true }
-    else { $tiles["$(Get-WVSetting 'Background')"].IsChecked = $true }
+    else { (Get-WVTileFor "$(Get-WVSetting 'Background')").IsChecked = $true }
 
     # 4.2: background options, and a note while a pick is just for a while.
     $c.FitChoice.SelectedItem  = $fitItems["$(Get-WVSetting 'WallpaperFit')"]
@@ -756,11 +943,13 @@ function Update-Controls {
         $until = [DateTime]::ParseExact("$(Get-WVSetting 'TempUntil')", 'yyyy-MM-dd', [Globalization.CultureInfo]::InvariantCulture)
         $after = if ($season -and (Test-WVOnDefaultBackground)) { $WV.Seasonal[$season] }
                  elseif ("$(Get-WVSetting 'Background')" -eq 'surprise') { 'Surprise me' }
+                 elseif (Test-WVOwnId "$(Get-WVSetting 'Background')") { 'your picture' }
                  else { $WV.Backgrounds["$(Get-WVSetting 'Background')"] }
+        $tempName = if (Test-WVOwnId $temp) { 'your picture' } else { $WV.Backgrounds[$temp] }   # (5.9.0)
         $c.TempText.Text = if ($until -le (Get-WVToday)) {
-            "You're using $($WV.Backgrounds[$temp]) just for today. Tomorrow it goes back to $after."
+            "You're using $tempName just for today. Tomorrow it goes back to $after."
         } else {
-            "You're using $($WV.Backgrounds[$temp]) until {0:dddd, MMMM d}. Then it goes back to $after." -f $until
+            "You're using $tempName until {0:dddd, MMMM d}. Then it goes back to $after." -f $until
         }
         $c.TempBox.Visibility = 'Visible'
     } else {
@@ -824,24 +1013,23 @@ function Clear-TempBackground {
         if ($key) { $key.DeleteValue('TempBackground', $false); $key.DeleteValue('TempUntil', $false); $key.Close() }
     } catch { }
 }
-foreach ($tile in $tiles.Values) {
-    $tile.Add_Checked({
-        param($s, $e)
-        if ($ui.Loading) { return }
-        $for = "$($c.PickFor.SelectedItem.Tag)"
-        if ($for -ne 'Always' -and "$($s.DataContext)" -ne 'surprise') {
-            # Just for a while: the pick lasts until the end of today, or a week; then what was there comes back.
-            $until = (Get-WVToday).AddDays($(if ($for -eq 'Week') { 6 } else { 0 })).ToString('yyyy-MM-dd')
-            Save-UserSetting 'TempBackground' "$($s.DataContext)"
-            Save-UserSetting 'TempUntil' $until
-        } else {
-            Save-UserSetting 'Background' "$($s.DataContext)"
-            Clear-TempBackground
-        }
-        Update-Controls
-        try { Start-WVScript 'apply-background.ps1' '-FromApp' } catch { }
-    })
+$onTileChecked = {   # (5.9.0: a scriptblock, for their own pictures' tiles too)
+    param($s, $e)
+    if ($ui.Loading) { return }
+    $for = "$($c.PickFor.SelectedItem.Tag)"
+    if ($for -ne 'Always' -and "$($s.DataContext)" -ne 'surprise') {
+        # Just for a while: the pick lasts until the end of today, or a week; then what was there comes back.
+        $until = (Get-WVToday).AddDays($(if ($for -eq 'Week') { 6 } else { 0 })).ToString('yyyy-MM-dd')
+        Save-UserSetting 'TempBackground' "$($s.DataContext)"
+        Save-UserSetting 'TempUntil' $until
+    } else {
+        Save-UserSetting 'Background' "$($s.DataContext)"
+        Clear-TempBackground
+    }
+    Update-Controls
+    try { Start-WVScript 'apply-background.ps1' '-FromApp' } catch { }
 }
+foreach ($tile in $tiles.Values) { $tile.Add_Checked($onTileChecked) }
 # Back to the seasonal theme: forget the background they picked (they're on the default again).
 if ($seasonTile) {
     $seasonTile.Add_Checked({
@@ -1214,6 +1402,25 @@ if ($env:TB_TEST) {
     $c.Scroller.ScrollToBottom(); & $shot 'win5-bottom.png'
     # 5.7.0: the sign-in box as it is, waiting for the browser, and with an error.
     $c.Scroller.ScrollToTop(); & $shot 'win6-signin.png'
+    # 5.9.0: the Animals section, and their own pictures (TB_OWN: pictures to add first, separated by |).
+    if ($env:TB_OWN) {
+        $said = @(foreach ($f in $env:TB_OWN -split '\|') {
+            try { "added $([System.IO.Path]::GetFileName($f)): $(Add-WVOwnPicture $f)" } catch { "not added $([System.IO.Path]::GetFileName($f)): $($_.Exception.Message)" }
+        })
+        Update-Controls
+        $first = @(Get-WVOwnPictures)[0]
+        if ($first -and $ownTiles.Contains($first)) { $ownTiles[$first].IsChecked = $true }
+        Update-Controls
+        $said += "pictures: $(@(Get-WVOwnPictures) -join ', ') allowed: $(Test-WVOwnPicturesAllowed) owned by TLA: $(Test-WVOwnedByTla)"
+        $said += "Background: $(Get-WVSetting 'Background') current: $(Get-WVCurrentBackground) path: $(Get-WVBackgroundPath (Get-WVCurrentBackground))"
+        $said | Out-File ([System.IO.Path]::Combine($env:TB_TEST, 'own.txt')) -Encoding utf8
+    }
+    foreach ($part in @(@($c.AnimalSection, 'win9-animals.png'), @($c.OwnSection, 'win10-own.png'))) {
+        if ($part[0].Visibility -ne 'Visible') { continue }
+        & $pump 200
+        $y = $part[0].TranslatePoint([System.Windows.Point]::new(0, 0), $c.Scroller.Content).Y
+        $c.Scroller.ScrollToVerticalOffset([Math]::Max(0, $y - 240)); & $shot $part[1]
+    }
     if ((Get-WVSignIn).state -ne 'off') {
         $ui.SignIn = @{ Listener = $null }; Update-Controls; & $shot 'win7-signin-waiting.png'
         $ui.SignIn = $null; $ui.SignInMessage = 'That sign-in couldn''t be checked. Try again.'; Update-Controls; & $shot 'win8-signin-error.png'

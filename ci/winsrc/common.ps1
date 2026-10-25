@@ -11,7 +11,7 @@
 
 $WV = @{
     Dir       = $PSScriptRoot
-    Release   = '5.8.0' # this package's version (4.3: what people see also depends on their release channel)
+    Release   = '5.9.0' # this package's version (4.3: what people see also depends on their release channel)
     DeviceKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo'
     UserKey   = 'HKEY_CURRENT_USER\Software\WelcomeVideo'
     StateKey  = 'HKEY_CURRENT_USER\Software\WelcomeVideo\State'
@@ -76,6 +76,9 @@ $WV = @{
         'pixel'         = '8-Bit'
         'anime'         = 'Anime'
         'sky-city'      = 'Sky City'
+        'grumpy-cat'    = 'Grumpy Cat'      # (5.9.0: Animals)
+        'bonjovi'       = 'Bonjovi'
+        'raccoon'       = 'Raccoon'
         'tla'           = 'TLA Classic'
     }
     # The intro videos people can choose. Files: Videos\<id>.mp4. 'match' = the video that goes with
@@ -99,6 +102,8 @@ $WV = @{
         'pixel'                  = '8-Bit'
         'anime'                  = 'Anime'
         'sky-city'               = 'Sky City'
+        'grumpy-cat'             = 'Grumpy Cat'   # (5.9.0)
+        'bonjovi'                = 'Bonjovi'
         'tla'                    = 'TLA Classic'
         'frutiger-aero-v2'       = 'Frutiger Aero (newer version)'
         'liquid-glass-original'  = 'Liquid Glass (original)'
@@ -109,14 +114,16 @@ $WV = @{
     # Experimental first, Stable once it's been tried. People pick their channel in the app (organization
     # default: Stable). Since = the release that brought something; anything not listed has been out for longer.
     Channels  = [ordered]@{ 'stable' = 'Stable'; 'experimental' = 'Experimental' }
-    ChannelReleases = @{ 'stable' = '5.6.0'; 'experimental' = '5.8.0' }   # as marked when this package was made (5.7.x, 5.8.0: Experimental first)
+    ChannelReleases = @{ 'stable' = '5.8.0'; 'experimental' = '5.9.0' }   # as marked when this package was made (5.9.0: Experimental first)
     Since     = @{ 'sky-city' = '4.3'; 'report' = '4.3'
                    'lightdark' = '5.0'; 'screensaver' = '5.0'; 'calls' = '5.0'; 'care' = '5.0'; 'tour' = '5.0'
                    'connect' = '5.2.5'
                    'beach' = '5.4'; 'anime-dark' = '5.4'; 'pixel-dark' = '5.4.5'; 'claymation-dark' = '5.4.5'
                    'greeting-styles' = '5.5.5'; 'greeting-switch' = '5.5.5'
                    'solarpunk-dark' = '5.6.0'; 'sky-city-dark' = '5.6.0'; 'space-light' = '5.6.0'; 'ocean-dark' = '5.6.0'
-                   'signin' = '5.7.0'; 'checkupdates' = '5.8.0' }   # (5.4: '<id>-<mode>' = that background's second intro video)
+                   'signin' = '5.7.0'; 'checkupdates' = '5.8.0'
+                   'grumpy-cat' = '5.9.0'; 'grumpy-cat-dark' = '5.9.0'; 'bonjovi' = '5.9.0'; 'bonjovi-dark' = '5.9.0'; 'raccoon' = '5.9.0'
+                   'ownpictures' = '5.9.0' }   # (5.4: '<id>-<mode>' = that background's second intro video)
     # Light and dark (5.0): every background has a second picture for the other mode (5.1.5: Underwater too). The
     # value is the mode of that extra picture (Backgrounds\<id>-<mode>.jpg, thumbs\<id>-<mode>.jpg); the original
     # is the other one.
@@ -125,6 +132,7 @@ $WV = @{
         'claymation' = 'dark'; 'blocks' = 'dark'; 'bricks' = 'dark'; 'pixel' = 'dark'; 'anime' = 'dark'
         'sky-city' = 'dark'; 'tla' = 'dark'; 'penguins' = 'light'; 'code' = 'light'; 'space' = 'light'
         'ocean' = 'dark'; 'beach' = 'dark'; 'fall' = 'dark'; 'christmas' = 'dark'; 'easter' = 'dark'
+        'grumpy-cat' = 'dark'; 'bonjovi' = 'dark'; 'raccoon' = 'dark'   # (5.9.0)
     }
     LightDarkModes = [ordered]@{
         'Auto'  = 'Match my light or dark mode'
@@ -132,6 +140,9 @@ $WV = @{
         'Dark'  = 'Always dark'
     }
 }
+
+# 5.9.0: the animal backgrounds, in their own section of the app.
+$WV.Animals = 'grumpy-cat', 'bonjovi', 'raccoon'
 
 function Get-WVValue([string]$Key, [string]$Name) {
     try { return [Microsoft.Win32.Registry]::GetValue($Key, $Name, $null) } catch { return $null }
@@ -145,15 +156,15 @@ function Test-WVUsersCanChange {
 function Test-WVValid([string]$Name, $Value) {
     if ($null -eq $Value) { return $false }
     if ($Name -eq 'PlayWhen')   { return $WV.PlayWhenChoices -contains "$Value" }
-    if ($Name -eq 'Background') { return $WV.Backgrounds.Contains("$Value") -or "$Value" -eq 'surprise' }
+    if ($Name -eq 'Background') { return $WV.Backgrounds.Contains("$Value") -or "$Value" -eq 'surprise' -or (Test-WVOwnPictureValid "$Value") }
     if ($Name -eq 'Video')      { return $WV.Videos.Contains("$Value") }
     if ($Name -eq 'QuietMode')  { return $WV.QuietModes.Contains("$Value") }
     if ($Name -eq 'QuietStart' -or $Name -eq 'QuietEnd') { return "$Value" -match '^([01]\d|2[0-3]):(00|15|30|45)$' }
     if ($Name -eq 'QuietDays')  { return @("$Value".Split(',') | Where-Object { $_ -and $WV.Days -notcontains $_ }).Count -eq 0 }
     if ($Name -eq 'PreferredName') { return "$Value".Length -le $WV.NameMax -and "$Value" -notmatch '[\p{C}]' }
     if ($Name -eq 'WallpaperFit')   { return $WV.FitModes.Contains("$Value") }
-    if ($Name -eq 'LockBackground') { return "$Value" -eq 'same' -or $WV.Backgrounds.Contains("$Value") }
-    if ($Name -eq 'TempBackground') { return $WV.Backgrounds.Contains("$Value") }
+    if ($Name -eq 'LockBackground') { return "$Value" -eq 'same' -or $WV.Backgrounds.Contains("$Value") -or (Test-WVOwnPictureValid "$Value") }
+    if ($Name -eq 'TempBackground') { return $WV.Backgrounds.Contains("$Value") -or (Test-WVOwnPictureValid "$Value") }
     if ($Name -eq 'TempUntil')      { return "$Value" -match '^\d{4}-\d{2}-\d{2}$' }
     if ($Name -eq 'Channel')        { return $WV.Channels.Contains("$Value") }
     if ($Name -eq 'LightDark')      { return $WV.LightDarkModes.Contains("$Value") }
@@ -283,6 +294,7 @@ function Get-WVLastPlayed {
 # ---- Desktop backgrounds ---------------------------------------------------------------------
 # -Mode (5.0): 'light' or 'dark' gives that mode's own picture, where the background has one.
 function Get-WVBackgroundPath([string]$Id, [string]$Mode) {
+    if (Test-WVOwnId $Id) { return Get-WVOwnPicturePath $Id }   # (5.9.0: their own picture, the same in both modes)
     if (-not $WV.Backgrounds.Contains($Id) -and -not $WV.Seasonal.Contains($Id)) { return $null }
     if ($Mode -and $WV.Variants[$Id] -eq $Mode) {
         $variant = [System.IO.Path]::Combine($WV.Dir, 'Backgrounds', "$Id-$Mode.jpg")
@@ -296,6 +308,7 @@ function Get-WVBackgroundPath([string]$Id, [string]$Mode) {
 }
 
 function Get-WVThumbnailPath([string]$Id, [string]$Mode) {
+    if (Test-WVOwnId $Id) { return Get-WVOwnPicturePath $Id }   # (5.9.0: the picture itself; the app shows it small)
     if ($Mode -and $WV.Variants[$Id] -eq $Mode) {
         $variant = [System.IO.Path]::Combine($WV.Dir, 'Backgrounds', 'thumbs', "$Id-$Mode.jpg")
         if ([System.IO.File]::Exists($variant)) { return $variant }
@@ -517,6 +530,8 @@ $WV.GreetingStyles = @{
     'pixel'         = 'a=seq;st=0.06;d=0;e=step;f=mono;c=FFD93D;sh=000000:0:0.07:-0.07;x=step'
     'anime'         = 'a=line;t0=0.25;d=0.45;e=back;sc=2.6;r=-6;it=1;w=heavy;gl=FF5FA2:0.12'
     'sky-city'      = 'a=line;d=1.6;e=out;dy=1.2;bob=0.05;bp=3.2;gl=7EC8FFCC:0.25'
+    'grumpy-cat'    = 'a=line;t0=0.6;d=1.4;e=lin;dy=0.3;c=DCE6F2;sh=0A1220B3:0.12:0:-0.04;x=drop'                 # (5.9.0: unimpressed)
+    'bonjovi'       = 'a=seq;st=0.06;d=0.6;e=bounce;dy=2.4;f=round;w=bold;c=FFD54A;sh=1B2A6BB3:0.1:0:-0.04'       # (5.9.0: a puppy's hops)
 }
 # The style for a video file (Videos\<id>[-dark|-light].mp4; the other versions of a video share its style).
 function Get-WVGreetingStyle([string]$VideoPath) {
@@ -569,6 +584,7 @@ $WV.TaskName    = 'TLA BootPaper Backgrounds'
 # True when the path is empty or one of the preset files (i.e. set by this app).
 function Test-WVOurPicture([string]$Path) {
     if (-not $Path) { return $true }
+    if ($Path -match '\\AppData\\Local\\TLA BootPaper\\Pictures\\own-[0-9a-f]{8}\.jpg$') { return $true }   # (5.9.0: their own, added in the app)
     return $Path.StartsWith($WV.Dir.TrimEnd('\') + '\Backgrounds\', [System.StringComparison]::OrdinalIgnoreCase)
 }
 
@@ -695,6 +711,10 @@ $WV.VideoHashes = [ordered]@{
     'penguins-light'         = '2efbec474c16367fabd03797e101d30a87fa92d4ee5ec6a3803433add727685b'   # (5.1.5)
     'beach'                  = 'b5dc48a3c56440d755068a77f6744497f28e85d62e59be51fee6f4fa75412636'   # (5.4)
     'beach-dark'             = '431a1396dc5aecd4b1dd0c58e97b2e95adde9658c2f518ef763d5083ed60731f'   # (5.4)
+    'grumpy-cat'             = '588c9cd54ba08bf1310c02f016967a9485bb240b6375b8844ef8793c92611f0f'   # (5.9.0)
+    'grumpy-cat-dark'        = '4873ba4d689c05140d42c5f639ae137f11b4a3136fb1575a932885e50fc13109'
+    'bonjovi'                = '7013cca50dbb60d823e9b38f43dfe00265d4629ade874766d8505495e08650c5'
+    'bonjovi-dark'           = 'd9e9b6c11379d31d345e50ab0435b9ef08628b6ab40ad2f11b2e9fc63755c7d0'
     'anime-dark'             = '58248a3b40f91c7cc240b3de28c360987515880572f8231e2fc9b0304bbf4560'   # (5.4)
     'pixel-dark'             = 'b0cfb3db78ba60371f7ee92502bbb6fabc6709ff38d5b6bf562f38f59f0896ce'   # (5.4.5)
     'claymation-dark'        = '0970de40e5ff566bc0b354da8200709ae00ce3bf6b8d23dd3072eb3b675cb3bf'   # (5.4.5)
@@ -805,6 +825,57 @@ function Get-WVVideoPath([string]$Id, [switch]$Pick) {
     if ([System.IO.File]::Exists($file)) { return $file }
     return [System.IO.Path]::Combine($dir, 'tla.mp4')   # a background with no video of its own
 }
+
+# ---- Their own pictures (5.9.0) ------------------------------------------------------------------
+# On a computer that belongs to the person rather than to TLA, they can add pictures of their own in the app: the
+# desktop and lock screen then show that (with the organization's announcement, when there is one), and Windows'
+# own Settings stay locked as before. TLA's PCs are joined to TLA's Microsoft Entra ID or to a domain; anything else
+# is someone's own (including a PC connected under Access work or school). The organization can decide instead:
+# HKLM\SOFTWARE\WelcomeVideo\OwnPictures = 1 (every PC) or 0 (none). Out on Experimental first.
+# Each picture: <their profile>\AppData\Local\TLA BootPaper\Pictures\own-<8 hex>.jpg, a JPEG copy the app makes when
+# it's added (the id is the start of that copy's SHA-256). At most OwnMax of them.
+$WV.OwnMax = 12
+function Test-WVOwnedByTla {
+    try {
+        $base = [Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine', 'Registry64')
+        $k = $base.OpenSubKey('SYSTEM\CurrentControlSet\Control\CloudDomainJoin\JoinInfo')
+        if ($k) { try { if ($k.SubKeyCount -gt 0) { return $true } } finally { $k.Close() } }   # (joined to Entra ID)
+        $k = $base.OpenSubKey('SYSTEM\CurrentControlSet\Services\Netlogon\Parameters')
+        if ($k) { try { if ("$($k.GetValue('DynamicSiteName'))$($k.GetValue('SiteName'))") { return $true } } finally { $k.Close() } }   # (a domain)
+    } catch { return $true }   # (can't tell: TLA's rules)
+    return $false
+}
+function Test-WVOwnPicturesAllowed {
+    if (-not (Test-WVReleased 'ownpictures') -or -not (Test-WVUsersCanChange)) { return $false }
+    switch ("$(Get-WVValue $WV.DeviceKey 'OwnPictures')") {
+        '1' { return $true }
+        '0' { return $false }
+    }
+    return -not (Test-WVOwnedByTla)
+}
+function Test-WVOwnId([string]$Id) { return $Id -cmatch '^own-[0-9a-f]{8}$' }
+# Their folder. (OwnProfile: their profile folder, for the SYSTEM tasks, which work for whoever is signed in.)
+function Get-WVOwnDir {
+    $base = if ($WV.OwnProfile) { [System.IO.Path]::Combine($WV.OwnProfile, 'AppData', 'Local') } else { [Environment]::GetFolderPath('LocalApplicationData') }
+    return [System.IO.Path]::Combine($base, 'TLA BootPaper', 'Pictures')
+}
+function Get-WVOwnPicturePath([string]$Id) {
+    if (-not (Test-WVOwnId $Id)) { return $null }
+    return [System.IO.Path]::Combine((Get-WVOwnDir), "$Id.jpg")
+}
+function Test-WVOwnPictureValid([string]$Id) {
+    return (Test-WVOwnId $Id) -and (Test-WVOwnPicturesAllowed) -and [System.IO.File]::Exists((Get-WVOwnPicturePath $Id))
+}
+# Their pictures' ids, oldest first.
+function Get-WVOwnPictures {
+    $dir = Get-WVOwnDir
+    if (-not [System.IO.Directory]::Exists($dir)) { return @() }
+    $files = @([System.IO.Directory]::GetFiles($dir, 'own-*.jpg') | ForEach-Object { [System.IO.FileInfo]::new($_) } |
+               Where-Object { Test-WVOwnId $_.BaseName } | Sort-Object CreationTimeUtc)
+    return @($files | ForEach-Object { $_.BaseName })
+}
+# What a popularity report says for a background: never the name of someone's own picture.
+function Get-WVReportedBackground([string]$Id) { if (Test-WVOwnId $Id) { return 'own' } return $Id }
 
 # ---- Connect to TLA (5.2.5) ----------------------------------------------------------------------
 # A computer Intune doesn't manage misses what TLA sends through it (the TLA new tab page in Chrome and Edge, apps,
