@@ -1,0 +1,116 @@
+
+== 0-before (21:29:36)
+  484     1 S      01:23 /System/Library/PrivateFrameworks/ContinuousDialogManagerService.framework/assistant_cdmd
+-- lsappinfo:
+-- front: "LSDisplayName"="Finder"
+-- windows: 
+-- saved state: 
+
+== 1-opened (21:29:49)
+  484     1 S      01:36 /System/Library/PrivateFrameworks/ContinuousDialogManagerService.framework/assistant_cdmd
+ 2457     1 S      00:13 /bin/zsh /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+ 2470  2457 S      00:12 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video --jxa /Library/Application Support/ca.schoolathome.welcomevideo/settings-app.js /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+-- lsappinfo:
+30) "TLA BootPaper" ASN:0x0-0x2a02a: (in front) 
+    bundleID="ca.schoolathome.welcomevideo.app"
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 2470 type="Foreground" flavor=3 Version="5.9.5" fileType="APPL" creator="????" Arch=ARM64 
+    bundleID="com.apple.wallpaper.agent"
+    executable path="/System/Library/CoreServices/WallpaperAgent.app/Contents/MacOS/WallpaperAgent"
+    pid = 3220 type="UIElement" flavor=3 Version="245.6" fileType="APPL" Arch=ARM64 sandboxed 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen true alpha 1 {"X":122,"Height":662,"Y":34,"Width":780} TLA BootPaper
+-- saved state: 
+-- sampled 2470
+
+== 2-calculator-in-front (21:29:55)
+  484     1 S      01:42 /System/Library/PrivateFrameworks/ContinuousDialogManagerService.framework/assistant_cdmd
+ 2457     1 S      00:19 /bin/zsh /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+ 2470  2457 S      00:18 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video --jxa /Library/Application Support/ca.schoolathome.welcomevideo/settings-app.js /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+-- lsappinfo:
+30) "TLA BootPaper" ASN:0x0-0x2a02a: 
+    bundleID="ca.schoolathome.welcomevideo.app"
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 2470 type="Foreground" flavor=3 Version="5.9.5" fileType="APPL" creator="????" Arch=ARM64 
+    bundleID="com.apple.wallpaper.agent"
+    executable path="/System/Library/CoreServices/WallpaperAgent.app/Contents/MacOS/WallpaperAgent"
+    pid = 3220 type="UIElement" flavor=3 Version="245.6" fileType="APPL" Arch=ARM64 sandboxed 
+-- front: "LSDisplayName"="Calculator"
+-- windows: TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen true alpha 1 {"X":122,"Height":662,"Y":34,"Width":780} TLA BootPaper
+-- saved state: 
+-- sampled 2470
+
+== 3-opened-again (21:30:03)
+  484     1 S      01:50 /System/Library/PrivateFrameworks/ContinuousDialogManagerService.framework/assistant_cdmd
+ 2457     1 S      00:27 /bin/zsh /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+ 2470  2457 S      00:26 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video --jxa /Library/Application Support/ca.schoolathome.welcomevideo/settings-app.js /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+-- lsappinfo:
+30) "TLA BootPaper" ASN:0x0-0x2a02a: (in front) 
+    bundleID="ca.schoolathome.welcomevideo.app"
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 2470 type="Foreground" flavor=3 Version="5.9.5" fileType="APPL" creator="????" Arch=ARM64 
+    bundleID="com.apple.wallpaper.agent"
+    executable path="/System/Library/CoreServices/WallpaperAgent.app/Contents/MacOS/WallpaperAgent"
+    pid = 3220 type="UIElement" flavor=3 Version="245.6" fileType="APPL" Arch=ARM64 sandboxed 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 2470 layer 0 onscreen true alpha 1 {"X":122,"Height":662,"Y":34,"Width":780} TLA BootPaper
+-- saved state: 
+-- sampled 2470
+-- closing with Cmd-W:
+
+== 4-closed (21:30:15)
+  484     1 S      02:02 /System/Library/PrivateFrameworks/ContinuousDialogManagerService.framework/assistant_cdmd
+-- lsappinfo:
+-- front: "LSDisplayName"="Calculator"
+-- windows: 
+-- saved state: 
+
+== 5-opened-after-close (21:30:27)
+  484     1 S      02:14 /System/Library/PrivateFrameworks/ContinuousDialogManagerService.framework/assistant_cdmd
+ 4031     1 S      00:12 /bin/zsh /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+ 4045  4031 S      00:12 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video --jxa /Library/Application Support/ca.schoolathome.welcomevideo/settings-app.js /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+-- lsappinfo:
+37) "TLA BootPaper" ASN:0x0-0x3d03d: (in front) 
+    bundleID="ca.schoolathome.welcomevideo.app"
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 4045 type="Foreground" flavor=3 Version="5.9.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":122,"Height":667,"Y":34,"Width":780} TLA BootPaper | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024} 
+-- saved state: 
+-- sampled 4045
+-- quit app:
+0:24: execution error: TLA BootPaper got an error: AppleEvent timed out. (-1712)
+
+== 6-quit (21:32:35)
+  484     1 S      04:22 /System/Library/PrivateFrameworks/ContinuousDialogManagerService.framework/assistant_cdmd
+ 4031     1 S      02:20 /bin/zsh /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+ 4045  4031 S      02:20 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video --jxa /Library/Application Support/ca.schoolathome.welcomevideo/settings-app.js /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+-- lsappinfo:
+35) "TLA BootPaper" ASN:0x0-0x3d03d: (in front) 
+    bundleID="ca.schoolathome.welcomevideo.app"
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 4045 type="Foreground" flavor=3 Version="5.9.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":122,"Height":667,"Y":34,"Width":780} TLA BootPaper | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024} 
+-- saved state: 
+-- sampled 4045
+
+== 7-opened-after-quit (21:32:49)
+  484     1 S      04:36 /System/Library/PrivateFrameworks/ContinuousDialogManagerService.framework/assistant_cdmd
+ 4031     1 S      02:34 /bin/zsh /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+ 4045  4031 S      02:34 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video --jxa /Library/Application Support/ca.schoolathome.welcomevideo/settings-app.js /Library/Application Support/ca.schoolathome.welcomevideo/settings.zsh
+-- lsappinfo:
+35) "TLA BootPaper" ASN:0x0-0x3d03d: (in front) 
+    bundleID="ca.schoolathome.welcomevideo.app"
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 4045 type="Foreground" flavor=3 Version="5.9.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":122,"Height":667,"Y":34,"Width":780} TLA BootPaper | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024}  | TLA BootPaper pid 4045 layer 0 onscreen undefined alpha 1 {"X":0,"Height":30,"Y":0,"Width":1024} 
+-- saved state: 
+-- sampled 4045
