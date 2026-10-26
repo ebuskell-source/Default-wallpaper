@@ -22,26 +22,22 @@ snap() {
   screencapture -x -t jpg "$O/$1.jpg"
 }
 quit_app() { echo "-- quit ($1):" >> "$O/summary.txt"; osascript -e 'with timeout of 20 seconds' -e 'quit app "TLA BootPaper"' -e 'end timeout' >> "$O/summary.txt" 2>&1; echo "   exit $?" >> "$O/summary.txt"; }
-open -a "$A"; sleep 10; snap 01-opened
+touch /tmp/tb-debug
+key() { osascript -e 'tell application "System Events" to tell process "TLA BootPaper" to set frontmost to true' -e 'delay 1' -e "tell application \"System Events\" to $1" >> "$O/summary.txt" 2>&1; }
+open -a "$A"; sleep 8; snap 01-opened
 quit_app "the first time"; sleep 4; snap 02-quit
-open -a "$A"; sleep 10; snap 03-opened-after-quit
-open -a Calculator; sleep 4; open -a "$A"; sleep 5; snap 04-opened-again-over-calculator
-echo "-- Cmd-W:" >> "$O/summary.txt"
-osascript -e 'tell application "System Events" to tell process "TLA BootPaper" to set frontmost to true' -e 'delay 1' \
-          -e 'tell application "System Events" to keystroke "w" using command down' >> "$O/summary.txt" 2>&1
-sleep 6; snap 05-closed
-open -a "$A"; sleep 10; snap 06-opened-after-close
-echo "-- Cmd-M, then opening it again:" >> "$O/summary.txt"
-osascript -e 'tell application "System Events" to keystroke "m" using command down' >> "$O/summary.txt" 2>&1; sleep 3; snap 07-minimized
-open -a "$A"; sleep 5; snap 08-opened-while-minimized
-quit_app "again"; sleep 4; snap 09-quit-again
-open -a "$A"; sleep 10; snap 10-opened-after-second-quit
-quit_app "to finish"; sleep 3
-# The sign-in reminder's way in (its own copy, then opening the app over it)
-zsh "$D/settings.zsh" --signin-now > /dev/null 2>&1 &
-sleep 10; snap 11-signin-now
-open -a "$A"; sleep 5; snap 12-opened-over-signin-now
-quit_app "signin-now"; sleep 3; pkill -f "welcome-video --jxa"; snap 13-end
+open -a "$A"; sleep 8; snap 03-opened-after-quit
+echo "-- Esc (the Close button):" >> "$O/summary.txt"; key 'key code 53'; sleep 5; snap 04-closed-with-esc
+open -a "$A"; sleep 8; snap 05-opened-after-esc
+echo "-- Cmd-W:" >> "$O/summary.txt"; key 'keystroke "w" using command down'; sleep 5; snap 06-closed-with-cmd-w
+open -a "$A"; sleep 8; snap 07-opened-after-cmd-w
+open -a Calculator; sleep 3; open -a "$A"; sleep 5; snap 08-opened-again-over-calculator
+echo "-- Cmd-M:" >> "$O/summary.txt"; key 'keystroke "m" using command down'; sleep 3; open -a "$A"; sleep 5; snap 09-opened-while-minimized
+quit_app "again"; sleep 4; snap 10-quit-again
+open -a Calculator; sleep 3; open -a "$A"; sleep 8; snap 11-fresh-over-calculator
+quit_app "to finish"; sleep 3; snap 12-end
+{ echo; echo "== debug log"; cat /tmp/tb-debug.log; } >> "$O/summary.txt" 2>&1
+rm -f /tmp/tb-debug
 # Pictures: the app's themed sections, and the tour
 TB_TEST="$O/app" zsh "$D/settings.zsh" > "$O/app/result.txt" 2>&1; echo "self-test exit $?" >> "$O/summary.txt"
 TB_TEST="$O/tour" /usr/bin/osascript -l JavaScript "$D/tour-app.js" "$D/settings.zsh" app > "$O/tour/result.txt" 2>&1
