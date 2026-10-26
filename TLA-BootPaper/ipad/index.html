@@ -112,6 +112,7 @@ const PAGES = [
   { id: 'lock', h: 'Keep your iPad to yourself',
     p: ['Your passcode keeps your schoolwork safe. Don’t share it with anyone except your family.',
         'Stepping away? Press the top button to lock your iPad.'] },
+  { id: 'unlock' },   // (filled in by unlockPage(): Face ID or Touch ID, for this iPad)
   { id: 'help', h: 'Help is one tap away',
     p: ['Something not working on your iPad? Email the TLA helpdesk and say what’s wrong. They’ll help you sort it out.'],
     extra: '<a class="link" href="mailto:' + HELPDESK + '?subject=' + encodeURIComponent('Help with my iPad') + '">Email ' + HELPDESK + '</a>' },
@@ -120,6 +121,30 @@ const PAGES = [
         'To get back to your Home Screen, swipe up from the bottom edge.'],
     extra: '<a class="link" href="' + HUB + '" target="_blank" rel="noopener">Open the TLA Hub</a>' },
 ];
+// Face ID or Touch ID: which one this iPad has, from its screen's size in points (a web page can't ask for the model).
+// iPads with a Home button have Touch ID in it; the iPad Air, iPad mini and iPad without one have it in the top button;
+// the iPad Pros without one have Face ID. One size is both a 12.9-inch iPad Pro (Face ID) and a 13-inch iPad Air (Touch
+// ID): only the newer of those Pros has an HDR screen, so the rest of them get a page that names both.
+function unlockKind() {
+  const a = Math.min(screen.width, screen.height), b = Math.max(screen.width, screen.height), size = a + 'x' + b;
+  if (['768x1024', '810x1080', '834x1112'].includes(size)) return 'home';
+  if (['744x1133', '820x1180'].includes(size)) return 'top';
+  if (['834x1194', '834x1210', '1032x1376'].includes(size)) return 'face';
+  if (size === '1024x1366' && matchMedia('(dynamic-range: high)').matches) return 'face';
+  return 'either';
+}
+function unlockPage(kind) {
+  if (kind === 'face') return { h: 'Unlock with Face ID',
+    p: ['Your iPad can unlock just by seeing your face. It’s faster than typing your passcode every time.',
+        'To set it up, open Settings, tap Face ID & Passcode, then Set Up Face ID.'] };
+  if (kind === 'top' || kind === 'home') return { h: 'Unlock with your fingerprint',
+    p: ['Your iPad has Touch ID in its ' + (kind === 'top' ? 'top button' : 'Home button') + ': rest your finger on it to unlock. It’s faster than typing your passcode every time.',
+        'To set it up, open Settings, tap Touch ID & Passcode, then Add a Fingerprint.'] };
+  return { h: 'Unlock with Face ID or Touch ID',
+    p: ['Your iPad can unlock with your face or your fingerprint. It’s faster than typing your passcode every time.',
+        'To set it up, open Settings, then tap Face ID & Passcode or Touch ID & Passcode.'] };
+}
+Object.assign(PAGES.find(pg => pg.id === 'unlock'), unlockPage(unlockKind()));
 let at = 0;
 const $ = id => document.getElementById(id);
 function show() {
