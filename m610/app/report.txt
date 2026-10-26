@@ -1,0 +1,22 @@
+Problem report: Sound, speakers or microphone (sjc22-be110-3fee0205-9790-470e-b14b-c887982e3366-06FFA64CACAE)
+What it's about: Sound, speakers or microphone
+How much it's getting in the way: I can still work around it
+
+What happened:
+Sound stops after a few minutes.
+
+-- Details about this Mac (added by TLA BootPaper) --
+Computer: sjc22-be110-3fee0205-9790-470e-b14b-c887982e3366-06FFA64CACAE
+Model: Apple Virtual Machine 1 (VirtualMac2,1)
+Processor: Apple M1 (Virtual)
+Memory: 7 GB
+Serial number: ZW15P49YWY
+System: macOS 26.6.2 (25G83)
+Last restart: Mon Oct 26, 10:49 PM (3 minutes ago)
+Storage: 100 GB free of 335 GB
+TLA BootPaper: 6.1.0 (Experimental)
+Background: TLA Classic
+Intro video: TLA Classic
+Reported: Monday, October 26, 2026 10:53 PM
+
+send enabled: true

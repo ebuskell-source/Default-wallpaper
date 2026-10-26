@@ -1,0 +1,7 @@
+10:54 PM  New versions install by themselves. To get one straight away, check now.  [bar hidden]
+10:54 PM  Checking… This can take up to a minute.  [bar hidden]
+10:54 PM  Downloading version 6.0.5… 0% You can keep using your Mac.  [bar 0%]
+10:54 PM  Installing version 6.0.5… 0% You can keep using your Mac.  [bar 0%]
+10:54 PM  Installing version 6.0.5… 90% You can keep using your Mac.  [bar 90%]
+10:55 PM  Updated to version 6.0.5 at 10:55 PM. Restart TLA BootPaper to use it.  [bar hidden, Restart button]
+button enabled: true  follow: null

@@ -1,0 +1,60 @@
+2026-10-26 22:52:37 Installed Aerial 4.1.7.
+2026-10-26 22:52:37 Screensaver: waiting: the screensaver video (it downloads with the intro videos)
+2026-10-26 22:52:37 Done. Takes effect at each person's next login.
+2026-10-26 22:52:37 Downloaded the frutiger-aero video.
+2026-10-26 22:52:39 Downloaded the space video.
+2026-10-26 22:52:39 Downloaded the ocean-dark video.
+2026-10-26 22:52:40 Downloaded the solarpunk-dark video.
+2026-10-26 22:52:41 Downloaded the claymation video.
+2026-10-26 22:52:42 Downloaded the microsoft-dark video.
+2026-10-26 22:52:44 Downloaded the bricks-dark video.
+2026-10-26 22:52:46 Downloaded the blocks video.
+2026-10-26 22:52:47 Downloaded the frutiger-aero-v2 video.
+2026-10-26 22:52:50 Downloaded the liquid-glass-dark video.
+2026-10-26 22:52:51 Downloaded the microsoft video.
+2026-10-26 22:52:52 Downloaded the penguins-light video.
+2026-10-26 22:52:55 Downloaded the bricks video.
+2026-10-26 22:52:56 Downloaded the microsoft-original video.
+2026-10-26 22:52:58 Downloaded the pixel-dark video.
+2026-10-26 22:52:59 Downloaded the claymation-dark video.
+2026-10-26 22:53:02 Downloaded the code-light video.
+2026-10-26 22:53:03 Downloaded the bonjovi-dark video.
+2026-10-26 22:53:03 Downloaded the rainy video.
+2026-10-26 22:53:04 Downloaded the solarpunk video.
+2026-10-26 22:53:05 Downloaded the frutiger-aero-dark video.
+2026-10-26 22:53:05 Downloaded the beach video.
+2026-10-26 22:53:06 Downloaded the anime-dark video.
+2026-10-26 22:53:06 Downloaded the tla video.
+2026-10-26 22:53:07 Downloaded the grumpy-cat-dark video.
+2026-10-26 22:53:07 Downloaded the easter video.
+2026-10-26 22:53:07 Downloaded the space-light video.
+2026-10-26 22:53:08 Downloaded the sky-city video.
+2026-10-26 22:53:08 Downloaded the code video.
+2026-10-26 22:53:09 Downloaded the liquid-glass-original video.
+2026-10-26 22:53:09 Downloaded the anime video.
+2026-10-26 22:53:10 Downloaded the christmas video.
+2026-10-26 22:53:10 Downloaded the grumpy-cat video.
+2026-10-26 22:53:11 Downloaded the liquid-glass video.
+2026-10-26 22:53:11 Downloaded the penguins video.
+2026-10-26 22:53:12 Downloaded the blocks-dark video.
+2026-10-26 22:53:13 Downloaded the ocean video.
+2026-10-26 22:53:14 Downloaded the bonjovi video.
+2026-10-26 22:53:14 Downloaded the fall video.
+2026-10-26 22:53:15 Downloaded the sky-city-dark video.
+2026-10-26 22:53:15 Downloaded the pixel video.
+2026-10-26 22:53:16 Downloaded the beach-dark video.
+2026-10-26 22:53:18 Downloaded the screensaver video.
+2026-10-26 22:53:18 Sign-in settings: settings required, 2 keys
+2026-10-26 22:53:19 Put the TLA video in Aerial's My Videos.
+2026-10-26 22:53:19 Set up Aerial to play the TLA video.
+2026-10-26 22:53:19 Screensaver: ready
+2026-10-26 22:54:53 Check for updates (asked for by runner): 6.0.5 is out; started the update.
+2026-10-26 22:54:53 TLA BootPaper 6.0.5 is out (this Mac has 6.0.0): downloading it.
+installer: Package name is TLA BootPaper
+installer: Upgrading at base path /
+2026-10-26 22:54:58 ---- TLA BootPaper 6.0.5 package installed ----
+2026-10-26 22:54:58 Release channels: stable 6.0.5, experimental 6.0.5.
+2026-10-26 22:54:58 Sign-in settings: settings required, 2 keys
+2026-10-26 22:55:04 Done. Takes effect at each person's next login.
+installer: The upgrade was successful.
+2026-10-26 22:55:05 Updated to TLA BootPaper 6.0.5.

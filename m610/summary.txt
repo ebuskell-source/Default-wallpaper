@@ -1,0 +1,75 @@
+== pictures: the app and the tour
+self-test exit 0
+  Match my desktop background (Rainy) - default
+  Surprise me (a different one each time)
+----
+Defaults
+  Microsoft
+  Microsoft (original)
+  Liquid Glass
+  Liquid Glass (original)
+  Penguins
+  TLA Classic
+----
+Nature
+  Beach
+  Underwater
+  Rainy
+  Space
+----
+Sci-Fi
+  Frutiger Aero
+  Frutiger Aero (newer version)
+  Code
+  Sky City
+  Solarpunk
+----
+Stylized
+  Anime
+  Claymation
+  8-Bit
+  Blocks
+  Bricks
+----
+Animals
+  Grumpy Cat
+  Bonjovimicrosoft [defaults]: Microsoft: an intro video for light mode and one for dark mode
+liquid-glass [defaults]: Liquid Glass: an intro video for light mode and one for dark mode
+penguins [defaults]: Penguins: an intro video for light mode and one for dark mode
+tla [defaults]: TLA Classic: one intro video for light and dark mode
+beach [nature]: Beach: an intro video for light mode and one for dark mode
+ocean [nature]: Underwater: an intro video for light mode and one for dark mode
+rainy [nature]: Rainy: one intro video for light and dark mode
+space [nature]: Space: an intro video for light mode and one for dark mode
+frutiger-aero [scifi]: Frutiger Aero: an intro video for light mode and one for dark mode
+code [scifi]: Code: an intro video for light mode and one for dark mode
+sky-city [scifi]: Sky City: an intro video for light mode and one for dark mode
+solarpunk [scifi]: Solarpunk: an intro video for light mode and one for dark mode
+anime [stylized]: Anime: an intro video for light mode and one for dark mode
+claymation [stylized]: Claymation: an intro video for light mode and one for dark mode
+pixel [stylized]: 8-Bit: an intro video for light mode and one for dark mode
+blocks [stylized]: Blocks: an intro video for light mode and one for dark mode
+bricks [stylized]: Bricks: an intro video for light mode and one for dark mode
+grumpy-cat [animals]: Grumpy Cat: an intro video for light mode and one for dark mode
+bonjovi [animals]: Bonjovi: an intro video for light mode and one for dark mode
+raccoon [animals]: Jimothy: its own intro video is coming soon. Until then, it plays the TLA Classic video.
+experimental [experimental]: Battle of the Beta Testers: for our beta testers on the Experimental channel. It plays the TLA Classic video.
+surprise [surprise]: A different background every day== a window left open while a newer version is installed
+166:255: execution error: System Events got an error: Can’t make button 1 of entire contents of window 1 of process "TLA BootPaper" whose name = "Restart TLA BootPaper" into type specifier. (-1700)
+before: 8307 
+after restart: 8307 
+== Check for updates, start to finish (made to look like 6.0.0)
+self-test exit 0
+10:54 PM  New versions install by themselves. To get one straight away, check now.  [bar hidden]
+10:54 PM  Checking… This can take up to a minute.  [bar hidden]
+10:54 PM  Downloading version 6.0.5… 0% You can keep using your Mac.  [bar 0%]
+10:54 PM  Installing version 6.0.5… 0% You can keep using your Mac.  [bar 0%]
+10:54 PM  Installing version 6.0.5… 90% You can keep using your Mac.  [bar 90%]
+10:55 PM  Updated to version 6.0.5 at 10:55 PM. Restart TLA BootPaper to use it.  [bar hidden, Restart button]
+button enabled: true  follow: nullWV_RELEASE="6.0.5"                     # this package's version (4.3: what people see also depends on their release channel)
+Care/update: done	6.0.5	1793055305		
+2026-10-26 22:52:36 The background guard is downloading the intro videos.
+2026-10-26 22:52:37 Screensaver: waiting: the screensaver video (it downloads with the intro videos)
+2026-10-26 22:54:53 Check for updates (asked for by runner): 6.0.5 is out; started the update.
+2026-10-26 22:54:53 TLA BootPaper 6.0.5 is out (this Mac has 6.0.0): downloading it.
+2026-10-26 22:55:05 Updated to TLA BootPaper 6.0.5.

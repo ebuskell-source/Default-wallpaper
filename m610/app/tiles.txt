@@ -1,0 +1,22 @@
+microsoft [defaults]: Microsoft: an intro video for light mode and one for dark mode
+liquid-glass [defaults]: Liquid Glass: an intro video for light mode and one for dark mode
+penguins [defaults]: Penguins: an intro video for light mode and one for dark mode
+tla [defaults]: TLA Classic: one intro video for light and dark mode
+beach [nature]: Beach: an intro video for light mode and one for dark mode
+ocean [nature]: Underwater: an intro video for light mode and one for dark mode
+rainy [nature]: Rainy: one intro video for light and dark mode
+space [nature]: Space: an intro video for light mode and one for dark mode
+frutiger-aero [scifi]: Frutiger Aero: an intro video for light mode and one for dark mode
+code [scifi]: Code: an intro video for light mode and one for dark mode
+sky-city [scifi]: Sky City: an intro video for light mode and one for dark mode
+solarpunk [scifi]: Solarpunk: an intro video for light mode and one for dark mode
+anime [stylized]: Anime: an intro video for light mode and one for dark mode
+claymation [stylized]: Claymation: an intro video for light mode and one for dark mode
+pixel [stylized]: 8-Bit: an intro video for light mode and one for dark mode
+blocks [stylized]: Blocks: an intro video for light mode and one for dark mode
+bricks [stylized]: Bricks: an intro video for light mode and one for dark mode
+grumpy-cat [animals]: Grumpy Cat: an intro video for light mode and one for dark mode
+bonjovi [animals]: Bonjovi: an intro video for light mode and one for dark mode
+raccoon [animals]: Jimothy: its own intro video is coming soon. Until then, it plays the TLA Classic video.
+experimental [experimental]: Battle of the Beta Testers: for our beta testers on the Experimental channel. It plays the TLA Classic video.
+surprise [surprise]: A different background every day
