@@ -1,0 +1,13 @@
+-rw-r--r--   1 root  wheel  665701 Oct 26 18:33 liquid-glass-dark-r6.jpg
+-rw-r--r--   1 root  wheel  572472 Oct 26 18:33 liquid-glass-r6.jpg
+-rw-r--r--   1 root  wheel  651417 Oct 26 18:33 microsoft-dark-r6.jpg
+-rw-r--r--   1 root  wheel  607404 Oct 26 18:33 microsoft-r6.jpg
+/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/liquid-glass-dark-r6.jpg   pixelWidth: 3840   pixelHeight: 2160 
+/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/liquid-glass-r6.jpg   pixelWidth: 3840   pixelHeight: 2160 
+/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/microsoft-dark-r6.jpg   pixelWidth: 3840   pixelHeight: 2160 
+/Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/microsoft-r6.jpg   pixelWidth: 3840   pixelHeight: 2160 
+microsoft Light: /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/microsoft-r6.jpg
+microsoft Dark: /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/microsoft-dark-r6.jpg
+liquid-glass Light: /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/liquid-glass-r6.jpg
+liquid-glass Dark: /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/liquid-glass-dark-r6.jpg
+signed out: yes
