@@ -1,0 +1,34 @@
+  Match my desktop background (TLA Classic) - default
+  Surprise me (a different one each time)
+----
+Tech
+  Microsoft
+  Microsoft (original)
+  Liquid Glass
+  Liquid Glass (original)
+  Frutiger Aero
+  Frutiger Aero (newer version)
+  Penguins
+  Code
+----
+Places
+  Beach
+  Underwater
+  Rainy
+  Space
+  Sky City
+  Solarpunk
+----
+Art styles
+  Anime
+  Claymation
+  8-Bit
+  Blocks
+  Bricks
+----
+Animals
+  Grumpy Cat
+  Bonjovi
+----
+TLA
+  TLA Classic

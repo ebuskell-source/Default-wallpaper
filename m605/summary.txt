@@ -1,0 +1,148 @@
+
+== 01-opened (21:53:07)
+ 1621     1 S      00:08 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video
+-- lsappinfo:
+31) "TLA BootPaper" ASN:0x0-0x25025: (in front) 
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 1621 type="Foreground" flavor=3 Version="6.0.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: pid 1621 onscreen no 312x237 | pid 1621 onscreen yes 780x662
+-- quit (the first time):
+   exit 0
+
+== 02-quit (21:53:12)
+-- lsappinfo:
+-- front: "LSDisplayName"="Finder"
+-- windows: 
+
+== 03-fresh-over-calculator (21:53:23)
+ 2678     1 S      00:08 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video
+-- lsappinfo:
+32) "TLA BootPaper" ASN:0x0-0x29029: (in front) 
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 2678 type="Foreground" flavor=3 Version="6.0.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: pid 2678 onscreen no 312x237 | pid 2678 onscreen yes 780x667
+-- Esc (the Close button):
+
+== 04-closed-with-esc (21:53:31)
+-- lsappinfo:
+-- front: "LSDisplayName"="Calculator"
+-- windows: 
+
+== 05-opened-after-esc (21:53:39)
+ 3791     1 S      00:08 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video
+-- lsappinfo:
+34) "TLA BootPaper" ASN:0x0-0x35035: (in front) 
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 3791 type="Foreground" flavor=3 Version="6.0.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: pid 3791 onscreen yes 780x667
+-- Cmd-W:
+
+== 06-closed-with-cmd-w (21:53:46)
+-- lsappinfo:
+-- front: "LSDisplayName"="Calculator"
+-- windows: 
+
+== 07-opened-after-cmd-w (21:53:54)
+ 4607     1 S      00:08 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video
+-- lsappinfo:
+36) "TLA BootPaper" ASN:0x0-0x3c03c: (in front) 
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 4607 type="Foreground" flavor=3 Version="6.0.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: pid 4607 onscreen yes 780x667
+
+== 08-opened-again-over-calculator (21:54:03)
+ 4607     1 S      00:17 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video
+-- lsappinfo:
+36) "TLA BootPaper" ASN:0x0-0x3c03c: (in front) 
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 4607 type="Foreground" flavor=3 Version="6.0.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: pid 4607 onscreen yes 780x667
+-- Cmd-M:
+
+== 09-opened-while-minimized (21:54:13)
+ 4607     1 S      00:27 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video
+-- lsappinfo:
+34) "TLA BootPaper" ASN:0x0-0x3c03c: (in front) 
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 4607 type="Foreground" flavor=3 Version="6.0.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: pid 4607 onscreen yes 780x667
+-- quit (again):
+   exit 0
+
+== 10-quit-again (21:54:17)
+-- lsappinfo:
+-- front: "LSDisplayName"="Calculator"
+-- windows: 
+
+== 11-fresh-over-calculator (21:54:29)
+ 6399     1 S      00:08 /Applications/TLA BootPaper.app/Contents/MacOS/welcome-video
+-- lsappinfo:
+35) "TLA BootPaper" ASN:0x0-0x45045: (in front) 
+    bundle path="/Applications/TLA BootPaper.app"
+    executable path="/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video"
+    pid = 6399 type="Foreground" flavor=3 Version="6.0.5" fileType="APPL" creator="????" Arch=ARM64 
+-- front: "LSDisplayName"="TLA BootPaper"
+-- windows: pid 6399 onscreen yes 780x667
+-- quit (to finish):
+   exit 0
+
+== 12-end (21:54:32)
+-- lsappinfo:
+-- front: "LSDisplayName"="Calculator"
+-- windows: 
+
+== debug log
+21:53:02.048 pid 1621 before show | active true hidden false policy 0 | visible false key false mini false onSpace true occl 8192 num 34 alpha 1 level 0 frame 122,72,780,662
+21:53:02.275 pid 1621 after show | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 34 alpha 1 level 0 frame 122,72,780,662
+21:53:04.027 pid 1621 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 34 alpha 1 level 0 frame 122,72,780,662
+21:53:05.542 pid 1621 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 34 alpha 1 level 0 frame 122,72,780,662
+21:53:07.043 pid 1621 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 34 alpha 1 level 0 frame 122,72,780,662
+21:53:17.871 pid 2678 before show | active true hidden false policy 0 | visible false key false mini false onSpace true occl 8192 num 54 alpha 1 level 0 frame 122,67,780,667
+21:53:18.002 pid 2678 after show | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 54 alpha 1 level 0 frame 122,67,780,667
+21:53:19.417 pid 2678 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 54 alpha 1 level 0 frame 122,67,780,667
+21:53:21.010 pid 2678 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 54 alpha 1 level 0 frame 122,67,780,667
+21:53:22.510 pid 2678 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 54 alpha 1 level 0 frame 122,67,780,667
+21:53:24.011 pid 2678 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 54 alpha 1 level 0 frame 122,67,780,667
+21:53:25.512 pid 2678 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 54 alpha 1 level 0 frame 122,67,780,667
+21:53:35.314 pid 3791 before show | active true hidden false policy 0 | visible false key false mini false onSpace true occl 8192 num 68 alpha 1 level 0 frame 122,67,780,667
+21:53:35.590 pid 3791 after show | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 68 alpha 1 level 0 frame 122,67,780,667
+21:53:37.592 pid 3791 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 68 alpha 1 level 0 frame 122,67,780,667
+21:53:39.101 pid 3791 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 68 alpha 1 level 0 frame 122,67,780,667
+21:53:40.603 pid 3791 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 68 alpha 1 level 0 frame 122,67,780,667
+21:53:48.603 pid 4607 before show | active true hidden false policy 0 | visible false key false mini false onSpace true occl 8192 num 78 alpha 1 level 0 frame 122,67,780,667
+21:53:48.702 pid 4607 after show | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 78 alpha 1 level 0 frame 122,67,780,667
+21:53:50.064 pid 4607 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 78 alpha 1 level 0 frame 122,67,780,667
+21:53:51.710 pid 4607 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 78 alpha 1 level 0 frame 122,67,780,667
+21:53:53.210 pid 4607 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 78 alpha 1 level 0 frame 122,67,780,667
+21:53:54.711 pid 4607 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 78 alpha 1 level 0 frame 122,67,780,667
+21:53:56.211 pid 4607 tick | active false hidden false policy 0 | visible true key false mini false onSpace true occl 8194 num 78 alpha 1 level 0 frame 122,67,780,667
+21:53:57.712 pid 4607 tick | active false hidden false policy 0 | visible true key false mini false onSpace true occl 8194 num 78 alpha 1 level 0 frame 122,67,780,667
+21:53:59.212 pid 4607 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 78 alpha 1 level 0 frame 122,67,780,667
+21:54:23.570 pid 6399 before show | active true hidden false policy 0 | visible false key false mini false onSpace true occl 8192 num 91 alpha 1 level 0 frame 122,67,780,667
+21:54:23.672 pid 6399 after show | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 91 alpha 1 level 0 frame 122,67,780,667
+21:54:25.184 pid 6399 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8192 num 91 alpha 1 level 0 frame 122,67,780,667
+21:54:26.931 pid 6399 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 91 alpha 1 level 0 frame 122,67,780,667
+21:54:28.430 pid 6399 tick | active true hidden false policy 0 | visible true key true mini false onSpace true occl 8194 num 91 alpha 1 level 0 frame 122,67,780,667
+self-test exit 0
+sync exit 0
+code-light: e13a4b3c8067f69fe20b15f5178a4a43543c25e37673c0e99e18b9c9eb7eda3b
+anime-dark: 8a2d221a6639fd6be1000694640647d627b93b89b81d6aaac2c218069a1f780d
+anime: b0fc2c29f5305fe57e3617073227a9a8137f18337d5429fa74611f61653bdcaa
+code: 0e8eea44df385807898f8b732aeb804fdd3b14c1d9d169fceebbdb0993f36b02
+2026-10-26 21:53:06 Downloaded the code-light video.
+2026-10-26 21:53:09 Downloaded the anime-dark video.
+code in light: /Library/Application Support/ca.schoolathome.welcomevideo/Videos/tla.mp4
+code in dark: /Library/Application Support/ca.schoolathome.welcomevideo/Videos/tla.mp4
+names: Microsoft Liquid Glass Frutiger Aero Penguins Code Beach Underwater Rainy Space Sky City Solarpunk Anime Claymation 8-Bit Blocks Bricks Grumpy Cat Bonjovi Jimothy TLA Classic Experimental
