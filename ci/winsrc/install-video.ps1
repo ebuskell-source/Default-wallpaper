@@ -61,7 +61,11 @@ function Copy-WVFile([string]$Source, [string]$Destination, [switch]$Optional) {
     }
 }
 
-# Backgrounds first: stored flat in the package (bg-<id>.jpg, thumb-<id>.jpg).
+# Backgrounds first: stored flat in the package (bg-<id>.jpg, thumb-<id>.jpg), installed under the names in
+# common.ps1 ($WV.PictureRevisions: 5.9.5, Microsoft and Liquid Glass in 4K as "-r6"). The pictures they replace
+# stay, since an older Intune detection script looks for them.
+$picRev     = @{ 'anime' = 'r5'; 'microsoft' = 'r6'; 'liquid-glass' = 'r6' }
+$variantRev = @{ 'microsoft' = 'r6'; 'liquid-glass' = 'r6' }
 $bgDir    = Join-Path $InstallDir 'Backgrounds'
 $thumbDir = Join-Path $bgDir 'thumbs'
 [void][System.IO.Directory]::CreateDirectory($thumbDir)
@@ -69,7 +73,7 @@ $thumbDir = Join-Path $bgDir 'thumbs'
 foreach ($id in 'microsoft', 'liquid-glass', 'penguins', 'code', 'frutiger-aero', 'solarpunk', 'rainy', 'space', 'ocean', 'beach', 'claymation', 'blocks', 'bricks', 'pixel', 'anime', 'sky-city', 'tla',
                 'grumpy-cat', 'bonjovi', 'raccoon',   # (5.9.0: Animals)
                 'fall', 'christmas', 'easter') {
-    $r = if ($id -eq 'anime') { 'r5' } else { 'r2' }
+    $r = if ($picRev.Contains($id)) { $picRev[$id] } else { 'r2' }
     Copy-WVFile (Join-Path $PSScriptRoot "bg-$id.jpg")    (Join-Path $bgDir "$id-$r.jpg")
     Remove-Item -LiteralPath (Join-Path $bgDir "$id.jpg") -Force -ErrorAction SilentlyContinue   # before 3.2.3
     Copy-WVFile (Join-Path $PSScriptRoot "thumb-$id.jpg") (Join-Path $thumbDir "$id.jpg")
@@ -78,7 +82,8 @@ Copy-WVFile (Join-Path $PSScriptRoot 'thumb-surprise.jpg') (Join-Path $thumbDir 
 # (5.0) Light and dark: each background's picture for the other mode (bg-<id>-<mode>.jpg).
 foreach ($file in Get-ChildItem -LiteralPath $PSScriptRoot -Filter 'bg-*-*.jpg') {
     if ($file.Name -notmatch '^bg-(.+)-(light|dark)\.jpg$') { continue }
-    Copy-WVFile $file.FullName (Join-Path $bgDir "$($Matches[1])-$($Matches[2]).jpg")
+    $vr = if ($variantRev.Contains($Matches[1])) { '-' + $variantRev[$Matches[1]] } else { '' }
+    Copy-WVFile $file.FullName (Join-Path $bgDir "$($Matches[1])-$($Matches[2])$vr.jpg")
     Copy-WVFile (Join-Path $PSScriptRoot "thumb-$($Matches[1])-$($Matches[2]).jpg") (Join-Path $thumbDir "$($Matches[1])-$($Matches[2]).jpg")
 }
 
@@ -136,10 +141,10 @@ $wideThumbs = Join-Path $InstallDir 'WideThumbs'
 $wideNames = @{}
 foreach ($id in 'microsoft', 'liquid-glass', 'penguins', 'code', 'frutiger-aero', 'solarpunk', 'rainy', 'space', 'ocean', 'beach', 'claymation', 'blocks', 'bricks', 'pixel', 'anime', 'sky-city', 'tla',
                 'grumpy-cat', 'bonjovi', 'raccoon') {
-    $r = if ($id -eq 'anime') { 'r5' } else { 'r2' }
+    $r = if ($picRev.Contains($id)) { $picRev[$id] } else { 'r2' }
     $sources = [ordered]@{ $id = Join-Path $bgDir "$id-$r.jpg" }
     foreach ($mode in 'light', 'dark') {
-        $v = Join-Path $bgDir "$id-$mode.jpg"
+        $v = Join-Path $bgDir "$id-$mode$(if ($variantRev.Contains($id)) { '-' + $variantRev[$id] }).jpg"
         if (Test-Path -LiteralPath $v) { $sources["$id-$mode"] = $v }
     }
     foreach ($name in $sources.Keys) {

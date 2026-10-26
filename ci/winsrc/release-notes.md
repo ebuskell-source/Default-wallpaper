@@ -1,3 +1,13 @@
+# [mac] Version 5.9.5
+- [mac] **Check for updates gets the new version straight away**, on every Mac, and tells you what it found: that you're up to date, or that it's installing the new version and then when it's done.
+- [mac] **The version under Updates says when a newer one is out** and your Mac doesn't have it yet.
+- [mac] **Microsoft and Liquid Glass in 4K**, light and dark: sharper on big and high-resolution screens.
+
+# [win] Version 5.9.5
+- [win] **Check for updates gets the new version straight away**, on every PC, and tells you what it found: that you're up to date, or that it's installing the new version and then when it's done.
+- [win] **The version under Updates says when a newer one is out** and your PC doesn't have it yet.
+- [win] **Microsoft and Liquid Glass in 4K**, light and dark: sharper on big and high-resolution screens.
+
 # [mac] Version 5.9.0
 - [mac] **Animals: three new backgrounds.** Grumpy Cat, Bonjovi and Raccoon, in their own Animals section. Each has a light and a dark picture, and Grumpy Cat and Bonjovi have their own intro videos for both.
 - [mac] **Your own pictures, on your own Mac.** On a Mac that's yours rather than TLA's, add pictures of your own under **Your own pictures** and use them for your desktop and lock screen.

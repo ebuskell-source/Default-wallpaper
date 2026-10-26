@@ -293,17 +293,22 @@ function Get-WVLastPlayed {
 
 # ---- Desktop backgrounds ---------------------------------------------------------------------
 # -Mode (5.0): 'light' or 'dark' gives that mode's own picture, where the background has one.
+# Picture file names: "<id>-r2.jpg" (3.2.3), "-r5" for Anime (3.3.3), and (5.9.5) "-r6" for Microsoft and Liquid
+# Glass in 4K, whose other mode's picture is "<id>-<mode>-r6.jpg" too. A new name for a new picture, because Windows
+# keeps its own copy of a picture it has seen under the same name. (Keep in step with install-video.ps1.)
+$WV.PictureRevisions = @{ 'anime' = 'r5'; 'microsoft' = 'r6'; 'liquid-glass' = 'r6' }
+$WV.VariantRevisions = @{ 'microsoft' = 'r6'; 'liquid-glass' = 'r6' }
 function Get-WVBackgroundPath([string]$Id, [string]$Mode) {
     if (Test-WVOwnId $Id) { return Get-WVOwnPicturePath $Id }   # (5.9.0: their own picture, the same in both modes)
     if (-not $WV.Backgrounds.Contains($Id) -and -not $WV.Seasonal.Contains($Id)) { return $null }
     if ($Mode -and $WV.Variants[$Id] -eq $Mode) {
-        $variant = [System.IO.Path]::Combine($WV.Dir, 'Backgrounds', "$Id-$Mode.jpg")
+        $vr = if ($WV.VariantRevisions.Contains($Id)) { '-' + $WV.VariantRevisions[$Id] } else { '' }
+        $variant = [System.IO.Path]::Combine($WV.Dir, 'Backgrounds', "$Id-$Mode$vr.jpg")
         if ([System.IO.File]::Exists($variant)) { return $variant }
     }
     # "-r2": the 3.2.3 pictures, which have extra room above and below so they fill any screen shape without
-    # cropping the sides. A new file name makes Windows pick up the new picture (it keeps its own copy).
-    # "-r5" (3.3.3): the new 16:9 Anime picture.
-    $r = if ($Id -eq 'anime') { 'r5' } else { 'r2' }
+    # cropping the sides. "-r5" (3.3.3): the new 16:9 Anime picture. "-r6" (5.9.5): Microsoft and Liquid Glass in 4K.
+    $r = if ($WV.PictureRevisions.Contains($Id)) { $WV.PictureRevisions[$Id] } else { 'r2' }
     return [System.IO.Path]::Combine($WV.Dir, 'Backgrounds', "$Id-$r.jpg")
 }
 
