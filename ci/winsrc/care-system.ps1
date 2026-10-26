@@ -10,9 +10,10 @@
 #       audio    starts or restarts the sound services, looks for new hardware, restarts sound devices that report
 #                a problem. No drivers are installed or removed.
 #       sync     asks Intune to check in now.
-#       update   "Check for updates" in the app (5.8.0). On a PC Intune manages: asks Intune to check in (new versions
-#                come from there). On the others: reads windows/latest.json and, when it has a newer version, starts
-#                the "TLA BootPaper Updates" task, which installs it (update.ps1).
+#       update   "Check for updates" in the app (5.8.0): reads windows/latest.json and, when it has a newer version,
+#                starts the "TLA BootPaper Updates" task, which installs it (update.ps1), and notes that in
+#                Care\UpdateStatus so the app can follow the install. (5.9.5: on every PC. Until then, a PC Intune
+#                managed only asked Intune to check in.)
 #       unbox    "Prepare for initial unboxing": only while this PC has never been prepared. Marks it, then shuts
 #                down. The next sign-in plays TLA Classic and the Welcome to TLA tour (play-video.ps1).
 #   - By itself: the same cleanup when storage is under 10% free (at most once a day), starts the sound service if
@@ -194,31 +195,23 @@ switch ($request) {
         try { Start-WVDeviceBackgroundUpdate } catch { }
     }
     'update' {
-        # 5.8.0: "Check for updates".
-        if (Test-WVIntuneManaged) {
-            $synced = Start-IntuneSync
-            # Intune's apps come through the Intune Management Extension, which checks for them when it starts.
-            try { Restart-Service -Name 'IntuneManagementExtension' -Force -ErrorAction Stop; $synced = $true } catch { }
-            Write-Log "Check for updates: asked Intune to check in ($synced)."
-            Set-Result $(if ($synced) { "TLA sends new versions to this PC through Intune. It's checking in now, so a new version can arrive in the next few minutes." }
-                         else { 'TLA sends new versions to this PC through Intune, but it couldn''t check in just now. Try again later.' })
-        } else {
-            try {
-                $latest = Get-WVLatestUpdate
-                if ((ConvertTo-WVVersion $latest.Version) -gt (ConvertTo-WVVersion $WV.Release)) {
-                    $service = New-Object -ComObject 'Schedule.Service'
-                    $service.Connect()
-                    [void]$service.GetFolder('\').GetTask('TLA BootPaper Updates').Run($null)
-                    Write-Log "Check for updates: $($latest.Version) is out; started the update."
-                    Set-Result 'An update is out. It''s installing now and will be ready in a few minutes.'
-                } else {
-                    Write-Log "Check for updates: up to date ($($WV.Release))."
-                    Set-Result "You're up to date."
-                }
-            } catch {
-                Write-Log "Check for updates: $($_.Exception.Message)"
-                Set-Result 'Couldn''t check for updates. Check that this PC is online, then try again.'
+        # 5.8.0: "Check for updates" (5.9.5: on every PC, Intune or not).
+        try {
+            $latest = Get-WVLatestUpdate
+            if ((ConvertTo-WVVersion $latest.Version) -gt (ConvertTo-WVVersion $WV.Release)) {
+                Set-WVUpdateStatus 'starting' $latest.Version
+                $service = New-Object -ComObject 'Schedule.Service'
+                $service.Connect()
+                [void]$service.GetFolder('\').GetTask('TLA BootPaper Updates').Run($null)
+                Write-Log "Check for updates: $($latest.Version) is out; started the update."
+                Set-Result "Version $($latest.Version) is out (this PC has $($WV.Release)). Installing it now: this takes a few minutes."
+            } else {
+                Write-Log "Check for updates: up to date ($($WV.Release))."
+                Set-Result "You're up to date: $($WV.Release) is the newest version."
             }
+        } catch {
+            Write-Log "Check for updates: $($_.Exception.Message)"
+            Set-Result 'Couldn''t reach TLA''s update server. Check that this PC is online, then try again.'
         }
     }
     'sync' {

@@ -37,7 +37,7 @@ $OwnPictures    = ''           # (5.9.0) their own pictures in the app: '' = on 
 $ErrorActionPreference = 'Stop'
 $InstallDir = Join-Path $env:ProgramData 'WelcomeVideo'
 $TaskName   = 'Welcome Video'
-$Version    = '41'   # raise this (and the one in the detection script) whenever you change the video or settings
+$Version    = '42'   # raise this (and the one in the detection script) whenever you change the video or settings
 $Shortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA BootPaper.lnk'
 $ReportShortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Report a problem to TLA.lnk'   # (4.3)
 $CareShortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA Care.lnk'                  # (5.0)

@@ -897,7 +897,10 @@ function Update-Controls {
     $c.ChannelExperimental.IsEnabled = -not $locked
     $stableRel = Get-WVChannelRelease 'stable'
     $expRel    = Get-WVChannelRelease 'experimental'
-    $c.ChannelStatus.Text = if ($channel -eq 'experimental') {
+    $c.ChannelStatus.Text = if ((ConvertTo-WVVersion (Get-WVChannelRelease $channel)) -gt (ConvertTo-WVVersion $WV.Release)) {
+        # 5.9.5: this PC doesn't have its channel's newest version yet (it used to look up to date).
+        "You're on $($WV.Channels[$channel]). Version $(Get-WVChannelRelease $channel) is out and this PC has $($WV.Release): it updates by itself within a few hours, or check for updates to get it now."
+    } elseif ($channel -eq 'experimental') {
         "You're on Experimental: version $(Get-WVShownRelease)." +
         $(if ((ConvertTo-WVVersion $expRel) -gt (ConvertTo-WVVersion $stableRel)) { " Stable is on version $stableRel." } else { ' Right now it has the same as Stable.' })
     } else {
@@ -1176,24 +1179,48 @@ function Set-WVChannel([string]$Channel) {
 $c.ChannelStable.Add_Checked({ Set-WVChannel 'stable' })
 $c.ChannelExperimental.Add_Checked({ Set-WVChannel 'experimental' })
 
-# Check for updates (5.8.0): the TLA Care task (as SYSTEM) checks GitHub and starts the update, or asks Intune to check
-# in on a PC it manages. Works signed in or not: it's for the whole computer.
+# Check for updates (5.8.0): the TLA Care task (as SYSTEM) checks GitHub and starts the update. Works signed in or
+# not: it's for the whole computer. 5.9.5: on every PC (it used to only ask Intune to check in on a PC Intune
+# manages), the answer says when it was checked, and when an update started, the app follows it to the end.
+function Get-WVClock([DateTime]$When) { return $When.ToString('h:mm tt', [Globalization.CultureInfo]::GetCultureInfo('en-US')) }
 $c.CheckUpdates.Add_Click({
     $at = Invoke-WVCareRequest 'update'
     if (-not $at) { $c.UpdateCheckText.Text = "Couldn't check for updates. Try again in a moment."; return }
     $c.CheckUpdates.IsEnabled = $false
-    $c.UpdateCheckText.Text = 'Checking...'
+    $c.UpdateCheckText.Text = 'Checking... This can take up to a minute.'
     $timer = [System.Windows.Threading.DispatcherTimer]::new()
     $timer.Interval = [TimeSpan]::FromSeconds(1)
-    $timer.Tag = @{ At = $at; Until = [DateTime]::Now.AddSeconds(90) }
+    $timer.Tag = @{ At = $at; Since = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds(); Until = [DateTime]::Now.AddSeconds(90); Follow = $null }
     $timer.Add_Tick({
         param($s, $e)
-        $result = Get-WVCareResult 'update' $s.Tag.At
-        if ($result -or [DateTime]::Now -gt $s.Tag.Until) {
-            $s.Stop()
-            $c.CheckUpdates.IsEnabled = $true
-            $c.UpdateCheckText.Text = if ($result) { $result.Text } else { "The check is taking longer than usual. Try again in a few minutes." }
+        $t = $s.Tag
+        if (-not $t.Follow) {
+            $result = Get-WVCareResult 'update' $t.At
+            if (-not $result -and [DateTime]::Now -le $t.Until) { return }
+            $c.UpdateCheckText.Text = if ($result) { "Checked at $(Get-WVClock ([DateTime]::Now)). $($result.Text)" }
+                                      else { 'The check is taking longer than usual. Try again in a few minutes.' }
+            $u = Get-WVUpdateStatus
+            if ($result -and $u -and $u.State -in 'starting', 'installing' -and $u.Time -ge $t.Since - 5) {
+                $t.Follow = @{ Version = $u.Version; Until = [DateTime]::Now.AddMinutes(15) }
+                return
+            }
+            $s.Stop(); $c.CheckUpdates.IsEnabled = $true
+            return
         }
+        # Following the install: done once the version installed here has caught up.
+        $u = Get-WVUpdateStatus
+        $installed = Get-WVInstalledRelease
+        $text = $null
+        if ((ConvertTo-WVVersion $installed) -ge (ConvertTo-WVVersion $t.Follow.Version)) {
+            $text = "Updated to version $installed at $(Get-WVClock ([DateTime]::Now)). Close TLA BootPaper and open it again to use it."
+        } elseif ($u -and $u.State -eq 'failed' -and $u.Time -ge $t.Since - 5) {
+            $text = "Version $($u.Version) couldn't be installed: $(if ($u.Why) { $u.Why } else { 'something went wrong' }). It tries again by itself later, or you can check again."
+        } elseif ([DateTime]::Now -gt $t.Follow.Until) {
+            $text = "Version $($t.Follow.Version) is still installing. It finishes by itself; check again in a few minutes."
+        } elseif ($u -and $u.State -eq 'installing' -and $c.UpdateCheckText.Text -notlike 'Installing version*') {
+            $c.UpdateCheckText.Text = "Installing version $($u.Version)... This takes a few minutes. You can keep using your PC."
+        }
+        if ($text) { $s.Stop(); $c.UpdateCheckText.Text = $text; $c.CheckUpdates.IsEnabled = $true }
     })
     $timer.Start()
 })
@@ -1432,6 +1459,30 @@ if ($env:TB_TEST) {
         & $pump 200
         $y = $part[0].TranslatePoint([System.Windows.Point]::new(0, 0), $c.Scroller.Content).Y
         $c.Scroller.ScrollToVerticalOffset([Math]::Max(0, $y - 240)); & $shot $part[1]
+    }
+    # 5.9.5: Check for updates, start to finish (TB_TEST_UPDATE=1: clicks it, then a picture each time the text
+    # changes and update-texts.txt with them, until it's done or 10 minutes have gone by).
+    if ($env:TB_TEST_UPDATE -and $c.UpdateCheckRow.Visibility -eq 'Visible') {
+        $y = $c.UpdateCheckRow.TranslatePoint([System.Windows.Point]::new(0, 0), $c.Scroller.Content).Y
+        $c.Scroller.ScrollToVerticalOffset([Math]::Max(0, $y - 300))
+        $texts = [System.Collections.Generic.List[string]]::new(); $script:lastText = ''; $script:shotN = 0
+        $note = {
+            $t = "$($c.UpdateCheckText.Text)"
+            if ($t -ne $script:lastText) {
+                $script:lastText = $t; $script:shotN++
+                $texts.Add("$(Get-WVClock ([DateTime]::Now))  $t"); & $shot "win11-update-$($script:shotN).png"
+            }
+        }
+        & $note
+        $c.CheckUpdates.RaiseEvent([System.Windows.RoutedEventArgs]::new([System.Windows.Controls.Primitives.ButtonBase]::ClickEvent))
+        & $note
+        $end = [DateTime]::Now.AddMinutes(10)
+        while ([DateTime]::Now -lt $end) {
+            & $pump 1000; & $note
+            if ($c.CheckUpdates.IsEnabled) { break }
+        }
+        $texts.Add("button enabled: $($c.CheckUpdates.IsEnabled)  status: $(Get-WVValue 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Care' 'UpdateStatus')  installed: $(Get-WVInstalledRelease)")
+        [System.IO.File]::WriteAllLines([System.IO.Path]::Combine($env:TB_TEST, 'update-texts.txt'), $texts)
     }
     if ((Get-WVSignIn).state -ne 'off') {
         $ui.SignIn = @{ Listener = $null }; Update-Controls; & $shot 'win7-signin-waiting.png'

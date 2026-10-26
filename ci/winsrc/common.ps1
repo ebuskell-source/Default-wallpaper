@@ -11,7 +11,7 @@
 
 $WV = @{
     Dir       = $PSScriptRoot
-    Release   = '5.9.0' # this package's version (4.3: what people see also depends on their release channel)
+    Release   = '5.9.5' # this package's version (4.3: what people see also depends on their release channel)
     DeviceKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo'
     UserKey   = 'HKEY_CURRENT_USER\Software\WelcomeVideo'
     StateKey  = 'HKEY_CURRENT_USER\Software\WelcomeVideo\State'
@@ -114,7 +114,7 @@ $WV = @{
     # Experimental first, Stable once it's been tried. People pick their channel in the app (organization
     # default: Stable). Since = the release that brought something; anything not listed has been out for longer.
     Channels  = [ordered]@{ 'stable' = 'Stable'; 'experimental' = 'Experimental' }
-    ChannelReleases = @{ 'stable' = '5.8.0'; 'experimental' = '5.9.0' }   # as marked when this package was made (5.9.0: Experimental first)
+    ChannelReleases = @{ 'stable' = '5.9.0'; 'experimental' = '5.9.5' }   # as marked when this package was made (5.9.5: Experimental first)
     Since     = @{ 'sky-city' = '4.3'; 'report' = '4.3'
                    'lightdark' = '5.0'; 'screensaver' = '5.0'; 'calls' = '5.0'; 'care' = '5.0'; 'tour' = '5.0'
                    'connect' = '5.2.5'
@@ -940,6 +940,30 @@ function Get-WVLatestUpdate {
         throw [System.IO.InvalidDataException]::new('latest.json points outside the TLA repository')
     }
     return @{ Version = $version; Url = $url; Sha256 = $want }
+}
+
+# 5.9.5: what the updater is doing, for the app's Check for updates (written as SYSTEM by care-system.ps1 and
+# update.ps1): HKLM\SOFTWARE\WelcomeVideo\Care\UpdateStatus = "<starting|installing|failed>|<version>|<unix time>|<why
+# it failed>". The installer runs on its own, so the app counts an update as done once the version installed here
+# (Get-WVInstalledRelease) has caught up.
+function Set-WVUpdateStatus([string]$State, [string]$Version, [string]$Why = '') {
+    try {
+        [Microsoft.Win32.Registry]::SetValue('HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Care', 'UpdateStatus',
+            "$State|$Version|$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())|$Why")
+    } catch { }
+}
+function Get-WVUpdateStatus {
+    $p = "$(Get-WVValue 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Care' 'UpdateStatus')".Split([char]'|', 4)
+    if ($p.Count -lt 3 -or $p[0] -notin 'starting', 'installing', 'failed' -or $p[2] -notmatch '^\d{1,12}$') { return $null }
+    return @{ State = $p[0]; Version = $p[1]; Time = [long]$p[2]; Why = $(if ($p.Count -ge 4) { $p[3] } else { '' }) }
+}
+# The version installed now: the one in the install folder's common.ps1, which an update replaces.
+function Get-WVInstalledRelease {
+    try {
+        $m = [regex]::Match([System.IO.File]::ReadAllText([System.IO.Path]::Combine($WV.Dir, 'common.ps1')), "Release\s*=\s*'([0-9.]{1,19})'")
+        if ($m.Success) { return $m.Groups[1].Value }
+    } catch { }
+    return $WV.Release
 }
 
 # ---- The announcement from GitHub (5.8.0) ------------------------------------------------------------
