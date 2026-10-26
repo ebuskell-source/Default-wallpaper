@@ -1,0 +1,29 @@
+﻿installer exit 0
+installed: 5.9.5
+task TLA BootPaper Updates: Ready
+task TLA Care: Ready
+GitHub has 5.9.0
+== Check for updates when it's up to date
+answer after about 3s: You're up to date: 5.9.5 is the newest version.
+UpdateStatus: 
+== made to look like 5.8.0
+installed now: 5.8.0
+== the app: Check for updates, start to finish
+settings exit 
+  6:12 PM  New versions install by themselves. To get one straight away, check now.
+  6:12 PM  Checking... This can take up to a minute.
+  6:12 PM  Checked at 6:12 PM. Version 5.9.0 is out (this PC has 5.8.0). Installing it now: this takes a few minutes.
+  6:12 PM  Installing version 5.9.0... This takes a few minutes. You can keep using your PC.
+  6:12 PM  Updated to version 5.9.0 at 6:12 PM. Close TLA BootPaper and open it again to use it.
+  button enabled: True  status: installing|5.9.0|1793038366|  installed: 5.9.0
+== after
+installed: 5.9.0
+UpdateStatus: installing|5.9.0|1793038366|
+  updates.log: 2026-10-26 18:12:46 TLA BootPaper 5.9.0 is out (this computer has 5.8.0): downloading it.
+  updates.log: 2026-10-26 18:12:47 Installing TLA BootPaper 5.9.0.
+  care.log: 2026-10-26 18:12:33 Check for updates: up to date (5.9.5).
+  care.log: 2026-10-26 18:12:46 Check for updates: 5.9.0 is out; started the update.
+  log file: backgrounds.log
+  log file: care.log
+  log file: updates.log
+done

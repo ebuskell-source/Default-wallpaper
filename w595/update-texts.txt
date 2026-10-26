@@ -1,0 +1,6 @@
+6:12 PM  New versions install by themselves. To get one straight away, check now.
+6:12 PM  Checking... This can take up to a minute.
+6:12 PM  Checked at 6:12 PM. Version 5.9.0 is out (this PC has 5.8.0). Installing it now: this takes a few minutes.
+6:12 PM  Installing version 5.9.0... This takes a few minutes. You can keep using your PC.
+6:12 PM  Updated to version 5.9.0 at 6:12 PM. Close TLA BootPaper and open it again to use it.
+button enabled: True  status: installing|5.9.0|1793038366|  installed: 5.9.0
