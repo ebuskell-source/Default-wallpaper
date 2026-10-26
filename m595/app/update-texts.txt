@@ -1,0 +1,6 @@
+6:16 PM  New versions install by themselves. To get one straight away, check now.
+6:16 PM  Checking… This can take up to a minute.
+6:16 PM  Checked at 6:16 PM. Version 5.9.0 is out (this Mac has 5.8.0). Installing it now: this takes a few minutes.
+6:16 PM  Installing version 5.9.0… This takes a few minutes. You can keep using your Mac.
+6:17 PM  Updated to version 5.9.0 at 6:17 PM. Close TLA BootPaper and open it again to use it.
+button enabled: true  follow: null

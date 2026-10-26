@@ -1,0 +1,22 @@
+Problem report: Sound, speakers or microphone (sat12-dp150-0afc8247-1025-4c11-b13a-96ca20688b25-6213463638EC)
+What it's about: Sound, speakers or microphone
+How much it's getting in the way: I can still work around it
+
+What happened:
+Sound stops after a few minutes.
+
+-- Details about this Mac (added by TLA BootPaper) --
+Computer: sat12-dp150-0afc8247-1025-4c11-b13a-96ca20688b25-6213463638EC
+Model: Apple Virtual Machine 1 (VirtualMac2,1)
+Processor: Apple M1 (Virtual)
+Memory: 7 GB
+Serial number: ZW15P49YWY
+System: macOS 26.6.2 (25G83)
+Last restart: Mon Oct 26, 6:13 PM (3 minutes ago)
+Storage: 100 GB free of 335 GB
+TLA BootPaper: 5.9.0 (Stable)
+Background: TLA Classic
+Intro video: TLA Classic
+Reported: Monday, October 26, 2026 6:17 PM
+
+send enabled: true

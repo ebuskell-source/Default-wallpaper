@@ -1,0 +1,40 @@
+2026-10-26 18:15:16 Downloaded the solarpunk video.
+2026-10-26 18:15:16 Downloaded the frutiger-aero-dark video.
+2026-10-26 18:15:17 Downloaded the beach video.
+2026-10-26 18:15:17 Downloaded the anime-dark video.
+2026-10-26 18:15:17 Downloaded the tla video.
+2026-10-26 18:15:17 Downloaded the grumpy-cat-dark video.
+2026-10-26 18:15:18 Downloaded the easter video.
+2026-10-26 18:15:18 Downloaded the space-light video.
+2026-10-26 18:15:18 Downloaded the sky-city video.
+2026-10-26 18:15:18 Downloaded the code video.
+2026-10-26 18:15:19 Downloaded the liquid-glass-original video.
+2026-10-26 18:15:19 Downloaded the anime video.
+2026-10-26 18:15:19 Downloaded the christmas video.
+2026-10-26 18:15:19 Downloaded the grumpy-cat video.
+2026-10-26 18:15:20 Downloaded the liquid-glass video.
+2026-10-26 18:15:20 Downloaded the penguins video.
+2026-10-26 18:15:20 Downloaded the blocks-dark video.
+2026-10-26 18:15:21 Downloaded the ocean video.
+2026-10-26 18:15:21 Downloaded the bonjovi video.
+2026-10-26 18:15:21 Downloaded the fall video.
+2026-10-26 18:15:21 Downloaded the sky-city-dark video.
+2026-10-26 18:15:22 Downloaded the pixel video.
+2026-10-26 18:15:22 Downloaded the beach-dark video.
+2026-10-26 18:15:23 Downloaded the screensaver video.
+2026-10-26 18:15:25 Installed Aerial 4.1.7.
+2026-10-26 18:15:25 Put the TLA video in Aerial's My Videos.
+2026-10-26 18:15:25 Set up Aerial to play the TLA video.
+2026-10-26 18:15:25 Screensaver: ready
+2026-10-26 18:15:25 Done. Takes effect at each person's next login.
+2026-10-26 18:15:28 Sign-in settings: settings required, 2 keys
+2026-10-26 18:15:43 Check for updates (asked for by runner): up to date (5.9.5).
+2026-10-26 18:16:30 Check for updates (asked for by runner): 5.9.0 is out; started the update.
+2026-10-26 18:16:32 TLA BootPaper 5.9.0 is out (this Mac has 5.8.0): downloading it.
+2026-10-26 18:16:44 ---- TLA BootPaper 5.9.0 package installed ----
+2026-10-26 18:16:49 Sign-in settings: settings required, 2 keys
+2026-10-26 18:17:02 Done. Takes effect at each person's next login.
+installer: Package name is TLA BootPaper
+installer: Upgrading at base path /
+installer: The upgrade was successful.
+2026-10-26 18:17:03 Updated to TLA BootPaper 5.9.0.

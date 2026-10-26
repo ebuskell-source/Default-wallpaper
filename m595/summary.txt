@@ -1,0 +1,20 @@
+== installed 5.9.5; GitHub has 5.9.0
+== Check for updates when it's up to date
+answer after about 12s: You're up to date: 5.9.5 is the newest version.
+Care/update: (none)
+== made to look like 5.8.0
+WV_RELEASE="5.8.0"                     # this package's version (4.3: what people see also depends on their release channel)
+== the app: Check for updates, start to finish
+self-test exit 0
+6:16 PM  New versions install by themselves. To get one straight away, check now.
+6:16 PM  Checking… This can take up to a minute.
+6:16 PM  Checked at 6:16 PM. Version 5.9.0 is out (this Mac has 5.8.0). Installing it now: this takes a few minutes.
+6:16 PM  Installing version 5.9.0… This takes a few minutes. You can keep using your Mac.
+6:17 PM  Updated to version 5.9.0 at 6:17 PM. Close TLA BootPaper and open it again to use it.
+button enabled: true  follow: null== after
+WV_RELEASE="5.9.0"                     # this package's version (4.3: what people see also depends on their release channel)
+Care/update: done	5.9.0	1793038623	
+2026-10-26 18:15:43 Check for updates (asked for by runner): up to date (5.9.5).
+2026-10-26 18:16:30 Check for updates (asked for by runner): 5.9.0 is out; started the update.
+2026-10-26 18:16:32 TLA BootPaper 5.9.0 is out (this Mac has 5.8.0): downloading it.
+2026-10-26 18:17:03 Updated to TLA BootPaper 5.9.0.
