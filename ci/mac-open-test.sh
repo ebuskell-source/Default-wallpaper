@@ -17,7 +17,9 @@ snap() {
     ps -axo pid,ppid,stat,etime,command | grep -E "welcome-video|settings\.zsh|settings-app|osascript|Dialog" | grep -v grep
     echo "-- lsappinfo:"; lsappinfo list 2>/dev/null | grep -B1 -A8 -i "bootpaper" | grep -E "BootPaper|pid|type|bundleID|executable" | head -20
     echo "-- front: $(lsappinfo info -only name "$(lsappinfo front)" 2>/dev/null)"
-    echo "-- windows: $(osascript -l JavaScript -e 'ObjC.import("CoreGraphics"); const l = ObjC.deepUnwrap($.CGWindowListCopyWindowInfo(1, 0)); l.filter(w => /BootPaper|welcome-video/i.test(w.kCGWindowOwnerName || "")).map(w => w.kCGWindowOwnerName + " pid " + w.kCGWindowOwnerPID + " layer " + w.kCGWindowLayer + " " + Math.round(w.kCGWindowBounds.Width) + "x" + Math.round(w.kCGWindowBounds.Height)).join("; ")' 2>&1)"
+    echo "-- windows: $(osascript -l JavaScript -e 'ObjC.import("CoreGraphics"); const l = ObjC.deepUnwrap(ObjC.castRefToObject($.CGWindowListCopyWindowInfo(0, 0))); l.filter(w => /BootPaper|welcome-video/i.test(w.kCGWindowOwnerName || "")).map(w => w.kCGWindowOwnerName + " pid " + w.kCGWindowOwnerPID + " layer " + w.kCGWindowLayer + " onscreen " + w.kCGWindowIsOnscreen + " alpha " + w.kCGWindowAlpha + " " + JSON.stringify(w.kCGWindowBounds) + " " + (w.kCGWindowName || "")).join(" | ")' 2>&1)"
+    echo "-- saved state: $(ls ~/Library/Saved\ Application\ State 2>&1 | grep -i welcome)"
+    for p in $(pgrep -f "welcome-video --jxa"); do sudo sample "$p" 1 -file "$O/$1-sample-$p.txt" >/dev/null 2>&1; echo "-- sampled $p"; done
   } >> "$O/summary.txt"
   screencapture -x -t jpg "$O/$1.jpg"
 }
