@@ -1,0 +1,39 @@
+﻿installer exit 0
+release 6.0.5, channels 6.0.5 / 6.0.5, version.txt 43
+names: Microsoft, Liquid Glass, Frutiger Aero, Penguins, Code, Beach, Underwater, Rainy, Space, Sky City, Solarpunk, Anime, Claymation, 8-Bit, Blocks, Bricks, Grumpy Cat, Bonjovi, Jimothy, TLA Classic
+sections: Tech = microsoft/liquid-glass/frutiger-aero/penguins/code; Places = beach/ocean/rainy/space/sky-city/solarpunk; Art styles = anime/claymation/pixel/blocks/bricks; Animals = grumpy-cat/bonjovi/raccoon; TLA = tla
+missing after sync: 
+code-light: e13a4b3c8067f69fe20b15f5178a4a43543c25e37673c0e99e18b9c9eb7eda3b (want e13a4b3c8067f69fe20b15f5178a4a43543c25e37673c0e99e18b9c9eb7eda3b)
+anime-dark: 8a2d221a6639fd6be1000694640647d627b93b89b81d6aaac2c218069a1f780d (want 8a2d221a6639fd6be1000694640647d627b93b89b81d6aaac2c218069a1f780d)
+anime: b0fc2c29f5305fe57e3617073227a9a8137f18337d5429fa74611f61653bdcaa (want b0fc2c29f5305fe57e3617073227a9a8137f18337d5429fa74611f61653bdcaa)
+code: 0e8eea44df385807898f8b732aeb804fdd3b14c1d9d169fceebbdb0993f36b02 (want 0e8eea44df385807898f8b732aeb804fdd3b14c1d9d169fceebbdb0993f36b02)
+code video in light mode (when 6.0.5 is out on their channel): light -> code-light.mp4
+code video in dark mode (when 6.0.5 is out on their channel): light -> code.mp4
+app exit 
+tour exit 
+  app\win1-top.png
+  app\win10-own.png
+  app\win11-animals.png
+  app\win11-art.png
+  app\win11-places.png
+  app\win11-tech.png
+  app\win11-tla.png
+  app\win2-video.png
+  app\win3-greeting-off.png
+  app\win4-middle.png
+  app\win5-bottom.png
+  app\win6-signin.png
+  app\win9-animals.png
+  tour\tour-1-welcome.png
+  tour\tour-2-name.png
+  tour\tour-3-background-animals.png
+  tour\tour-3-background-art.png
+  tour\tour-3-background-places.png
+  tour\tour-3-background-tech.png
+  tour\tour-3-background-tla.png
+  tour\tour-3-background.png
+  tour\tour-4-calls.png
+  tour\tour-5-care.png
+  tour\tour-6-connect.png
+  tour\tour-7-done.png
+done
