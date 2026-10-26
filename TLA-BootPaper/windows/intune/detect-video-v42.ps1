@@ -16,7 +16,7 @@ if ($installed) { $installed = $installed.Trim() }
 
 $files = 'play-video.ps1', 'settings.ps1', 'common.ps1', 'whatsnew.ps1', 'report.ps1', 'apply-background.ps1', 'lock-backgrounds.ps1',
          'sync-videos.ps1', 'release-notes.md', 'care.ps1', 'care-system.ps1', 'session.ps1', 'tour.ps1', 'theme-check.ps1', 'update.ps1', 'greeting.ps1', 'signin.ps1',
-         'Backgrounds\microsoft-r2.jpg', 'Backgrounds\microsoft-dark.jpg', 'Backgrounds\thumbs\microsoft.jpg' | ForEach-Object { Join-Path $InstallDir $_ }
+         'Backgrounds\microsoft-r6.jpg', 'Backgrounds\microsoft-dark-r6.jpg', 'Backgrounds\thumbs\microsoft.jpg' | ForEach-Object { Join-Path $InstallDir $_ }
 $shortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA BootPaper.lnk'
 $report   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Report a problem to TLA.lnk'
 $care     = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA Care.lnk'
