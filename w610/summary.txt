@@ -1,0 +1,16 @@
+﻿installer exit 0, version.txt 44
+release 6.1.0; experimental shown: True; Beta Testers picture: True
+app exit 
+tour exit 
+== Check for updates (made to look like 6.0.0)
+update exit 
+  11:01 PM  New versions install by themselves. To get one straight away, check now.  [bar hidden]
+  11:01 PM  Checking... This can take up to a minute.  [bar hidden]
+  11:01 PM  Checked at 11:01 PM. Version 6.0.5 is out (this PC has 6.0.0). Installing it now: this takes a few minutes.  [bar 0%]
+  11:01 PM  Downloading version 6.0.5... 0%  You can keep using your PC.  [bar 0%]
+  11:01 PM  Installing version 6.0.5... This takes a few minutes. You can keep using your PC.  [bar 0%]
+  11:01 PM  Updated to version 6.0.5 at 11:01 PM. Restart TLA BootPaper to use it.  [bar hidden, Restart button]
+  button enabled: True  status: installing|6.0.5|1793055663||install  installed: 6.0.5
+  log: 2026-10-26 23:01:03 TLA BootPaper 6.0.5 is out (this computer has 6.0.0): downloading it.
+  log: 2026-10-26 23:01:04 Installing TLA BootPaper 6.0.5.
+done
