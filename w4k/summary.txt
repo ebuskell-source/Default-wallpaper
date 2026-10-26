@@ -1,0 +1,25 @@
+﻿installer exit 0
+liquid-glass-dark-r6.jpg 3840x2160 650 KB
+liquid-glass-r6.jpg 3840x2160 559 KB
+microsoft-dark-r6.jpg 3840x2160 636 KB
+microsoft-r6.jpg 3840x2160 593 KB
+Wide\liquid-glass-dark.jpg 199 KB
+Wide\liquid-glass.jpg 174 KB
+Wide\microsoft-dark.jpg 196 KB
+Wide\microsoft.jpg 185 KB
+detection v42: 'Installed'
+version.txt: 42
+
+microsoft Light: shown C:\ProgramData\WelcomeVideo\Backgrounds\microsoft-r6.jpg | wallpaper C:\ProgramData\WelcomeVideo\Backgrounds\microsoft-r6.jpg
+microsoft Dark: shown C:\ProgramData\WelcomeVideo\Backgrounds\microsoft-dark-r6.jpg | wallpaper C:\ProgramData\WelcomeVideo\Backgrounds\microsoft-dark-r6.jpg
+liquid-glass Light: shown C:\ProgramData\WelcomeVideo\Backgrounds\liquid-glass-r6.jpg | wallpaper C:\ProgramData\WelcomeVideo\Backgrounds\liquid-glass-r6.jpg
+liquid-glass Dark: shown C:\ProgramData\WelcomeVideo\Backgrounds\liquid-glass-dark-r6.jpg | wallpaper C:\ProgramData\WelcomeVideo\Backgrounds\liquid-glass-dark-r6.jpg
+  log: 2026-10-26 18:35:59 Desktop for S-1-5-21-3776380004-1005456608-3524014338-500 set to 'microsoft'.
+  log: 2026-10-26 18:36:00 Lock screen for S-1-5-21-3776380004-1005456608-3524014338-500 set to 'microsoft'.
+  log: 2026-10-26 18:36:04 Default lock screen set to 'liquid-glass'.
+  log: 2026-10-26 18:36:04 Desktop for S-1-5-21-3776380004-1005456608-3524014338-500 set to 'liquid-glass'.
+  log: 2026-10-26 18:36:05 Lock screen for S-1-5-21-3776380004-1005456608-3524014338-500 set to 'liquid-glass'.
+  log: 2026-10-26 18:36:09 Default lock screen set to 'liquid-glass'.
+  log: 2026-10-26 18:36:09 Desktop for S-1-5-21-3776380004-1005456608-3524014338-500 set to 'liquid-glass'.
+  log: 2026-10-26 18:36:10 Lock screen for S-1-5-21-3776380004-1005456608-3524014338-500 set to 'liquid-glass'.
+done
