@@ -5,6 +5,20 @@ on:
 permissions:
   contents: write
 jobs:
+  win-610:
+    if: contains(github.event.head_commit.message, '[win-610]')
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - shell: powershell
+        run: ./ci/win-610-test.ps1
+      - name: results
+        if: always()
+        shell: bash
+        run: |
+          cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "win 6.1.0 ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-win-610
   mac-610:
     if: contains(github.event.head_commit.message, '[mac-610]')
     runs-on: macos-latest
