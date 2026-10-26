@@ -26,7 +26,7 @@ touch /tmp/tb-debug
 key() { osascript -e 'tell application "System Events" to tell process "TLA BootPaper" to set frontmost to true' -e 'delay 1' -e "tell application \"System Events\" to $1" >> "$O/summary.txt" 2>&1; }
 open -a "$A"; sleep 8; snap 01-opened
 quit_app "the first time"; sleep 4; snap 02-quit
-open -a "$A"; sleep 8; snap 03-opened-after-quit
+open -a Calculator; sleep 3; open -a "$A"; sleep 8; snap 03-fresh-over-calculator
 echo "-- Esc (the Close button):" >> "$O/summary.txt"; key 'key code 53'; sleep 5; snap 04-closed-with-esc
 open -a "$A"; sleep 8; snap 05-opened-after-esc
 echo "-- Cmd-W:" >> "$O/summary.txt"; key 'keystroke "w" using command down'; sleep 5; snap 06-closed-with-cmd-w
