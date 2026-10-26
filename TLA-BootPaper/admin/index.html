@@ -86,10 +86,10 @@
 <main id="app" class="hidden">
   <h2>Lock screen announcement</h2>
   <div class="card">
-    <p class="muted small" style="margin-top:0">Shown on every Mac's, Windows PC's and Linux computer's lock screen, and at the top of TLA BootPaper (up to 300 characters). Computers Intune manages pick up a change the next time they check in (usually within a few hours); the others within about half an hour. Leave it empty for no announcement.</p>
+    <p class="muted small" style="margin-top:0">Shown on every Mac's, Windows PC's, Linux computer's and iPad's lock screen, and at the top of TLA BootPaper (up to 300 characters). Computers Intune manages pick up a change the next time they check in (usually within a few hours); the others within about half an hour. Leave it empty for no announcement.</p>
     <textarea id="announce" maxlength="300" placeholder="For example: The TLA Hub will be closed on Friday from 6 am to 10 pm."></textarea>
     <div class="row">
-      <button class="primary" id="saveAnnounce" disabled>Save for Macs and Windows PCs</button>
+      <button class="primary" id="saveAnnounce" disabled>Save for Macs, Windows PCs and iPads</button>
       <span class="status" id="announceMsg"></span>
     </div>
     <p class="muted small" id="announceWhere"></p>
@@ -116,6 +116,7 @@ const SCOPES = 'openid profile offline_access https://graph.microsoft.com/User.R
                'https://graph.microsoft.com/DeviceManagementManagedDevices.Read.All ' +
                'https://graph.microsoft.com/DeviceManagementScripts.Read.All';   // (the "Who uses what" reports)
 const MAC_POLICY = 'TLA Announcement (Mac lock screen)', WIN_POLICY = 'TLA Announcement (Windows lock screen)';
+const IPAD_POLICY = 'TLA Announcement (iPad lock screen)';   // (5.9.5)
 const REPORT = 'TLA BootPaper popularity';
 const GRAPH = 'https://graph.microsoft.com/beta';
 const REDIRECT = location.origin + location.pathname;
@@ -184,7 +185,9 @@ async function graphAll(path) {
 
 // ---- The announcement ------------------------------------------------------------------------------------------
 // Mac: a Settings catalog policy (the login window's text). Windows: an imported administrative template (TLA >
-// BootPaper > Announcement). Both are found by name, read, and changed in place.
+// BootPaper > Announcement). iPads (5.9.5): a Device features profile's lock screen message (its "If Lost, Return
+// to..." message, which iPadOS shows at the bottom of the Lock Screen). Each is found by name, read, and changed in
+// place.
 const where = {};
 function findText(node, test, path) {        // the first setting value (deep) whose definition id passes test
   if (!node || typeof node !== 'object') return null;
@@ -228,6 +231,18 @@ async function loadAnnouncement() {
         : 'Windows: found the policy, but not its text box (' + (dvs.map(d => (d.definition || {}).displayName || d.id).join(', ') || 'no settings') + ')');
     } else msgs.push('Windows: no policy named "' + WIN_POLICY + '"');
   } catch (e) { msgs.push('Windows: ' + e.message); }
+  try {
+    where.ipad = null;
+    const ipad = (await graphAll(`/deviceManagement/deviceConfigurations?$select=id,displayName`)).find(p => p.displayName === IPAD_POLICY);
+    if (ipad) {
+      const full = await graph(`/deviceManagement/deviceConfigurations/${ipad.id}`);
+      if (/iosDeviceFeaturesConfiguration$/.test(full['@odata.type'] || '')) {
+        where.ipad = { id: ipad.id };
+        if (!$('announce').value && full.lockScreenFootnote) $('announce').value = full.lockScreenFootnote;
+        msgs.push('iPads: "' + IPAD_POLICY + '"');
+      } else msgs.push('iPads: "' + IPAD_POLICY + '" isn’t a Device features profile');
+    } else msgs.push('iPads: no profile named "' + IPAD_POLICY + '"');
+  } catch (e) { msgs.push('iPads: ' + e.message); }
   // The copy on GitHub, for Linux and the computers Intune doesn't manage (copied from Intune every 10 minutes).
   try {
     const raw = await (await fetch('https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/linux/announcement.txt?t=' + Date.now())).text();
@@ -236,7 +251,7 @@ async function loadAnnouncement() {
     msgs.push('Linux and other computers: ' + (copy === now ? 'up to date' : 'copied within about 10 minutes'));
   } catch (e) { }
   $('announceWhere').textContent = 'Saves to ' + msgs.join(' · ');
-  $('saveAnnounce').disabled = !(where.mac && where.mac.value) && !(where.win && (where.win.pv || where.win.box));
+  $('saveAnnounce').disabled = !(where.mac && where.mac.value) && !(where.win && (where.win.pv || where.win.box)) && !where.ipad;
 }
 async function saveAnnouncement() {
   const text = $('announce').value.trim(), done = [], failed = [];
@@ -275,6 +290,13 @@ async function saveAnnouncement() {
       done.push('Windows PCs');
       loadAnnouncement();   // (what's there now, with the ids of anything just added)
     } catch (e) { failed.push('Windows PCs (' + e.message + ')'); }
+  }
+  if (where.ipad) {
+    try {
+      await graph(`/deviceManagement/deviceConfigurations/${where.ipad.id}`, { method: 'PATCH', body: JSON.stringify({
+        '@odata.type': '#microsoft.graph.iosDeviceFeaturesConfiguration', lockScreenFootnote: text || null }) });
+      done.push('iPads');
+    } catch (e) { failed.push('iPads (' + e.message + ')'); }
   }
   $('announceMsg').className = 'status ' + (failed.length ? 'bad' : 'ok');
   $('announceMsg').textContent = (done.length ? 'Saved ✓ for ' + done.join(' and ') + '. ' : '') + (failed.length ? "Couldn't save for " + failed.join('; ') : '');
