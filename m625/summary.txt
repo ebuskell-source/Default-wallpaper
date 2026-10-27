@@ -1,0 +1,36 @@
+== lock agent after install
+	path = /Library/LaunchAgents/ca.schoolathome.welcomevideo.lock.plist
+	state = not running
+	last exit code = 0
+		state = active
+		state = active
+	run interval = 60 seconds
+== TLA's Mac, never signed in
+enrollment=dep corporate=1 signin=out||||||none online=1 needed=1
+signin	out						none
+corporate	1
+== the agent starts it
+lock screens running: 1
+front: TextEdit
+== signed in elsewhere (as if in the browser): it goes away
+lock screens running: 0 after 4s
+enrollment=dep corporate=1 signin=in|29|1795627508|hub|Jane Doe|jdoe| online=1 needed=0
+== run out (40 days ago): back within a minute
+enrollment=dep corporate=1 signin=out||1792257914|hub|Jane Doe|jdoe|expired online=1 needed=1
+lock screens running: 1 after 54s
+== Log out button and Sign in button exist
+Sign in, Log out
+== Sign in: steps aside for the browser
+button Sign in of window TLA BootPaper of application process welcome-video
+front: Safari
+/tmp/tla-signin.8yFpA9sH
+lock screens running: 0 after signing in
+helpers left:        0
+== offline-style: needed only when online (the check itself)
+enrollment=dep corporate=1 signin=in|29|1795627593|hub|Jane Doe|jdoe| online=1 needed=0
+== a Mac of their own, never signed in: no lock, Skip stays
+enrollment=none corporate=0 signin=out||||||none online=1 needed=0
+lock screens running: 0
+== release
+6.2.5 6.2.5
+done
