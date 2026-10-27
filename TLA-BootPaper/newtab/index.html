@@ -15,6 +15,9 @@
   and the links in links.json. Nothing is sent anywhere: it only reads files next to it.
   5.4: each person's own shortcuts (Add shortcut, edit, remove; kept in their browser), and, where the TLA New Tab
   extension is installed (../extension/), the browser's most-visited sites, like Chrome's and Edge's own new tab page.
+  6.3: the TLA Hub button in the search bar, Microsoft 365's and Google's apps in a menu each (bottom left and right),
+  the shortcuts alone at the bottom, and the person's own desktop background (from TLA BootPaper, through the extension)
+  instead of today's.
 -->
 <style>
   :root {
@@ -38,7 +41,7 @@
            background: linear-gradient(to bottom, rgba(8, 20, 38, 0.62) 0%, rgba(8, 20, 38, 0.18) 30%, rgba(8, 20, 38, 0) 45%,
                                        rgba(8, 20, 38, 0) 62%, rgba(8, 20, 38, 0.55) 100%); }
 
-  main { position: relative; min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto auto;
+  main { position: relative; min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto;
          padding: clamp(20px, 3.5vw, 44px); gap: 12px; }
 
   /* The top band: the time, search and the announcement. The middle (the TLA logo in every picture) stays clear. */
@@ -56,26 +59,60 @@
 
   form { justify-self: center; width: min(560px, 100%); margin-top: clamp(14px, 1.8vw, 26px); position: relative; }
   form svg { position: absolute; left: 19px; top: 50%; translate: 0 -50%; width: 20px; height: 20px; stroke: var(--ink-soft); }
-  input[type=search] { width: 100%; height: 54px; padding: 0 22px 0 52px; border: 0; border-radius: 27px;
+  input[type=search] { width: 100%; height: 54px; padding: 0 64px 0 52px; border: 0; border-radius: 27px;
                        background: rgba(255, 255, 255, 0.94); color: var(--navy); font: 17px var(--type);
                        box-shadow: 0 10px 34px rgba(8, 20, 38, 0.35); }
   input[type=search]::placeholder { color: var(--ink-soft); }
+  input[type=search]::-webkit-search-cancel-button { display: none; }
+  /* 6.3: the TLA Hub, in its own circle at the far end of the search bar (where the magnifying glass is at the start). */
+  .hub { position: absolute; right: 3px; top: 50%; translate: 0 -50%; display: grid; place-items: center; align-content: center;
+         gap: 2px; width: 48px; height: 48px; border-radius: 50%; background: var(--navy); color: var(--gold); text-decoration: none;
+         box-shadow: 0 0 0 2px rgba(242, 184, 48, 0.85); }
+  .hub svg { position: static; translate: none; width: 20px; height: 20px; stroke: var(--gold); }
+  .hub span { font: 600 8.5px/1 var(--type); letter-spacing: 0.01em; color: var(--white); white-space: nowrap; }
+  .hub:hover { background: #13294A; }
+  .hub:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
   input[type=search]:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
-  nav { justify-self: center; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 10px 12px;
-        border-radius: 22px; border: 1px solid var(--glass-edge); background: var(--glass);
-        -webkit-backdrop-filter: blur(20px) saturate(1.3); backdrop-filter: blur(20px) saturate(1.3); }
-  nav a { display: flex; flex-direction: column; align-items: center; gap: 7px; width: 104px; padding: 10px 4px 8px;
-          border-radius: 14px; color: var(--white); text-decoration: none; font-size: 13px; line-height: 1.2; text-align: center; }
-  nav a:hover { background: rgba(255, 255, 255, 0.12); }
-  nav a:focus-visible { outline: 3px solid var(--gold); outline-offset: 0; }
-  nav .ic { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 13px; background: rgba(255, 255, 255, 0.12); }
-  nav svg { width: 24px; height: 24px; stroke: var(--gold); }
+  /* 6.3: the bottom row: Microsoft 365's apps (left), the shortcuts (middle), Google's apps (right). */
+  .bottom { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 20px; padding-bottom: 22px; }
+  .suite { position: relative; }
+  .suite.ms { justify-self: start; }
+  .suite.google { justify-self: end; }
+  .suite > button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; width: 132px; height: 132px;
+         padding: 0; border-radius: 22px; border: 1px solid var(--glass-edge); background: var(--glass); color: var(--white); cursor: pointer;
+         -webkit-backdrop-filter: blur(20px) saturate(1.3); backdrop-filter: blur(20px) saturate(1.3); font: 600 14px/1.2 var(--type); }
+  .suite > button:hover { background: rgba(11, 27, 51, 0.62); }
+  .suite > button:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .dots { display: grid; grid-template-columns: repeat(3, 12px); gap: 7px; }
+  .dots i { width: 12px; height: 12px; border-radius: 50%; }
+  .chev { position: absolute; top: 9px; right: 9px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+          border: 1px solid rgba(255, 255, 255, 0.45); transition: rotate 160ms ease-out; }
+  .chev svg { width: 13px; height: 13px; stroke: var(--white); stroke-width: 2.2; }
+  .suite > button[aria-expanded=true] .chev { rotate: 180deg; }
+  .menu { position: absolute; bottom: calc(100% + 10px); width: 330px; padding: 14px 10px 10px; border-radius: 20px;
+          border: 1px solid var(--glass-edge); background: rgba(11, 27, 51, 0.82); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+          -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); }
+  .ms .menu { left: 0; }
+  .google .menu { right: 0; }
+  .menu[hidden] { display: none; }
+  .menu h2 { margin: 0 8px 8px; font: 600 13px var(--type); color: var(--gold); letter-spacing: 0.02em; }
+  .menu .apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .menu a { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 10px 4px 9px; border-radius: 12px;
+            color: var(--white); text-decoration: none; font-size: 13px; line-height: 1.2; text-align: center; }
+  .menu a:hover { background: rgba(255, 255, 255, 0.12); }
+  .menu a:focus-visible { outline: 3px solid var(--gold); outline-offset: 0; }
+  .app { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 11px; background: var(--c, #2B579A); }
+  .app svg { width: 22px; height: 22px; stroke: #fff; }
 
   /* 5.4: the person's shortcuts (and the browser's most-visited sites), like Chrome's and Edge's own tiles. */
-  .shortcuts { justify-self: center; display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; max-width: min(100%, 1010px);
-               padding: 5px 10px; border-radius: 20px; border: 1px solid var(--glass-edge); background: var(--glass);
+  .shortcuts { justify-self: center; display: flex; flex-direction: column; max-width: min(100%, 1010px);
+               padding: 10px 12px 6px; border-radius: 20px; border: 1px solid var(--glass-edge); background: var(--glass);
                -webkit-backdrop-filter: blur(20px) saturate(1.3); backdrop-filter: blur(20px) saturate(1.3); }
+  .shortcuts h2 { display: flex; align-items: center; gap: 9px; margin: 0 6px 6px; padding-bottom: 9px;
+                  border-bottom: 1px solid rgba(255, 255, 255, 0.16); font: 600 15px var(--type); }
+  .shortcuts h2 svg { width: 19px; height: 19px; stroke: var(--white); }
+  .shortcuts .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
   .tile { position: relative; width: 96px; }
   .tile > a, .tile > button.add { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; padding: 8px 4px 6px;
           border: 0; border-radius: 14px; background: none; color: var(--white); text-decoration: none; font: 13px/1.2 var(--type);
@@ -117,11 +154,15 @@
     header { grid-template-columns: max-content minmax(0, 1fr); }
     form { grid-column: 1 / -1; grid-row: 2; justify-self: center; width: min(600px, 100%); margin-top: 0; }
   }
+  @media (max-width: 1100px) {
+    .bottom { grid-template-columns: 1fr 1fr; }
+    .shortcuts { grid-column: 1 / -1; grid-row: 1; }
+  }
   @media (max-width: 640px) {
     header { grid-template-columns: 1fr; }
+    .suite > button { width: 112px; height: 112px; }
     .notice { justify-self: stretch; max-width: none; }
     form { grid-row: auto; }
-    nav a { width: 84px; }
     .tile { width: 84px; }
     .caption { position: static; text-align: center; }
   }
@@ -141,12 +182,22 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
       <input type="search" name="q" id="q" placeholder="Search the web" aria-label="Search the web" autocomplete="off">
       <input type="hidden" name="adlt" value="strict">
+      <a class="hub" id="hub" href="https://hub.schoolathome.ca/" title="TLA Hub" aria-label="TLA Hub">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 4l9 6.5"/><path d="M5.5 9v10h13V9"/><path d="M10 19v-5h4v5"/></svg>
+        <span aria-hidden="true">TLA Hub</span>
+      </a>
     </form>
     <aside class="notice" id="notice" hidden><strong>From TLA</strong><span id="notice-text"></span></aside>
   </header>
   <div></div>
-  <section class="shortcuts" id="shortcuts" aria-label="Your shortcuts" hidden></section>
-  <nav id="links" aria-label="School links"></nav>
+  <div class="bottom">
+    <div class="suite ms" id="suite-ms"></div>
+    <section class="shortcuts" id="shortcuts" aria-labelledby="shortcuts-title" hidden>
+      <h2 id="shortcuts-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4 4.5v3.7h3.7"/><path d="M12 8v4.3l2.8 1.7"/></svg>Most visited</h2>
+      <div class="row" id="shortcut-row"></div>
+    </section>
+    <div class="suite google" id="suite-google"></div>
+  </div>
 </main>
 <dialog id="edit" aria-labelledby="edit-title">
   <form method="dialog" id="edit-form" novalidate>
@@ -174,20 +225,39 @@ const BACKGROUNDS = [['microsoft', 'Microsoft'], ['liquid-glass', 'Liquid Glass'
 // background in it is left out until its release is Stable, as channels.json on this site says.)
 const SINCE = { 'grumpy-cat': '5.9.0', bonjovi: '5.9.0', raccoon: '5.9.0' };
 const SEASONS = { fall: 'Fall', christmas: 'Christmas', easter: 'Easter' };
+const OTHER_NAMES = { experimental: 'Battle of the Beta Testers' };   // (6.3: shown when it's their desktop's)
 const VARIANTS = { microsoft: 'dark', 'liquid-glass': 'dark', 'frutiger-aero': 'dark', solarpunk: 'dark', rainy: 'dark',
   claymation: 'dark', blocks: 'dark', bricks: 'dark', pixel: 'dark', anime: 'dark', 'sky-city': 'dark', tla: 'dark',
   penguins: 'light', code: 'light', space: 'light', ocean: 'dark', beach: 'dark', fall: 'dark', christmas: 'dark', easter: 'dark',
   'grumpy-cat': 'dark', bonjovi: 'dark', raccoon: 'dark' };
+// 6.3: hub (the button in the search bar), and the apps in the Microsoft 365 and Google menus. links.json can change them.
 const DEFAULT_LINKS = {
   search: { placeholder: 'Search the web', action: 'https://www.bing.com/search', params: { adlt: 'strict' } },
-  links: [
-    { name: 'TLA Hub', url: 'https://hub.schoolathome.ca/', icon: 'hub' },
-    { name: 'Email', url: 'https://outlook.office.com/mail/', icon: 'mail' },
-    { name: 'Teams', url: 'https://teams.microsoft.com/', icon: 'chat' },
-    { name: 'OneDrive', url: 'https://www.microsoft365.com/onedrive', icon: 'cloud' },
-    { name: 'Microsoft 365', url: 'https://www.microsoft365.com/', icon: 'apps' },
-    { name: 'Helpdesk', url: 'mailto:helpdesk@schoolathome.ca', icon: 'help' }]
+  hub: 'https://hub.schoolathome.ca/',
+  microsoft: [
+    { name: 'Outlook', url: 'https://outlook.office.com/mail/', icon: 'mail', color: '#0F6CBD' },
+    { name: 'Teams', url: 'https://teams.microsoft.com/', icon: 'chat', color: '#5B5FC7' },
+    { name: 'OneDrive', url: 'https://www.microsoft365.com/onedrive', icon: 'cloud', color: '#0364B8' },
+    { name: 'Word', url: 'https://www.microsoft365.com/launch/word', icon: 'doc', color: '#185ABD' },
+    { name: 'Excel', url: 'https://www.microsoft365.com/launch/excel', icon: 'sheet', color: '#107C41' },
+    { name: 'PowerPoint', url: 'https://www.microsoft365.com/launch/powerpoint', icon: 'slides', color: '#C43E1C' },
+    { name: 'OneNote', url: 'https://www.onenote.com/notebooks', icon: 'book', color: '#7719AA' },
+    { name: 'Microsoft 365', url: 'https://www.microsoft365.com/', icon: 'apps', color: '#D83B01' },
+    { name: 'Helpdesk', url: 'mailto:helpdesk@schoolathome.ca', icon: 'help', color: '#B8860B' }],
+  google: [
+    { name: 'Gmail', url: 'https://mail.google.com/', icon: 'mail', color: '#C5221F' },
+    { name: 'Drive', url: 'https://drive.google.com/', icon: 'cloud', color: '#188038' },
+    { name: 'Docs', url: 'https://docs.google.com/document/', icon: 'doc', color: '#1A73E8' },
+    { name: 'Sheets', url: 'https://docs.google.com/spreadsheets/', icon: 'sheet', color: '#188038' },
+    { name: 'Slides', url: 'https://docs.google.com/presentation/', icon: 'slides', color: '#E37400' },
+    { name: 'Forms', url: 'https://docs.google.com/forms/', icon: 'form', color: '#7248B9' },
+    { name: 'Calendar', url: 'https://calendar.google.com/', icon: 'calendar', color: '#1967D2' },
+    { name: 'Meet', url: 'https://meet.google.com/', icon: 'video', color: '#00832D' },
+    { name: 'Classroom', url: 'https://classroom.google.com/', icon: 'class', color: '#1E8E3E' }]
 };
+// (the coloured dots of each menu's button)
+const DOTS = { microsoft: ['#F25022', '#7FBA00', '#00A4EF', '#FFB900', '#F25022', '#7FBA00', '#00A4EF', '#FFB900', '#F25022'],
+               google: ['#4285F4', '#EA4335', '#FBBC05', '#34A853', '#4285F4', '#EA4335', '#FBBC05', '#34A853', '#4285F4'] };
 const ICONS = {
   hub: '<path d="M3 10.5 12 4l9 6.5"/><path d="M5.5 9v10h13V9"/><path d="M10 19v-5h4v5"/>',
   mail: '<rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/>',
@@ -198,6 +268,11 @@ const ICONS = {
   book: '<path d="M5 4.5h12.5v15H6.5A1.5 1.5 0 0 1 5 18z"/><path d="M5 18a1.5 1.5 0 0 1 1.5-1.5h11"/>',
   calendar: '<rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
   video: '<rect x="3" y="6.5" width="12.5" height="11" rx="2"/><path d="m15.5 10.5 5-3v9l-5-3"/>',
+  doc: '<path d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10A.5.5 0 0 1 6 20V4a.5.5 0 0 1 .5-.5z"/><path d="M9 11h6M9 14h6M9 17h4"/>',
+  sheet: '<rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M4 9.5h16M4 14.5h16M10 4v16"/>',
+  slides: '<rect x="3.5" y="5" width="17" height="11" rx="1.5"/><path d="M12 16v3.5M8.5 19.5h7"/>',
+  form: '<rect x="5" y="3.5" width="14" height="17" rx="1.5"/><circle cx="9" cy="9" r=".8"/><circle cx="9" cy="13" r=".8"/><path d="M11.5 9H16M11.5 13H16M9 17h7"/>',
+  class: '<rect x="3.5" y="5" width="17" height="12" rx="1.5"/><circle cx="12" cy="10" r="2"/><path d="M8.5 15c.6-1.6 1.9-2.5 3.5-2.5s2.9.9 3.5 2.5M8 20h8"/>',
   link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>'
 };
 
@@ -228,7 +303,15 @@ function onStable(id) {
   for (let i = 0; i < 4; i++) if (a[i] !== b[i]) return a[i] < b[i];
   return true;
 }
+// 6.3: their desktop's background, as TLA BootPaper tells the TLA New Tab extension (remembered, so it's there at once).
+let desk = null;
+try { desk = JSON.parse(localStorage.getItem('tla-desk') || 'null'); } catch (e) { }
+function backgroundName(id) {
+  const b = BACKGROUNDS.find(([x]) => x === id);
+  return b ? b[1] : SEASONS[id] ? SEASONS[id] + ' theme' : OTHER_NAMES[id] || '';
+}
 function todaysBackground(d) {
+  if (desk && typeof desk.id === 'string' && backgroundName(desk.id)) return [desk.id, backgroundName(desk.id)];
   const s = season(d);
   if (s) return [s, SEASONS[s] + ' theme'];
   const dayNumber = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
@@ -243,7 +326,7 @@ fetch('../channels.json', { cache: 'no-cache' }).then(r => r.json()).then(j => {
 }).catch(() => {});
 const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
 function pictureFile(id) {
-  const look = darkQuery.matches ? 'dark' : 'light';
+  const look = desk && desk.id === id && (desk.look === 'dark' || desk.look === 'light') ? desk.look : darkQuery.matches ? 'dark' : 'light';
   return 'pictures/' + (VARIANTS[id] === look ? id + '-' + look : id) + '.jpg';
 }
 let shownFile = '';
@@ -257,7 +340,7 @@ function showPicture() {
     el.style.backgroundImage = 'url("' + file + '")';
     el.classList.add('shown');
     shownFile = file;
-    document.getElementById('caption').textContent = "Today's picture: " + name;
+    document.getElementById('caption').textContent = (desk && desk.id === id ? 'Your background: ' : "Today's picture: ") + name;
   };
   img.onerror = () => { if (id !== 'tla') { shownFile = file; document.getElementById('picture').style.backgroundImage = 'url("pictures/tla.jpg")';
                                             document.getElementById('picture').classList.add('shown'); } };
@@ -288,22 +371,63 @@ fetch('../linux/announcement.txt', { cache: 'no-cache' })
 
 // ---- links and search ----
 const safeUrl = u => typeof u === 'string' && /^(https:\/\/|mailto:)/i.test(u);
+function appList(list, fallback) {
+  return (Array.isArray(list) ? list : fallback).filter(l => l && typeof l.name === 'string' && safeUrl(l.url)).slice(0, 12);
+}
+function showSuite(id, title, list, dots) {
+  const box = document.getElementById('suite-' + id);
+  const wasOpen = !!box.querySelector('.menu:not([hidden])');
+  box.textContent = '';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.setAttribute('aria-expanded', 'false');
+  btn.setAttribute('aria-controls', 'menu-' + id);
+  const grid = document.createElement('span');
+  grid.className = 'dots'; grid.setAttribute('aria-hidden', 'true');
+  dots.forEach(c => { const i = document.createElement('i'); i.style.background = c; grid.append(i); });
+  const chev = document.createElement('span');
+  chev.className = 'chev'; chev.setAttribute('aria-hidden', 'true');
+  chev.innerHTML = '<svg viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></svg>';
+  const name = document.createElement('span');
+  name.textContent = title;
+  btn.append(chev, grid, name);
+  const menu = document.createElement('div');
+  menu.className = 'menu'; menu.id = 'menu-' + id; menu.hidden = true;
+  menu.setAttribute('role', 'group'); menu.setAttribute('aria-label', title + ' apps');
+  const h = document.createElement('h2'); h.textContent = title;
+  const apps = document.createElement('div'); apps.className = 'apps';
+  list.forEach(l => {
+    const a = document.createElement('a');
+    a.href = l.url;
+    const ic = document.createElement('span');
+    ic.className = 'app';
+    if (typeof l.color === 'string' && /^#[0-9a-f]{6}$/i.test(l.color)) ic.style.setProperty('--c', l.color);
+    ic.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[l.icon] || ICONS.link) + '</svg>';   // (built-in icons only)
+    const n = document.createElement('span');
+    n.textContent = l.name.slice(0, 24);
+    a.append(ic, n);
+    apps.append(a);
+  });
+  menu.append(h, apps);
+  btn.addEventListener('click', () => setMenu(id, menu.hidden));
+  box.append(menu, btn);
+  if (wasOpen) setMenu(id, true);
+}
+function setMenu(id, open) {
+  for (const other of ['ms', 'google']) {
+    const box = document.getElementById('suite-' + other);
+    const menu = box.querySelector('.menu'), btn = box.querySelector('button');
+    if (!menu) continue;
+    const show = other === id && open;
+    menu.hidden = !show; btn.setAttribute('aria-expanded', String(show));
+  }
+}
+document.addEventListener('click', e => { if (!e.target.closest('.suite')) setMenu('', false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !dlg.open) setMenu('', false); });
 function showLinks(cfg) {
-  const nav = document.getElementById('links');
-  nav.textContent = '';
-  (Array.isArray(cfg.links) ? cfg.links : DEFAULT_LINKS.links)
-    .filter(l => l && typeof l.name === 'string' && safeUrl(l.url)).slice(0, 8)
-    .forEach(l => {
-      const a = document.createElement('a');
-      a.href = l.url;
-      const ic = document.createElement('span');
-      ic.className = 'ic';
-      ic.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[l.icon] || ICONS.link) + '</svg>';   // (built-in icons only)
-      const name = document.createElement('span');
-      name.textContent = l.name.slice(0, 30);
-      a.append(ic, name);
-      nav.append(a);
-    });
+  showSuite('ms', 'Microsoft 365', appList(cfg.microsoft, DEFAULT_LINKS.microsoft), DOTS.microsoft);
+  showSuite('google', 'Google', appList(cfg.google, DEFAULT_LINKS.google), DOTS.google);
+  if (typeof cfg.hub === 'string' && /^https:\/\//i.test(cfg.hub)) document.getElementById('hub').href = cfg.hub;
   const s = cfg.search || {};
   const form = document.getElementById('search');
   if (safeUrl(s.action) && s.action.startsWith('https://')) {
@@ -369,7 +493,7 @@ function iconFor(t) {
   return fav;
 }
 function showShortcuts() {
-  const box = document.getElementById('shortcuts');
+  const box = document.getElementById('shortcut-row');
   box.textContent = '';
   const list = tiles();
   list.forEach((t, i) => {
@@ -409,7 +533,7 @@ function showShortcuts() {
     tile.append(add);
     if (list.length >= MAX_TILES) box.lastElementChild.replaceWith(tile); else box.append(tile);
   }
-  box.hidden = false;
+  document.getElementById('shortcuts').hidden = false;
 }
 
 // Add or edit a shortcut. A most-visited site that's edited becomes one of theirs; removed, it stays hidden.
@@ -451,6 +575,20 @@ document.getElementById('edit-remove').addEventListener('click', () => { if (edi
 document.getElementById('edit-cancel').addEventListener('click', () => dlg.close());
 
 // The browser's most-visited sites, from the TLA New Tab extension where it's installed (again when the tab comes back).
+function askDesktop() {   // (6.3; extension 1.1 and TLA BootPaper 6.3.5)
+  try {
+    if (!(window.chrome && chrome.runtime && chrome.runtime.sendMessage)) return;
+    chrome.runtime.sendMessage(EXTENSION_ID, { type: 'background' }, reply => {
+      void chrome.runtime.lastError;
+      if (!reply || typeof reply.id !== 'string' || !/^[a-z0-9-]{1,40}$/.test(reply.id)) return;
+      const d = { id: reply.id, look: reply.look === 'dark' ? 'dark' : reply.look === 'light' ? 'light' : '' };
+      if (JSON.stringify(d) === JSON.stringify(desk)) return;
+      desk = d;
+      try { localStorage.setItem('tla-desk', JSON.stringify(d)); } catch (e) { }
+      showPicture();
+    });
+  } catch (e) { }
+}
 function askMostVisited() {
   try {
     if (!(window.chrome && chrome.runtime && chrome.runtime.sendMessage)) return;
@@ -463,7 +601,8 @@ function askMostVisited() {
     });
   } catch (e) { }
 }
-document.addEventListener('visibilitychange', () => { if (!document.hidden) askMostVisited(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { askMostVisited(); askDesktop(); } });
+askDesktop();
 showShortcuts();
 askMostVisited();
 tick();
