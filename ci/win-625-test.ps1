@@ -31,7 +31,8 @@ function Run($what, $args2, $env1) {
     if (-not $a.WaitForExit(300000)) { $a.Kill(); Say "$what`: timed out" } else { Say "$what exit $($a.ExitCode)" }
     $env:TB_TEST = ''
 }
-function LockTitle { (Get-Process powershell -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -eq 'TLA BootPaper sign-in' } | Measure-Object).Count }
+Add-Type -Namespace T -Name W -MemberDefinition '[DllImport("user32.dll", CharSet = CharSet.Unicode)] public static extern System.IntPtr FindWindow(string c, string t); [DllImport("user32.dll")] public static extern bool IsWindowVisible(System.IntPtr h);'
+function LockTitle { $h = [T.W]::FindWindow($null, 'TLA BootPaper sign-in'); if ($h -ne [IntPtr]::Zero -and [T.W]::IsWindowVisible($h)) { 1 } else { 0 } }
 
 Check 'own PC'
 $env:TB_TEST_CORPORATE = '1'
@@ -61,5 +62,6 @@ Remove-ItemProperty 'HKCU:\Software\WelcomeVideo\SignIn' -Name Token -ErrorActio
 Check 'own PC, never signed in'
 Run 'tour-own' @('-Tour') "$out\tour-own"
 Get-Content "$env:LOCALAPPDATA\TLA BootPaper\app-errors.log" -ErrorAction SilentlyContinue | Out-File $sum -Append
+Say '== lock.log'; Get-Content "$env:LOCALAPPDATA\TLA BootPaper\lock.log" -ErrorAction SilentlyContinue | Out-File $sum -Append
 Get-ChildItem "$out\*-err.txt" | ForEach-Object { if ($_.Length) { Say "$($_.Name): $(Get-Content $_.FullName -Raw)" } }
 Say 'done'
