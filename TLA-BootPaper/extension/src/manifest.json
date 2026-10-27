@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "TLA New Tab",
-  "version": "1.0",
-  "description": "Shows your most-visited sites on the TLA new tab page. Nothing leaves your browser.",
+  "version": "1.1",
+  "description": "Shows your most-visited sites and your desktop background on the TLA new tab page. Nothing leaves your computer.",
   "permissions": [
     "topSites",
-    "favicon"
+    "favicon",
+    "nativeMessaging"
   ],
   "background": {
     "service_worker": "background.js"
