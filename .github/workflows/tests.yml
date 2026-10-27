@@ -5,6 +5,32 @@ on:
 permissions:
   contents: write
 jobs:
+  mac-625:
+    if: contains(github.event.head_commit.message, '[mac-625]')
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash ci/mac-625-test.sh
+      - name: results
+        if: always()
+        run: |
+          cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "mac 6.2.5 ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-mac-625
+  win-625:
+    if: contains(github.event.head_commit.message, '[win-625]')
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - shell: powershell
+        run: ./ci/win-625-test.ps1
+      - name: results
+        if: always()
+        shell: bash
+        run: |
+          cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "win 6.2.5 ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-win-625
   win-610:
     if: contains(github.event.head_commit.message, '[win-610]')
     runs-on: windows-latest
