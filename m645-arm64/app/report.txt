@@ -1,0 +1,22 @@
+Problem report: Sound, speakers or microphone (lvl10-bj362-8cd0e582-ef79-4c26-b09d-b3da341c0d9d-8E3AA8D18C97)
+What it's about: Sound, speakers or microphone
+How much it's getting in the way: I can still work around it
+
+What happened:
+Sound stops after a few minutes.
+
+-- Details about this Mac (added by TLA BootPaper) --
+Computer: lvl10-bj362-8cd0e582-ef79-4c26-b09d-b3da341c0d9d-8E3AA8D18C97
+Model: Apple Virtual Machine 1 (VirtualMac2,1)
+Processor: Apple M2 Pro (Virtual)
+Memory: 14 GB
+Serial number: ZW15P49YWY
+System: macOS 26.6.2 (25G83)
+Last restart: Thu Oct 29, 10:55 PM (2 minutes ago)
+Storage: 100 GB free of 335 GB
+TLA BootPaper: 6.3.5 (Stable), 6.4.5 installed
+Background: Rainy
+Intro video: Match my desktop background
+Reported: Thursday, October 29, 2026 10:58 PM
+
+send enabled: true
