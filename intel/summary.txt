@@ -1,0 +1,26 @@
+ProductName:		macOS
+ProductVersion:		15.7.9
+BuildVersion:		24G830
+x86_64
+Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+SSE4.2 AVX1.0 AVX2 BMI2 
+installer: 0
+== binaries
+[x86_64:Mach-O 64-bit executable x86_64] [arm64:Mach-O 64-bit executable arm64]
+/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video (for architecture x86_64):	Mach-O 64-bit executable x86_64
+/Applications/TLA BootPaper.app/Contents/MacOS/welcome-video (for architecture arm64):	Mach-O 64-bit executable arm64
+[x86_64:Mach-O 64-bit executable x86_64] [arm64:Mach-O 64-bit executable arm64]
+/Library/Application Support/ca.schoolathome.welcomevideo/tla-player (for architecture x86_64):	Mach-O 64-bit executable x86_64
+/Library/Application Support/ca.schoolathome.welcomevideo/tla-player (for architecture arm64):	Mach-O 64-bit executable arm64
+[x86_64:Mach-O 64-bit executable x86_64] [arm64:Mach-O 64-bit executable arm64]
+/Library/Application Support/ca.schoolathome.welcomevideo/tla-signin (for architecture x86_64):	Mach-O 64-bit executable x86_64
+/Library/Application Support/ca.schoolathome.welcomevideo/tla-signin (for architecture arm64):	Mach-O 64-bit executable arm64
+== launcher runs?
+host-error: run: {
+    NSLocalizedDescription = "Error: Error: method types do not match the superclass method types";
+    NSLocalizedFailureReason = "Error: Error: method types do not match the superclass method types";
+    OSAScriptErrorBriefMessageKey = "Error: Error: method types do not match the superclass method types";
+    OSAScriptErrorMessageKey = "Error: Error: method types do not match the superclass method types";
+    OSAScriptErrorNumberKey = "-2700";
+    OSAScriptErrorRangeKey = "NSRange: {0, 0}";
+}
