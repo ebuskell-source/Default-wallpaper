@@ -219,17 +219,17 @@
 // The same backgrounds and light/dark pictures as TLA BootPaper. VARIANTS: the look of each background's extra picture.
 const BACKGROUNDS = [['microsoft', 'Microsoft'], ['liquid-glass', 'Liquid Glass'], ['penguins', 'Penguins'], ['code', 'Code'],
   ['frutiger-aero', 'Frutiger Aero'], ['solarpunk', 'Solarpunk'], ['rainy', 'Rainy'], ['space', 'Space'], ['ocean', 'Underwater'],
-  ['beach', 'Beach'], ['claymation', 'Claymation'], ['blocks', 'Blocks'], ['bricks', 'Bricks'], ['pixel', '8-Bit'], ['anime', 'Anime'],
+  ['beach', 'Beach'], ['vancouver', 'Vancouver'], ['claymation', 'Claymation'], ['blocks', 'Blocks'], ['bricks', 'Bricks'], ['pixel', '8-Bit'], ['anime', 'Anime'],
   ['sky-city', 'Sky City'], ['grumpy-cat', 'Grumpy Cat'], ['bonjovi', 'Bonjovi'], ['raccoon', 'Jimothy'], ['tla', 'TLA Classic']];
 // (Beach, 5.4: added once 5.4 was Stable, since this page can't tell who's on Experimental. 5.9.0: SINCE instead: a
 // background in it is left out until its release is Stable, as channels.json on this site says.)
-const SINCE = { 'grumpy-cat': '5.9.0', bonjovi: '5.9.0', raccoon: '5.9.0' };
-const SEASONS = { fall: 'Fall', christmas: 'Christmas', easter: 'Easter' };
+const SINCE = { 'grumpy-cat': '5.9.0', bonjovi: '5.9.0', raccoon: '5.9.0', vancouver: '6.4.5' };
+const SEASONS = { fall: 'Fall', christmas: 'Christmas', easter: 'Easter', winter: 'Winter' };
 const OTHER_NAMES = { experimental: 'Battle of the Beta Testers' };   // (6.3: shown when it's their desktop's)
 const VARIANTS = { microsoft: 'dark', 'liquid-glass': 'dark', 'frutiger-aero': 'dark', solarpunk: 'dark', rainy: 'dark',
   claymation: 'dark', blocks: 'dark', bricks: 'dark', pixel: 'dark', anime: 'dark', 'sky-city': 'dark', tla: 'dark',
   penguins: 'light', code: 'light', space: 'light', ocean: 'dark', beach: 'dark', fall: 'dark', christmas: 'dark', easter: 'dark',
-  'grumpy-cat': 'dark', bonjovi: 'dark', raccoon: 'dark' };
+  'grumpy-cat': 'dark', bonjovi: 'dark', raccoon: 'dark', vancouver: 'dark', winter: 'dark' };
 // 6.3: hub (the button in the search bar), and the apps in the Microsoft 365 and Google menus. links.json can change them.
 const DEFAULT_LINKS = {
   search: { placeholder: 'Search the web', action: 'https://www.bing.com/search', params: { adlt: 'strict' } },
@@ -283,12 +283,13 @@ function easterSunday(y) {   // (the Anonymous Gregorian algorithm, as in TLA Bo
   const m = Math.floor((a + 11 * h + 19 * l) / 433), month = Math.floor((h + l - 7 * m + 90) / 25);
   return new Date(y, month - 1, (h + l - 7 * m + 33 * month + 19) % 32);
 }
-function season(d) {   // Fall Sep 22 - Nov 30, Christmas Dec 1 - Jan 6, Easter two weeks before Easter Sunday to Easter Monday
+function season(d) {   // Fall Sep 22 - Nov 30, Christmas Dec 1 - Jan 6, Easter two weeks before Easter Sunday to Easter Monday, Winter Jan 7 - Mar 19
   const mo = d.getMonth() + 1, day = d.getDate();
   if ((mo === 9 && day >= 22) || mo === 10 || mo === 11) return 'fall';
   if (mo === 12 || (mo === 1 && day <= 6)) return 'christmas';
   const e = easterSunday(d.getFullYear()), t = new Date(d.getFullYear(), d.getMonth(), d.getDate());
   if (t >= new Date(e.getFullYear(), e.getMonth(), e.getDate() - 14) && t <= new Date(e.getFullYear(), e.getMonth(), e.getDate() + 1)) return 'easter';
+  if ((mo === 1 && day >= 7) || mo === 2 || (mo === 3 && day <= 19)) return 'winter';   // (6.4.5)
   return null;
 }
 // The Stable release (from channels.json; until it's read, or if it can't be, anything with a SINCE is left out).
