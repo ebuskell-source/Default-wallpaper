@@ -1,0 +1,28 @@
+﻿installer exit 0, version.txt 48
+2026-12-25 season: christmas
+2027-01-07 season: winter
+2027-02-14 season: winter
+2027-03-19 season: easter
+2027-03-20 season: easter
+pixel: C:\ProgramData\WelcomeVideo\Backgrounds\pixel-r3.jpg | C:\ProgramData\WelcomeVideo\Backgrounds\pixel-dark-r3.jpg exists True
+vancouver: C:\ProgramData\WelcomeVideo\Backgrounds\vancouver-r2.jpg | C:\ProgramData\WelcomeVideo\Backgrounds\vancouver-dark.jpg exists True
+winter: C:\ProgramData\WelcomeVideo\Backgrounds\winter-r2.jpg | C:\ProgramData\WelcomeVideo\Backgrounds\winter-dark.jpg exists True
+Vancouver released True, category nature
+  Backgrounds\pixel-dark-r3.jpg
+  Backgrounds\pixel-r3.jpg
+  Backgrounds\vancouver-dark.jpg
+  Backgrounds\vancouver-r2.jpg
+  Backgrounds\winter-dark.jpg
+  Backgrounds\winter-r2.jpg
+  Wide\pixel-dark.jpg
+  Wide\pixel.jpg
+  Wide\vancouver-dark.jpg
+  Wide\vancouver.jpg
+== videos
+  pixel-dark.mp4 B0CFB3DB78BA
+  pixel.mp4 F9704533E611
+  winter-dark.mp4 C0D808353384
+  winter.mp4 9E0C57A315E3
+app exit 
+tour exit 
+done
