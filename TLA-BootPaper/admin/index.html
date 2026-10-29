@@ -90,6 +90,7 @@
     <textarea id="announce" maxlength="300" placeholder="For example: The TLA Hub will be closed on Friday from 6 am to 10 pm."></textarea>
     <div class="row">
       <button class="primary" id="saveAnnounce" disabled>Save for Macs, Windows PCs and iPads</button>
+      <button id="clearAnnounce" disabled>No announcement</button>
       <span class="status" id="announceMsg"></span>
     </div>
     <p class="muted small" id="announceWhere"></p>
@@ -252,13 +253,15 @@ async function loadAnnouncement() {
   } catch (e) { }
   $('announceWhere').textContent = 'Saves to ' + msgs.join(' · ');
   $('saveAnnounce').disabled = !(where.mac && where.mac.value) && !(where.win && (where.win.pv || where.win.box)) && !where.ipad;
+  $('clearAnnounce').disabled = $('saveAnnounce').disabled;
 }
 async function saveAnnouncement() {
   const text = $('announce').value.trim(), done = [], failed = [];
   $('saveAnnounce').disabled = true; $('announceMsg').className = 'status'; $('announceMsg').textContent = 'Saving…';
   if (where.mac && where.mac.value) {
     try {
-      where.mac.value.simpleSettingValue.value = text;
+      // (Intune doesn't take an empty text here, so "none" is a single space, which Macs show as nothing)
+      where.mac.value.simpleSettingValue.value = text || ' ';
       const p = where.mac.policy;
       await graph(`/deviceManagement/configurationPolicies/${p.id}`, { method: 'PUT', body: JSON.stringify({
         name: p.name, description: p.description || '', platforms: p.platforms, technologies: p.technologies,
@@ -449,6 +452,7 @@ $('signinBtn').onclick = signIn;
 $('signout').onclick = () => { sessionStorage.clear(); location.href = `https://login.microsoftonline.com/${TENANT}/oauth2/v2.0/logout?post_logout_redirect_uri=` + encodeURIComponent(REDIRECT); };
 $('announce').oninput = () => { $('announceMsg').textContent = ''; };
 $('saveAnnounce').onclick = saveAnnouncement;
+$('clearAnnounce').onclick = () => { $('announce').value = ''; saveAnnouncement(); };
 $('platforms').onclick = e => { const b = e.target.closest('button'); if (!b) return; platform = b.dataset.p;
   [...$('platforms').children].forEach(x => x.classList.toggle('on', x === b)); draw(); };
 start();
