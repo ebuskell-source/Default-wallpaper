@@ -1,0 +1,11 @@
+x86_64
+arch -1
+V1: Error: method types do not match the superclass method types
+V2: ok
+V3: ok
+V4: Error: method types do not match the superclass method types
+V5: ok
+W1: ok
+D1: ok
+D2: ok
+V3 flipped=true
