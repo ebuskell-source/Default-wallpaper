@@ -5,6 +5,17 @@ on:
 permissions:
   contents: write
 jobs:
+  jxa-intel:
+    if: contains(github.event.head_commit.message, '[jxa-intel]')
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash ci/jxa-test.sh
+      - name: results
+        if: always()
+        run: |
+          cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "jxa ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-jxa-intel
   win-645:
     if: contains(github.event.head_commit.message, '[win-645]')
     runs-on: windows-latest
