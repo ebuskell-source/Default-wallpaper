@@ -1,0 +1,61 @@
+ProductName:		macOS ProductVersion:		15.7.9 BuildVersion:		24G830 x86_64
+installer: 0
+== backgrounds
+2026-12-25=christmas 2027-01-07=winter 2027-02-14=winter 2027-03-19=easter 2027-03-20=easter 
+pixel /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/pixel-r3.jpg /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/pixel-dark-r3.jpg
+vancouver /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/vancouver-r2.jpg /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/vancouver-dark.jpg
+winter /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/winter-r2.jpg /Library/Application Support/ca.schoolathome.welcomevideo/Backgrounds/winter-dark.jpg
+names: Vancouver seasons: fall christmas easter winter
+pixel-dark-r3.jpg pixel-r3.jpg vancouver-dark.jpg vancouver-r2.jpg winter-dark.jpg winter-r2.jpg 
+== videos (sync)
+-rw-r--r--   1 root  wheel  6819513 Oct 29 22:57 pixel-dark.mp4
+-rw-r--r--   1 root  wheel  8473776 Oct 29 22:57 pixel.mp4
+-rw-r--r--   1 root  wheel  8351498 Oct 29 22:57 winter-dark.mp4
+-rw-r--r--   1 root  wheel  9539918 Oct 29 22:57 winter.mp4
+f9704533e611afbdc1a32d26e8d42bb95b7222e02ea8ecf75c4779d9daf076d3  /Library/Application Support/ca.schoolathome.welcomevideo/Videos/pixel.mp4
+9e0c57a315e3bc134ee74088083900eebe45917887ac2c7769542e7cd2f8658b  /Library/Application Support/ca.schoolathome.welcomevideo/Videos/winter.mp4
+c0d80835338478e3179cfe2b74ef42294f13edcb7cec90e0d708a7a4b8d9e291  /Library/Application Support/ca.schoolathome.welcomevideo/Videos/winter-dark.mp4
+== the app and the tour (pictures)
+app self-test exit 0: 
+app windows: TLA BootPaper
+== TLA's Mac, signed out: lock screen, Sign in inside it
+signin	out						none
+corporate	1
+lock screens: 1 after 5s
+button Sign in of window TLA BootPaper of application process welcome-video
+front: Finder
+front after TextEdit: TextEdit
+url: https://ebuskell-source.github.io/Default-wallpaper/TLA-BootPaper/signin/?state=49228.QjbZ port: 49228
+callback: 302
+lock screens: 0 3s after signing in
+in	30	
+== login on TLA's Mac, signed out: the tour (no video)
+tour after 12s: 1
+tour self-test:       14 pictures
+== log
+2026-10-29 22:57:39 Downloaded the rainy video.
+2026-10-29 22:57:39 Downloaded the solarpunk video.
+2026-10-29 22:57:39 Downloaded the frutiger-aero-dark video.
+2026-10-29 22:57:39 Downloaded the beach video.
+2026-10-29 22:57:40 Downloaded the anime-dark video.
+2026-10-29 22:57:40 Downloaded the tla video.
+2026-10-29 22:57:40 Downloaded the grumpy-cat-dark video.
+2026-10-29 22:57:42 Release channels: stable 6.3.5, experimental 6.3.5.
+2026-10-29 22:57:44 Downloaded the easter video.
+2026-10-29 22:57:44 Downloaded the space-light video.
+2026-10-29 22:57:44 Downloaded the sky-city video.
+2026-10-29 22:57:44 Downloaded the code video.
+2026-10-29 22:57:45 Downloaded the liquid-glass-original video.
+2026-10-29 22:57:45 Downloaded the anime video.
+2026-10-29 22:57:46 Downloaded the christmas video.
+2026-10-29 22:57:47 Downloaded the grumpy-cat video.
+2026-10-29 22:57:47 Downloaded the liquid-glass video.
+2026-10-29 22:57:47 Downloaded the penguins video.
+2026-10-29 22:57:48 Downloaded the blocks-dark video.
+2026-10-29 22:57:49 Downloaded the ocean video.
+2026-10-29 22:57:50 Downloaded the bonjovi video.
+2026-10-29 22:57:50 Downloaded the fall video.
+2026-10-29 22:57:51 Downloaded the sky-city-dark video.
+2026-10-29 22:57:51 Downloaded the pixel video.
+2026-10-29 22:57:52 Downloaded the beach-dark video.
+done

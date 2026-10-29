@@ -1,0 +1,22 @@
+Problem report: Sound, speakers or microphone (sjc20-av659-39493f65-d235-4d1e-9baf-bf3c75d1efc2-C2F90A51B48F)
+What it's about: Sound, speakers or microphone
+How much it's getting in the way: I can still work around it
+
+What happened:
+Sound stops after a few minutes.
+
+-- Details about this Mac (added by TLA BootPaper) --
+Computer: sjc20-av659-39493f65-d235-4d1e-9baf-bf3c75d1efc2-C2F90A51B48F
+Model: Mac mini (Macmini6,2)
+Processor: Unknown
+Memory: 14 GB
+Serial number: C02J1619G1HW
+System: macOS 15.7.9 (24G830)
+Last restart: Thu Oct 29, 10:46 PM (11 minutes ago)
+Storage: 113 GB free of 340 GB
+TLA BootPaper: 6.3.5 (Stable), 6.4.5 installed
+Background: Rainy
+Intro video: Match my desktop background
+Reported: Thursday, October 29, 2026 10:58 PM
+
+send enabled: true
