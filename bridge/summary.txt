@@ -1,0 +1,10 @@
+installed: 7.0, app 7.0
+after its update check: 7.0, app 7.0
+111:release="$(print -r -- "$json" | /usr/bin/plutil -extract release raw -o - - 2>/dev/null)"
+112:[[ "$release" =~ '^[0-9]{1,4}(\.[0-9]{1,4}){0,3}$' ]] || release=""
+after another check: 7.0
+2026-10-30 16:17:20 ---- TLA BootPaper 7.5.0 package installed ----
+2026-10-30 16:17:26 TLA BootPaper 7.5.0.1 is out (this Mac has 7.5.0): downloading it.
+installer: Package name is TLA BootPaper
+2026-10-30 16:17:54 ---- TLA BootPaper 7.0 package installed ----
+done
