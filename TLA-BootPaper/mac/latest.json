@@ -1,6 +1,7 @@
 {
-  "version": "7.0",
-  "url": "https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/mac/TLA-BootPaper-7.0.pkg",
-  "sha256": "2055c7e554c59791218341a653746f57ce52a637dc034ea9bb91cfa263931ee5",
-  "size": 40636091
+  "version": "7.5.0.1",
+  "release": "7.0",
+  "url": "https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/mac/TLA-BootPaper-7.0-r2.pkg",
+  "sha256": "08494c93b5011ccb2607b63219113ac1d4f3e26181e12f821c584504cb96563c",
+  "size": 40636432
 }
