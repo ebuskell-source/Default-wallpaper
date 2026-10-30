@@ -1,0 +1,257 @@
+ProductName:		macOS ProductVersion:		15.7.9 BuildVersion:		24G830 x86_64
+Macmini6,2
+installer: 0
+	state = not running
+	last exit code = 0
+	run interval = 300 seconds
+== offers (pretending to be each Mac)
+-- MacBookPro9,2 (on macOS 12)
+model	MacBookPro9,2	MacBook Pro (13-inch, Mid 2012)
+offer	offer	sequoia tahoe
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	sequoia	The Weather app quits when you scroll to the bottom of its list.
+issue	sequoia	QuickTime Player shows green blocks along the timeline of .mov videos.
+issue	sequoia	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+issue	tahoe	The Weather app quits when you scroll to the bottom of its list.
+issue	tahoe	QuickTime Player shows green blocks along the timeline of .mov videos.
+issue	tahoe	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+-- MacBookPro8,1 (on macOS 12)
+model	MacBookPro8,1	MacBook Pro (13-inch, Early 2011)
+offer	offer	sequoia tahoe
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	sequoia	Zoom won't open without a separate fix.
+issue	sequoia	Apps can't ask for the camera or microphone, so Zoom and Teams can't use them unless permission is given another way.
+issue	sequoia	Menus and sidebars with a blurred background look smeared when the pointer moves over them.
+issue	sequoia	Safari extensions can't be turned on.
+issue	sequoia	When editing a widget in the sidebar, the Done button can't be clicked.
+issue	sequoia	Maps doesn't work, and neither does what relies on it: Find My, and Places in Photos.
+issue	sequoia	Firefox and Thunderbird can freeze the whole Mac unless their hardware acceleration is turned off.
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+issue	tahoe	Zoom won't open without a separate fix.
+issue	tahoe	Apps can't ask for the camera or microphone, so Zoom and Teams can't use them unless permission is given another way.
+issue	tahoe	Menus and sidebars with a blurred background look smeared when the pointer moves over them.
+issue	tahoe	Safari extensions can't be turned on.
+issue	tahoe	When editing a widget in the sidebar, the Done button can't be clicked.
+issue	tahoe	Maps doesn't work, and neither does what relies on it: Find My, and Places in Photos.
+issue	tahoe	Firefox and Thunderbird can freeze the whole Mac unless their hardware acceleration is turned off.
+-- MacBook5,1 (on macOS 12)
+model	MacBook5,1	MacBook (13-inch, Aluminum, Late 2008)
+offer	offer	sequoia tahoe
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	sequoia	Zoom won't open without a separate fix.
+issue	sequoia	Apps can't ask for the camera or microphone, so Zoom and Teams can't use them unless permission is given another way.
+issue	sequoia	Menus and sidebars with a blurred background look smeared when the pointer moves over them.
+issue	sequoia	Safari extensions can't be turned on.
+issue	sequoia	When editing a widget in the sidebar, the Done button can't be clicked.
+issue	sequoia	Maps doesn't work, and neither does what relies on it: Find My, and Places in Photos.
+issue	sequoia	The built-in keyboard, trackpad and Bluetooth don't work after installing (and after each macOS update) until the patches are put back, so a USB keyboard and mouse, plugged in through a USB hub, are needed until then.
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+issue	tahoe	Zoom won't open without a separate fix.
+issue	tahoe	Apps can't ask for the camera or microphone, so Zoom and Teams can't use them unless permission is given another way.
+issue	tahoe	Menus and sidebars with a blurred background look smeared when the pointer moves over them.
+issue	tahoe	Safari extensions can't be turned on.
+issue	tahoe	When editing a widget in the sidebar, the Done button can't be clicked.
+issue	tahoe	Maps doesn't work, and neither does what relies on it: Find My, and Places in Photos.
+issue	tahoe	The built-in keyboard, trackpad and Bluetooth don't work after installing (and after each macOS update) until the patches are put back, so a USB keyboard and mouse, plugged in through a USB hub, are needed until then.
+-- iMac14,2 (on macOS 12)
+model	iMac14,2	iMac (27-inch, Late 2013)
+offer	offer	sequoia tahoe
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	sequoia	The Weather app quits when you scroll to the bottom of its list.
+issue	sequoia	QuickTime Player shows green blocks along the timeline of .mov videos.
+issue	sequoia	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+issue	sequoia	Screen recordings of part of the screen come out with garbled areas (recording the whole screen works).
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+issue	tahoe	The Weather app quits when you scroll to the bottom of its list.
+issue	tahoe	QuickTime Player shows green blocks along the timeline of .mov videos.
+issue	tahoe	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+issue	tahoe	Screen recordings of part of the screen come out with garbled areas (recording the whole screen works).
+-- MacPro6,1 (on macOS 12)
+model	MacPro6,1	Mac Pro (Late 2013)
+offer	offer	sequoia tahoe
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	sequoia	The Photos app won't open.
+issue	sequoia	The screensaver quits as soon as it starts.
+issue	sequoia	The camera shows a black picture.
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+issue	tahoe	The Photos app won't open.
+issue	tahoe	The screensaver quits as soon as it starts.
+issue	tahoe	The camera shows a black picture.
+-- MacBookPro14,3 (on macOS 12)
+model	MacBookPro14,3	MacBook Pro (15-inch, 2017)
+offer	offer	sequoia tahoe
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+issue	tahoe	On 2016 and 2017 MacBook Pros with a Touch Bar, people testing earlier 3.0 versions reported that Touch ID and Wi-Fi didn't work.
+-- MacBookAir7,2 (on macOS 12)
+model	MacBookAir7,2	MacBook Air (13-inch, Early 2015)
+offer	offer	sequoia tahoe
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	sequoia	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+issue	tahoe	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+-- iMac19,1 (on macOS 15)
+model	iMac19,1	iMac (Retina 5K, 27-inch, 2019)
+offer	offer	tahoe
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+-- MacBookAir8,1 (on macOS 12)
+model	MacBookAir8,1	MacBook Air (Retina, 13-inch, 2018)
+offer	none	OpenCore Legacy Patcher doesn't work on this model (MacBook Air (Retina, 13-inch, 2018)): on Macs with Apple's T2 chip, its makers say macOS stops with an error while starting up, before the installer appears.
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+-- MacBookPro16,1 (on macOS 12)
+model	MacBookPro16,1	MacBook Pro (16-inch, 2019)
+offer	
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+-- the stable channel (nothing offered):
+offer	
+== TLA Care, as a 2012 MacBook Pro
+opencore	info	macOS Sequoia for this Mac	Apple doesn't update this Mac any more. OpenCore Legacy Patcher can put macOS Sequoia (or macOS Tahoe) on it. See what changes first.	opencore	See what changes
+missing value
+macOS Sequoia (recommended), macOS Tahoe (OpenCore Legacy Patcher 3.0.0-rc.5), Not now
+button macOS Sequoia (recommended) of window 1 of application process osascript
+button Cancel of window 1 of application process osascript
+button macOS Tahoe (OpenCore Legacy Patcher 3.0.0-rc.5) of window 1 of application process osascript
+== as root, the first stage (test: OpenCore built for MacBookPro9,2, not put on the disk)
+run exit 0
+built=/Library/Application Support/ca.schoolathome.welcomevideo/OpenCore/Build
+note=Built (test: not installed).
+oclp=2.5.1
+phase=prepare
+since=1793375775
+target=sequoia
+tries=0
+user=test
+ls: /Library/Application Support/ca.schoolathome.welcomevideo/OpenCore/Build: Permission denied
+ls: /Library/Application Support/ca.schoolathome.welcomevideo/OpenCore/Build/EFI/OC: Permission denied
+2.5.1
+== EFI partition it would use (read only)
+disk0s1
+== Apple's installers list (parsing only)
+Finding available software
+Software Update found the following full installers:
+* Title: macOS Tahoe, Version: 26.7.2, Size: 17958879KiB, Build: 25G332, Deferred: NO
+* Title: macOS Tahoe, Version: 26.7.1, Size: 17950170KiB, Build: 25G241, Deferred: NO
+* Title: macOS Tahoe, Version: 26.7, Size: 17951133KiB, Build: 25G229, Deferred: NO
+* Title: macOS Tahoe, Version: 26.6.2, Size: 17953734KiB, Build: 25G83, Deferred: NO
+* Title: macOS Tahoe, Version: 26.6.1, Size: 17938060KiB, Build: 25G76, Deferred: NO
+* Title: macOS Tahoe, Version: 26.6, Size: 17942836KiB, Build: 25G72, Deferred: NO
+== sign-out locks straight away (TLA's Mac)
+before: 0 lock screens, in
+after signing out: 1 lock screens after 6s
+== log
+2026-10-30 15:56:15 OpenCore: prepare: test
+installer: Package name is OpenCore Legacy Patcher
+# OpenCore Legacy Patcher (2.5.1) #
+  /Users/runner/Library/Logs/Dortania/OpenCore-Patcher_2.5.1_2026-10-30_15-57-41-799176.log
+~/Library/Logs/Dortania/OpenCore-Patcher_2.5.1_2026-10-30_15-57-41-799176.log
+Set OpenCore Build
+- Adding OpenCore v1.0.4 RELEASE
+- Adding config.plist for OpenCore
+Your OpenCore EFI for MacBookPro9,2 has been built at:
+    /tmp/tmp0oenq1iy/Build-Folder/OpenCore-Build
+2026-10-30 15:57:49 OpenCore: built OpenCore for MacBookPro9,2 (/tmp/tmp0oenq1iy/Build-Folder/OpenCore-Build).
+done
