@@ -5,6 +5,18 @@ on:
 permissions:
   contents: write
 jobs:
+  mac-tourlock:
+    if: contains(github.event.head_commit.message, '[mac-tourlock]')
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash ci/mac-tourlock-test.sh
+      - name: results
+        if: always()
+        run: |
+          cd out && git init -q && git checkout -q -b r && git add -A && git -c user.name=ci -c user.email=ci@example.com commit -qm "tourlock ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:ci/results-mac-tourlock
   mac-bridge:
     if: contains(github.event.head_commit.message, '[mac-bridge]')
     runs-on: macos-latest
