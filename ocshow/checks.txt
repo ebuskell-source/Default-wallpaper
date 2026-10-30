@@ -1,0 +1,7 @@
+restart	ok	Restart	Restarted 9 minutes ago.		
+storage	ok	Storage	112.6 GB free of 340 GB.		
+internet	ok	Internet	Connected.		
+sound	ok	Sound	Working. No sound or no microphone? Reset it.	audio	Reset sound
+opencore	info	macOS Sequoia for this Mac	Apple doesn't update this Mac any more. OpenCore Legacy Patcher can put macOS Sequoia (or macOS Tahoe) on it. See what changes first.	opencore	See what changes
+connect	info	Connect this Mac to TLA	It's missing what TLA sends, like the TLA new tab page in Chrome and Edge, apps and updates. Sign in with your TLA account in Company Portal.	connect	Connect
+bootpaper	info	TLA BootPaper	11 intro videos still downloading.	videos	Download now

@@ -1,0 +1,2 @@
+36:153: execution error: System Events got an error: Can’t get window "TLA Care" of process 1 whose frontmost = true. (-1728)
+done

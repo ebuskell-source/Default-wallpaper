@@ -1,0 +1,19 @@
+model	MacBookAir7,2	MacBook Air (13-inch, Early 2015)
+offer	offer	sequoia tahoe
+version	sequoia	macOS Sequoia	2.5.1	45
+issue	sequoia	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	sequoia	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	sequoia	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	sequoia	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	sequoia	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	sequoia	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+version	tahoe	macOS Tahoe	3.0.0-rc.5	55
+issue	tahoe	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+issue	tahoe	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+issue	tahoe	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+issue	tahoe	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+issue	tahoe	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+issue	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+issue	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+issue	tahoe	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+state			
