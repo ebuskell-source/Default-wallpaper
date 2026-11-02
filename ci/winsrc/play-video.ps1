@@ -208,6 +208,7 @@ $state = @{ Done = $false; Played = $false; Ending = $false }
 $app.Add_SessionEnding({ $state.Done = $true; $state.Ending = $true })
 
 $window = [System.Windows.Window]::new()
+$window.Title         = 'TLA BootPaper video'   # (6.2.5: so the lock screen waits until it's over)
 $window.WindowStyle   = 'None'
 $window.ResizeMode    = 'NoResize'
 $window.WindowState   = 'Maximized'

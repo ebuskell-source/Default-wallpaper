@@ -9,6 +9,8 @@ Unregister-ScheduledTask -TaskName 'TLA BootPaper Apply' -Confirm:$false -ErrorA
 Unregister-ScheduledTask -TaskName 'TLA BootPaper Theme' -Confirm:$false -ErrorAction SilentlyContinue   # (5.0)
 Unregister-ScheduledTask -TaskName 'TLA Care' -Confirm:$false -ErrorAction SilentlyContinue              # (5.0)
 Unregister-ScheduledTask -TaskName 'TLA BootPaper Updates' -Confirm:$false -ErrorAction SilentlyContinue # (5.4)
+Unregister-ScheduledTask -TaskName 'TLA BootPaper Sign-in Lock' -Confirm:$false -ErrorAction SilentlyContinue # (6.2.5)
+foreach ($b in 'Google\Chrome', 'Microsoft\Edge') { Remove-Item "HKLM:\SOFTWARE\$b\NativeMessagingHosts\ca.schoolathome.bootpaper" -Force -ErrorAction SilentlyContinue }   # (6.3.5)
 # The background policies, where they're ours (leave them if Intune or someone else set them).
 $ours = { param($p) $p -and "$p".StartsWith((Join-Path $env:ProgramData 'WelcomeVideo\'), [StringComparison]::OrdinalIgnoreCase) }
 $csp = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP'

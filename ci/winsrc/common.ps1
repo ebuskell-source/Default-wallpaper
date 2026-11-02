@@ -11,7 +11,7 @@
 
 $WV = @{
     Dir       = $PSScriptRoot
-    Release   = '5.9.5' # this package's version (4.3: what people see also depends on their release channel)
+    Release   = '7.3.0' # this package's version (4.3: what people see also depends on their release channel)
     DeviceKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo'
     UserKey   = 'HKEY_CURRENT_USER\Software\WelcomeVideo'
     StateKey  = 'HKEY_CURRENT_USER\Software\WelcomeVideo\State'
@@ -46,8 +46,8 @@ $WV = @{
     # Seasonal themes (4.0): during its season, everyone still on the organization's default background gets
     # the seasonal one instead (desktop and lock screen). Picking a background yourself keeps yours. They have
     # no intro video of their own: the default background's video plays.
-    Seasonal  = [ordered]@{ 'fall' = 'Fall'; 'christmas' = 'Christmas'; 'easter' = 'Easter' }
-    SeasonEnds = @{ 'fall' = 'November 30'; 'christmas' = 'January 6'; 'easter' = 'Easter Monday' }
+    Seasonal  = [ordered]@{ 'fall' = 'Fall'; 'christmas' = 'Christmas'; 'easter' = 'Easter'; 'winter' = 'Winter' }   # (6.4.5: Winter)
+    SeasonEnds = @{ 'fall' = 'November 30'; 'christmas' = 'January 6'; 'easter' = 'Easter Monday'; 'winter' = 'March 19' }
     # The organization's announcement (4.0), set in Intune (an imported administrative template): written on
     # every lock screen picture by lock-backgrounds.ps1, and shown at the top of the app.
     AnnouncementKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\TLA\BootPaper'
@@ -59,27 +59,29 @@ $WV = @{
     # The only backgrounds people can choose (for the desktop and the lock screen). Files: Backgrounds\<id>.jpg,
     # thumbnails in Backgrounds\thumbs. The app lists the ones with no intro video (not in Videos below) in
     # their own "coming soon" section.
-    Backgrounds = [ordered]@{
+    Backgrounds = [ordered]@{   # (6.0.5: in the order of their themed sections, Categories below)
         'microsoft'     = 'Microsoft'
         'liquid-glass'  = 'Liquid Glass'
         'penguins'      = 'Penguins'
-        'code'          = 'Code'
-        'frutiger-aero' = 'Frutiger Aero'
-        'solarpunk'     = 'Solarpunk'
+        'tla'           = 'TLA Classic'
+        'beach'         = 'Beach'           # (5.4)
+        'ocean'         = 'Underwater'
         'rainy'         = 'Rainy'
         'space'         = 'Space'
-        'ocean'         = 'Underwater'
-        'beach'         = 'Beach'           # (5.4)
+        'vancouver'     = 'Vancouver'       # (6.4.5)
+        'frutiger-aero' = 'Frutiger Aero'
+        'code'          = 'Code'
+        'sky-city'      = 'Sky City'
+        'solarpunk'     = 'Solarpunk'
+        'anime'         = 'Anime'
         'claymation'    = 'Claymation'
+        'pixel'         = '8-Bit'
         'blocks'        = 'Blocks'
         'bricks'        = 'Bricks'
-        'pixel'         = '8-Bit'
-        'anime'         = 'Anime'
-        'sky-city'      = 'Sky City'
         'grumpy-cat'    = 'Grumpy Cat'      # (5.9.0: Animals)
         'bonjovi'       = 'Bonjovi'
-        'raccoon'       = 'Raccoon'
-        'tla'           = 'TLA Classic'
+        'raccoon'       = 'Jimothy'         # (6.0.5: was Raccoon; the id stays, so saved choices keep working)
+        'experimental'  = 'Battle of the Beta Testers'   # (6.1.0: the Experimental channel's own, as on Macs)
     }
     # The intro videos people can choose. Files: Videos\<id>.mp4. 'match' = the video that goes with
     # the person's desktop background.
@@ -114,8 +116,8 @@ $WV = @{
     # Experimental first, Stable once it's been tried. People pick their channel in the app (organization
     # default: Stable). Since = the release that brought something; anything not listed has been out for longer.
     Channels  = [ordered]@{ 'stable' = 'Stable'; 'experimental' = 'Experimental' }
-    ChannelReleases = @{ 'stable' = '5.9.0'; 'experimental' = '5.9.5' }   # as marked when this package was made (5.9.5: Experimental first)
-    Since     = @{ 'sky-city' = '4.3'; 'report' = '4.3'
+    ChannelReleases = @{ 'stable' = '7.3.0'; 'experimental' = '7.3.0' }   # as marked when this package was made (7.3.0: Stable)
+    Since     = @{ 'sky-city' = '4.3'; 'report' = '4.3'; 'lockdown' = '6.2.5'
                    'lightdark' = '5.0'; 'screensaver' = '5.0'; 'calls' = '5.0'; 'care' = '5.0'; 'tour' = '5.0'
                    'connect' = '5.2.5'
                    'beach' = '5.4'; 'anime-dark' = '5.4'; 'pixel-dark' = '5.4.5'; 'claymation-dark' = '5.4.5'
@@ -123,7 +125,7 @@ $WV = @{
                    'solarpunk-dark' = '5.6.0'; 'sky-city-dark' = '5.6.0'; 'space-light' = '5.6.0'; 'ocean-dark' = '5.6.0'
                    'signin' = '5.7.0'; 'checkupdates' = '5.8.0'
                    'grumpy-cat' = '5.9.0'; 'grumpy-cat-dark' = '5.9.0'; 'bonjovi' = '5.9.0'; 'bonjovi-dark' = '5.9.0'; 'raccoon' = '5.9.0'
-                   'ownpictures' = '5.9.0' }   # (5.4: '<id>-<mode>' = that background's second intro video)
+                   'ownpictures' = '5.9.0'; 'code-light' = '6.0.5'; 'vancouver' = '6.4.5' }   # (5.4: '<id>-<mode>' = that background's second intro video)
     # Light and dark (5.0): every background has a second picture for the other mode (5.1.5: Underwater too). The
     # value is the mode of that extra picture (Backgrounds\<id>-<mode>.jpg, thumbs\<id>-<mode>.jpg); the original
     # is the other one.
@@ -133,6 +135,7 @@ $WV = @{
         'sky-city' = 'dark'; 'tla' = 'dark'; 'penguins' = 'light'; 'code' = 'light'; 'space' = 'light'
         'ocean' = 'dark'; 'beach' = 'dark'; 'fall' = 'dark'; 'christmas' = 'dark'; 'easter' = 'dark'
         'grumpy-cat' = 'dark'; 'bonjovi' = 'dark'; 'raccoon' = 'dark'   # (5.9.0)
+        'vancouver' = 'dark'; 'winter' = 'dark'   # (6.4.5)
     }
     LightDarkModes = [ordered]@{
         'Auto'  = 'Match my light or dark mode'
@@ -141,8 +144,28 @@ $WV = @{
     }
 }
 
-# 5.9.0: the animal backgrounds, in their own section of the app.
-$WV.Animals = 'grumpy-cat', 'bonjovi', 'raccoon'
+# 5.9.0: the animal backgrounds, in their own section of the app. 6.0.5: every background is in a themed section,
+# in the app and the Welcome to TLA tour: Categories (id = heading, in order), and each background's. 6.1.0: the
+# sections TLA chose, a caption under each default ("Windows default"), and the Experimental channel's own background
+# (Battle of the Beta Testers), only on that channel (ChannelOnly).
+$WV.Categories = [ordered]@{ 'defaults' = 'Defaults'; 'nature' = 'Nature'; 'scifi' = 'Sci-Fi'; 'stylized' = 'Stylized'; 'animals' = 'Animals'
+                             'experimental' = 'Experimental channel only'; 'surprise' = 'Surprise me' }
+$WV.CategoryOf = @{
+    'microsoft' = 'defaults'; 'liquid-glass' = 'defaults'; 'penguins' = 'defaults'; 'tla' = 'defaults'
+    'beach' = 'nature'; 'ocean' = 'nature'; 'rainy' = 'nature'; 'space' = 'nature'; 'vancouver' = 'nature'
+    'frutiger-aero' = 'scifi'; 'code' = 'scifi'; 'sky-city' = 'scifi'; 'solarpunk' = 'scifi'
+    'anime' = 'stylized'; 'claymation' = 'stylized'; 'pixel' = 'stylized'; 'blocks' = 'stylized'; 'bricks' = 'stylized'
+    'grumpy-cat' = 'animals'; 'bonjovi' = 'animals'; 'raccoon' = 'animals'
+    'experimental' = 'experimental'; 'surprise' = 'surprise'
+}
+$WV.Captions = @{ 'microsoft' = 'Windows default'; 'liquid-glass' = 'macOS default'; 'penguins' = 'Linux default'; 'tla' = 'Legacy default'
+                  'surprise' = 'A new one each day' }
+$WV.ChannelOnly = @{ 'experimental' = 'experimental' }
+$WV.Animals = @($WV.CategoryOf.Keys | Where-Object { $WV.CategoryOf[$_] -eq 'animals' })
+function Get-WVCategory([string]$Id) {
+    if ($WV.CategoryOf.ContainsKey($Id)) { return $WV.CategoryOf[$Id] }
+    return 'defaults'
+}
 
 function Get-WVValue([string]$Key, [string]$Name) {
     try { return [Microsoft.Win32.Registry]::GetValue($Key, $Name, $null) } catch { return $null }
@@ -245,6 +268,7 @@ function Get-WVReleaseLabel([string]$Version) {
 
 # True when something (a background, video or feature, by id) is out on this person's channel.
 function Test-WVReleased([string]$Id) {
+    if ($WV.ChannelOnly.ContainsKey($Id)) { return (Get-WVChannel) -eq $WV.ChannelOnly[$Id] }   # (6.1.0)
     if (-not $WV.Since.Contains($Id)) { return $true }
     return (ConvertTo-WVVersion $WV.Since[$Id]) -le (ConvertTo-WVVersion (Get-WVChannelRelease))
 }
@@ -296,8 +320,8 @@ function Get-WVLastPlayed {
 # Picture file names: "<id>-r2.jpg" (3.2.3), "-r5" for Anime (3.3.3), and (5.9.5) "-r6" for Microsoft and Liquid
 # Glass in 4K, whose other mode's picture is "<id>-<mode>-r6.jpg" too. A new name for a new picture, because Windows
 # keeps its own copy of a picture it has seen under the same name. (Keep in step with install-video.ps1.)
-$WV.PictureRevisions = @{ 'anime' = 'r5'; 'microsoft' = 'r6'; 'liquid-glass' = 'r6' }
-$WV.VariantRevisions = @{ 'microsoft' = 'r6'; 'liquid-glass' = 'r6' }
+$WV.PictureRevisions = @{ 'anime' = 'r5'; 'microsoft' = 'r6'; 'liquid-glass' = 'r6'; 'pixel' = 'r3' }   # (6.4.5: 8-Bit's new pictures)
+$WV.VariantRevisions = @{ 'microsoft' = 'r6'; 'liquid-glass' = 'r6'; 'pixel' = 'r3' }
 function Get-WVBackgroundPath([string]$Id, [string]$Mode) {
     if (Test-WVOwnId $Id) { return Get-WVOwnPicturePath $Id }   # (5.9.0: their own picture, the same in both modes)
     if (-not $WV.Backgrounds.Contains($Id) -and -not $WV.Seasonal.Contains($Id)) { return $null }
@@ -374,6 +398,7 @@ function Get-WVSeason($Day) {
     if ($Day.Month -eq 12 -or ($Day.Month -eq 1 -and $Day.Day -le 6)) { return 'christmas' }
     $easter = Get-WVEasterSunday $Day.Year
     if ($Day -ge $easter.AddDays(-14) -and $Day -le $easter.AddDays(1)) { return 'easter' }
+    if (($Day.Month -eq 1 -and $Day.Day -ge 7) -or $Day.Month -eq 2 -or ($Day.Month -eq 3 -and $Day.Day -le 19)) { return 'winter' }   # (6.4.5)
     return $null
 }
 
@@ -537,6 +562,7 @@ $WV.GreetingStyles = @{
     'sky-city'      = 'a=line;d=1.6;e=out;dy=1.2;bob=0.05;bp=3.2;gl=7EC8FFCC:0.25'
     'grumpy-cat'    = 'a=line;t0=0.6;d=1.4;e=lin;dy=0.3;c=DCE6F2;sh=0A1220B3:0.12:0:-0.04;x=drop'                 # (5.9.0: unimpressed)
     'bonjovi'       = 'a=seq;st=0.06;d=0.6;e=bounce;dy=2.4;f=round;w=bold;c=FFD54A;sh=1B2A6BB3:0.1:0:-0.04'       # (5.9.0: a puppy's hops)
+    'winter'        = 'a=seq;st=0.055;d=0.9;e=out;dy=1.4;c=EAF7FF;gl=9FD8FF:0.3;sh=0A1A33B3:0.1:0:-0.04'   # (6.4.5: snowfall)
 }
 # The style for a video file (Videos\<id>[-dark|-light].mp4; the other versions of a video share its style).
 function Get-WVGreetingStyle([string]$VideoPath) {
@@ -696,7 +722,7 @@ $WV.VideoHashes = [ordered]@{
     'anime'                  = 'b0fc2c29f5305fe57e3617073227a9a8137f18337d5429fa74611f61653bdcaa'
     'penguins'               = '2f6f7adbeadbe959e72218b194c0de7ca43d5596a8f67a2c76bd0743ef7434eb'
     'solarpunk'              = '725ec78d91c5935963345c60f5b703f36fe017ca40cd47d6501fa956f05d304e'
-    'pixel'                  = '3feef1c0d359950e00b42b4a3db355e31b73cf457736947c0bbc286d56b45930'
+    'pixel'                  = 'f9704533e611afbdc1a32d26e8d42bb95b7222e02ea8ecf75c4779d9daf076d3'   # (6.4.5: the new one)
     'ocean'                  = '6def8de6af1e729d56d8fa8e224d85d7a7a36993c8e772ff33fa75048020e803'
     'frutiger-aero-v2'       = 'bbce9fec534928fbae3dbe94e9f5a368f92aba439454ce8882df60fb8cf22460'   # (the 3.4.3 one)
     'liquid-glass-original'  = '5dae894482e3cd513baf6214da8a340f9da38ccb7f7589507c39b71bb26afbdf'
@@ -720,14 +746,20 @@ $WV.VideoHashes = [ordered]@{
     'grumpy-cat-dark'        = '4873ba4d689c05140d42c5f639ae137f11b4a3136fb1575a932885e50fc13109'
     'bonjovi'                = '7013cca50dbb60d823e9b38f43dfe00265d4629ade874766d8505495e08650c5'
     'bonjovi-dark'           = 'd9e9b6c11379d31d345e50ab0435b9ef08628b6ab40ad2f11b2e9fc63755c7d0'
-    'anime-dark'             = '58248a3b40f91c7cc240b3de28c360987515880572f8231e2fc9b0304bbf4560'   # (5.4)
+    'anime-dark'             = '8a2d221a6639fd6be1000694640647d627b93b89b81d6aaac2c218069a1f780d'   # (5.4; 6.0.5: a new version)
     'pixel-dark'             = 'b0cfb3db78ba60371f7ee92502bbb6fabc6709ff38d5b6bf562f38f59f0896ce'   # (5.4.5)
     'claymation-dark'        = '0970de40e5ff566bc0b354da8200709ae00ce3bf6b8d23dd3072eb3b675cb3bf'   # (5.4.5)
     'solarpunk-dark'         = '4c47774ee0d5957e18b69e1c227b7428ca51842943e813085eb11c29d06b5f95'   # (5.6.0)
     'sky-city-dark'          = 'ad33f57f0ecf7d13dde0366661ca143f8e0f4beb6a53cb707fe81e5ac6705eb3'   # (5.6.0)
     'space-light'            = '42b2a456b88441ebed1bb1e53b88a4944b50b600baea23ff445ee696a9fa86d8'   # (5.6.0)
     'ocean-dark'             = '04e023547a1f6ed95097235ea95158a5e803bef505b5829c1f25cbcd4873a7e7'   # (5.6.0)
+    'code-light'             = 'e13a4b3c8067f69fe20b15f5178a4a43543c25e37673c0e99e18b9c9eb7eda3b'   # (6.0.5)
+    'winter'                 = '9e0c57a315e3bc134ee74088083900eebe45917887ac2c7769542e7cd2f8658b'   # (6.4.5)
+    'winter-dark'            = 'c0d80835338478e3179cfe2b74ef42294f13edcb7cec90e0d708a7a4b8d9e291'
 }
+# 6.0.5: where a video's file in the repository isn't <id>.mp4. A new version of a video goes up under a name of its
+# own, so older packages keep finding the one their list expects.
+$WV.VideoRemote = @{ 'anime-dark' = 'anime-dark-v2'; 'pixel' = 'pixel-v2' }
 
 function Get-WVSha256([string]$File) {
     $sha = [System.Security.Cryptography.SHA256]::Create()
@@ -766,7 +798,8 @@ function Sync-WVVideos([scriptblock]$Log = { param($t) }) {
             $temp = [System.IO.Path]::Combine($dir, ".$id.download")
             try {
                 $client = [System.Net.WebClient]::new()
-                try { $client.DownloadFile("$($WV.VideoSource)/$id.mp4", $temp) } finally { $client.Dispose() }
+                $remote = if ($WV.VideoRemote.ContainsKey($id)) { $WV.VideoRemote[$id] } else { $id }
+                try { $client.DownloadFile("$($WV.VideoSource)/$remote.mp4", $temp) } finally { $client.Dispose() }
                 $got = Get-WVSha256 $temp
                 if ($got -ne $want) { throw "the downloaded file doesn't match (SHA-256 $got)" }
                 # Replace the old copy. If it's playing right now, try again next time.
@@ -951,16 +984,19 @@ function Get-WVLatestUpdate {
 # update.ps1): HKLM\SOFTWARE\WelcomeVideo\Care\UpdateStatus = "<starting|installing|failed>|<version>|<unix time>|<why
 # it failed>". The installer runs on its own, so the app counts an update as done once the version installed here
 # (Get-WVInstalledRelease) has caught up.
-function Set-WVUpdateStatus([string]$State, [string]$Version, [string]$Why = '') {
+# 6.1.0: and how far it's got, for the app's progress bar: "download <percent>", or "install" (the installer doesn't
+# say how far it is), after the reason.
+function Set-WVUpdateStatus([string]$State, [string]$Version, [string]$Why = '', [string]$Progress = '') {
     try {
         [Microsoft.Win32.Registry]::SetValue('HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Care', 'UpdateStatus',
-            "$State|$Version|$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())|$Why")
+            "$State|$Version|$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())|$Why$(if ($Progress) { "|$Progress" })")
     } catch { }
 }
 function Get-WVUpdateStatus {
-    $p = "$(Get-WVValue 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Care' 'UpdateStatus')".Split([char]'|', 4)
+    $p = "$(Get-WVValue 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Care' 'UpdateStatus')".Split([char]'|', 5)
     if ($p.Count -lt 3 -or $p[0] -notin 'starting', 'installing', 'failed' -or $p[2] -notmatch '^\d{1,12}$') { return $null }
-    return @{ State = $p[0]; Version = $p[1]; Time = [long]$p[2]; Why = $(if ($p.Count -ge 4) { $p[3] } else { '' }) }
+    return @{ State = $p[0]; Version = $p[1]; Time = [long]$p[2]; Why = $(if ($p.Count -ge 4) { $p[3] } else { '' })
+              Progress = $(if ($p.Count -ge 5) { $p[4] } else { '' }) }
 }
 # The version installed now: the one in the install folder's common.ps1, which an update replaces.
 function Get-WVInstalledRelease {

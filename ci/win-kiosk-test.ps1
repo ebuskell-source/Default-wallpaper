@@ -1,9 +1,9 @@
 # 7.3.0: the scripts parse, the kiosk sign-in browser opens and is found by its profile, and closes.
 $o = "$PWD\out\kiosk"; New-Item -ItemType Directory -Force $o | Out-Null
 $r = @()
-Start-Process ci\test-win.exe -ArgumentList '/S' -Wait
-Start-Sleep 20
-$d = (Get-ChildItem "$env:ProgramData" -Directory | Where-Object Name -like 'TLA*' | Select-Object -First 1).FullName
+
+
+$d = "$PWD\ci\winsrc"
 $r += "dir: $d"
 foreach ($f in 'tour.ps1','settings.ps1','signin.ps1','sync-videos.ps1','common.ps1') {
   $e = $null; [void][System.Management.Automation.Language.Parser]::ParseFile("$d\$f", [ref]$null, [ref]$e); $r += "$f parse errors: $($e.Count) $($e | ForEach-Object { $_.Message + ' @' + $_.Extent.StartLineNumber })"

@@ -6,7 +6,8 @@
 # TLA Care, done. The name and background pages only show when people may change those settings. 5.1.5: the face
 # or fingerprint page only on computers that can do it, for people who haven't set it up yet. 5.2.5: full screen
 # (other windows it opens, like Settings or TLA Care, still come in front), and "Connect to TLA" on computers Intune
-# doesn't manage.
+# doesn't manage. 6.0.5: the backgrounds page shows one themed section at a time (Tech, Places, Art styles, Animals,
+# TLA), picked above the pictures: all of them at once no longer fit, and the last row was cut off.
 
 $tourXaml = @'
 <Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -146,6 +147,7 @@ function Test-WVTourHello {
 function Get-WVTourPages {
     $pages = [System.Collections.Generic.List[string]]::new()
     $pages.Add('welcome')
+    if (Test-WVSignedOut) { $pages.Add('signin') }   # (6.1.5: their Hub account first)
     if (Test-WVUsersCanChange) { $pages.Add('name'); $pages.Add('background') }
     if (Test-WVTourHello) { $pages.Add('hello') }
     if (Test-WVReleased 'calls') { $pages.Add('calls') }
@@ -185,9 +187,34 @@ function Show-WVTourPage([int]$Index) {
     [void]$extra.Children.Clear()
     $w.FindName('Back').Visibility = if ($Index -gt 0) { 'Visible' } else { 'Collapsed' }
     $w.FindName('Next').Content = if ($page -eq 'done') { 'Get started' } elseif ($page -eq 'welcome') { "Let's go" } else { 'Next' }
-    $w.FindName('Skip').Visibility = if ($page -eq 'done') { 'Collapsed' } else { 'Visible' }
+    # 6.2.5: on TLA's own PCs, no skipping the tour until they've signed in.
+    $t.MustSignIn = Test-WVMustSignIn
+    $w.FindName('Skip').Visibility = if ($page -eq 'done' -or $t.MustSignIn) { 'Collapsed' } else { 'Visible' }
     $name = ("$(Get-WVSetting 'PreferredName')" -replace '\s+', ' ').Trim()
     switch ($page) {
+        'signin' {   # (6.1.5)
+            if (Test-WVSignedOut) {
+                $heading.Text = 'Sign in with your Hub account'
+                $body.Text = if ($t.MustSignIn) { 'This computer belongs to TLA, so sign in with the account you use for the TLA Hub before you keep going. Click Sign in: your browser opens the Hub''s sign-in page.' }
+                             else { 'Sign in once with the account you use for the TLA Hub. Until you do, your choices are greyed out and you see TLA Classic. Click Sign in: your browser opens the Hub''s sign-in page.' }
+                if ($t.SignInNote) {
+                    $n0 = [System.Windows.Controls.TextBlock]::new(); $n0.Text = $t.SignInNote
+                    $n0.Foreground = [System.Windows.Media.Brushes]::White; $n0.TextWrapping = 'Wrap'; $n0.MaxWidth = 560; $n0.Margin = '0,0,0,10'
+                    [void]$extra.Children.Add($n0)
+                }
+                [void]$extra.Children.Add((New-WVTourButton 'Sign in' {
+                    try { Start-WVScript 'settings.ps1' '-SignIn' } catch { }
+                    $script:TourState.SignInStarted = $true
+                    $n = [System.Windows.Controls.TextBlock]::new()
+                    $n.Text = 'Finish signing in in your browser. When it says you''re signed in, come back here and click Next.'
+                    $n.Foreground = [System.Windows.Media.Brushes]::White; $n.TextWrapping = 'Wrap'; $n.MaxWidth = 560; $n.Margin = '0,10,0,0'
+                    [void]$script:TourState.Window.FindName('Extra').Children.Add($n)
+                }))
+            } else {
+                $heading.Text = "You're signed in"
+                $body.Text = 'Your choices are yours to make now. Let''s set them up.'
+            }
+        }
         'welcome' {
             $heading.Text = if ($name) { "Welcome to TLA, $name!" } else { 'Welcome to TLA!' }
             $body.Text = "This computer is all set up for you. Here's a quick look at what makes it yours. It takes about a minute."
@@ -205,12 +232,30 @@ function Show-WVTourPage([int]$Index) {
         'background' {
             $heading.Text = 'Pick your background'
             $body.Text = 'It goes on your desktop and lock screen. Each one has its own intro video, and a light and a dark look that follow Windows.'
+            $current = "$(Get-WVSetting 'Background')"
+            $orgBg = "$(Get-WVOrgSetting 'Background')"
+            $list = @($WV.Backgrounds.Keys | Where-Object { (Test-WVReleased $_) -or $_ -eq $orgBg })
+            # 6.0.5: one themed section at a time, starting with the one their background is in.
+            $cats = @($WV.Categories.Keys | Where-Object { $cid = $_; @($list | Where-Object { (Get-WVCategory $_) -eq $cid }).Count })
+            if ($cats -notcontains $t.Cat) { $t.Cat = if ($list -contains $current) { Get-WVCategory $current } else { $cats[0] } }
+            $tabs = [System.Windows.Controls.WrapPanel]::new()
+            $tabs.Margin = '0,0,0,16'
+            foreach ($cid in $cats) {
+                $tab = [System.Windows.Controls.Button]::new()
+                $tab.Content = $WV.Categories[$cid]; $tab.Tag = $cid
+                $tab.Style = $w.FindResource($(if ($cid -eq $t.Cat) { 'TourButton' } else { 'GhostButton' }))
+                $tab.Padding = '18,7'; $tab.MinWidth = 0; $tab.FontSize = 14; $tab.Margin = '0,0,8,0'
+                $tab.Add_Click({ param($s, $e) $script:TourState.Cat = "$($s.Tag)"; Show-WVTourPage $script:TourState.Index })
+                [void]$tabs.Children.Add($tab)
+            }
+            [void]$extra.Children.Add($tabs)
             $wrap = [System.Windows.Controls.WrapPanel]::new()
             $wrap.MaxWidth = 880
-            $current = "$(Get-WVSetting 'Background')"
+            # (room for two rows, the most a section has, so the page doesn't jump between sections)
+            $wrap.MinHeight = 2 * (72 + 4 + 22 + 12) + 16
             $mode = Get-WVMode
-            foreach ($id in $WV.Backgrounds.Keys) {
-                if (-not (Test-WVReleased $id) -and $id -ne "$(Get-WVOrgSetting 'Background')") { continue }
+            foreach ($id in $list) {
+                if ((Get-WVCategory $id) -ne $t.Cat) { continue }
                 $tile = [System.Windows.Controls.Button]::new()
                 $tile.Style = $w.FindResource('TileButton')
                 $tile.Tag = $id
@@ -228,7 +273,8 @@ function Show-WVTourPage([int]$Index) {
                     $img.Source = $bitmap
                 } catch { }
                 $label = [System.Windows.Controls.TextBlock]::new()
-                $label.Text = $WV.Backgrounds[$id]; $label.Foreground = [System.Windows.Media.Brushes]::White
+                $label.Text = $WV.Backgrounds[$id] + $(if ($WV.Captions.ContainsKey($id)) { "`n$($WV.Captions[$id])" })   # (6.1.0: "Windows default")
+                $label.TextAlignment = 'Center'; $label.Foreground = [System.Windows.Media.Brushes]::White
                 $label.FontSize = 12; $label.HorizontalAlignment = 'Center'; $label.Margin = '0,3,0,1'
                 [void]$stack.Children.Add($img)
                 [void]$stack.Children.Add($label)
@@ -299,6 +345,7 @@ function Show-WVTourPage([int]$Index) {
 
 function Close-WVTour {
     $t = $script:TourState
+    if (Test-WVMustSignIn) { return }   # (6.2.5)
     if ($t.Pages[$t.Index] -eq 'name') { Save-WVTourName }
     try { [Microsoft.Win32.Registry]::SetValue($WV.StateKey, 'TourDone', [DateTime]::Now.ToString('s')) } catch { }
     $t.Window.Close()
@@ -306,7 +353,7 @@ function Close-WVTour {
 
 function New-WVTourWindow {
     $win = [System.Windows.Markup.XamlReader]::Parse($tourXaml)
-    $script:TourState = @{ Window = $win; Pages = @(Get-WVTourPages); Index = 0; NameBox = $null }
+    $script:TourState = @{ Window = $win; Pages = @(Get-WVTourPages); Index = 0; NameBox = $null; Cat = '' }
     try {
         $iconBytes = [System.IO.File]::ReadAllBytes([System.IO.Path]::Combine($WV.Dir, 'welcome-video.ico'))
         $decoder = [System.Windows.Media.Imaging.BitmapDecoder]::Create([System.IO.MemoryStream]::new($iconBytes), 'None', 'OnLoad')
@@ -319,6 +366,11 @@ function New-WVTourWindow {
     $win.FindName('Next').Add_Click({
         param($s, $e)
         $t = $script:TourState
+        if ($t.Pages[$t.Index] -eq 'signin' -and (Test-WVMustSignIn)) {   # (6.2.5)
+            $t.SignInNote = if ($t.SignInStarted) { 'You''re not signed in yet. Finish signing in in your browser, then click Next.' } else { 'Sign in first: click Sign in below.' }
+            Show-WVTourPage $t.Index; return
+        }
+        $t.SignInNote = ''
         if ($t.Index -ge $t.Pages.Count - 1) { Close-WVTour } else { Show-WVTourPage ($t.Index + 1) }
     })
     $win.FindName('Back').Add_Click({ param($s, $e) if ($script:TourState.Index -gt 0) { Show-WVTourPage ($script:TourState.Index - 1) } })
@@ -328,5 +380,232 @@ function New-WVTourWindow {
     $win.Add_KeyDown({ param($s, $e) if ($e.Key -eq 'Escape') { Close-WVTour } })
     $win.Add_Loaded({ param($s, $e) [void]$s.Activate() })
     Show-WVTourPage 0
+    return $win
+}
+
+# ---- 6.2.5: the lock screen -----------------------------------------------------------------------------------
+# On TLA's own PCs (joined to TLA's Entra ID or a domain), it covers everything while this person's Hub sign-in has
+# run out, or they've never signed in, until they sign in. Not while the PC is offline, when they couldn't anyway.
+# settings.ps1 -Lock (the "TLA BootPaper Sign-in Lock" task, at each sign-in) checks every minute. While they sign
+# in, their web browser may come in front of it; anything else, it covers again. Signing out of Windows still works.
+$WV.LockBrowsers = @('chrome', 'msedge', 'firefox', 'brave', 'opera', 'vivaldi', 'arc')
+function Test-WVCorporate {
+    if (-not (Test-WVReleased 'lockdown')) { return $false }
+    if ($env:TB_TEST_CORPORATE -eq '1') { return $true }   # (developer check: as if it were TLA's)
+    try {
+        $base = [Microsoft.Win32.RegistryKey]::OpenBaseKey('LocalMachine', 'Registry64')
+        $k = $base.OpenSubKey('SYSTEM\CurrentControlSet\Control\CloudDomainJoin\JoinInfo')
+        if ($k) { try { if ($k.SubKeyCount -gt 0) { return $true } } finally { $k.Close() } }
+        $k = $base.OpenSubKey('SYSTEM\CurrentControlSet\Services\Netlogon\Parameters')
+        if ($k) { try { if ("$($k.GetValue('DynamicSiteName'))$($k.GetValue('SiteName'))") { return $true } } finally { $k.Close() } }
+    } catch { }
+    return $false   # (unlike Test-WVOwnedByTla: only when it's certain)
+}
+function Test-WVMustSignIn { return (Test-WVCorporate) -and (Get-WVSignIn -Fresh).state -eq 'out' }
+function Test-WVLockNeeded {
+    if (-not (Test-WVMustSignIn)) { return $false }
+    # (not over the welcome video, and not over the tour while it's in front: the tour asks them to sign in itself.
+    # 6.5.0: a tour left open behind other windows no longer keeps the lock away, as on Macs in 7.0.5)
+    try {
+        Add-Type -Namespace WelcomeVideo -Name LockFront -MemberDefinition @'
+[DllImport("user32.dll")] public static extern System.IntPtr GetForegroundWindow();
+[DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(System.IntPtr hWnd, out uint pid);
+'@ -ErrorAction SilentlyContinue
+    } catch { }
+    [uint32]$fpid = 0
+    try { [void][WelcomeVideo.LockFront]::GetWindowThreadProcessId([WelcomeVideo.LockFront]::GetForegroundWindow(), [ref]$fpid) } catch { }
+    $me = [System.Diagnostics.Process]::GetCurrentProcess().SessionId
+    foreach ($p in [System.Diagnostics.Process]::GetProcessesByName('powershell')) {
+        try {
+            if ($p.SessionId -ne $me -or $p.Id -eq $PID) { continue }
+            $t = "$($p.MainWindowTitle)"
+            if ($t -eq 'TLA BootPaper video') { return $false }
+            if ($t -eq 'Welcome to TLA' -and $p.Id -eq $fpid) { return $false }
+        } catch { }
+    }
+    return Test-WVOnline
+}
+
+$lockXaml = @'
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="TLA BootPaper sign-in" WindowStyle="None" ResizeMode="NoResize" WindowState="Maximized" Topmost="True"
+        Background="#0B1B33" ShowInTaskbar="False" FontFamily="Segoe UI" FontSize="16">
+  <Grid>
+    <Border x:Name="Picture" Opacity="0.35"/>
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="640">
+      <Image x:Name="Logo" Width="72" Height="72" Margin="0,0,0,18"/>
+      <TextBlock Text="Sign in to keep using this computer" Foreground="White" FontSize="34" FontWeight="SemiBold"
+                 TextWrapping="Wrap" TextAlignment="Center"/>
+      <TextBlock x:Name="Body" Foreground="#E6FFFFFF" FontSize="17" TextWrapping="Wrap" TextAlignment="Center" Margin="0,14,0,24" LineHeight="25"/>
+      <Button x:Name="SignIn" Content="Sign in" HorizontalAlignment="Center" Padding="40,10" FontSize="16" IsDefault="True"
+              Foreground="#0B1B33" Background="White" BorderThickness="0" Cursor="Hand"/>
+      <TextBlock x:Name="Note" Foreground="#CCFFFFFF" FontSize="14" TextWrapping="Wrap" TextAlignment="Center" Margin="0,18,0,0"/>
+    </StackPanel>
+    <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,24">
+      <Button x:Name="SignOut" Content="Sign out of Windows" HorizontalAlignment="Center" Padding="16,6" FontSize="13"
+              Foreground="White" Background="#33FFFFFF" BorderThickness="0" Cursor="Hand"/>
+      <TextBlock Text="Need help? Email helpdesk@schoolathome.ca" Foreground="#99FFFFFF" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+    </StackPanel>
+  </Grid>
+</Window>
+'@
+
+# What it did, for TLA Care and the helpdesk: %LOCALAPPDATA%\TLA BootPaper\lock.log (kept short).
+function Write-WVLockLog([string]$Text) {
+    try {
+        $d = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'TLA BootPaper'); [void][System.IO.Directory]::CreateDirectory($d)
+        $f = [System.IO.Path]::Combine($d, 'lock.log')
+        if ([System.IO.File]::Exists($f) -and (Get-Item $f).Length -gt 65536) { [System.IO.File]::Delete($f) }
+        [System.IO.File]::AppendAllText($f, ('{0:yyyy-MM-dd HH:mm:ss} {1} {2}{3}' -f (Get-Date), "$($WV.Release)", $Text, "`r`n"))
+    } catch { }
+}
+# 7.3.0: the lock's sign-in page opens in Edge in kiosk mode (full screen, no address bar, no other tabs or windows), in
+# a profile of its own, so signing in doesn't give the browser - and the rest of the internet - meanwhile.
+$WV.LockBrowserProfile = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'TLA BootPaper', 'signin-browser')
+function Start-WVLockBrowser([string]$Url) {
+    $edge = @("${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe", "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe") |
+        Where-Object { [System.IO.File]::Exists($_) } | Select-Object -First 1
+    if (-not $edge) { [void][System.Diagnostics.Process]::Start($Url); return $false }   # (no Edge: their default browser)
+    Stop-WVLockBrowser
+    [void][System.IO.Directory]::CreateDirectory($WV.LockBrowserProfile)
+    $a = "--kiosk `"$Url`" --edge-kiosk-type=fullscreen --no-first-run --no-default-browser-check --user-data-dir=`"$($WV.LockBrowserProfile)`""
+    [void][System.Diagnostics.Process]::Start($edge, $a)
+    return $true
+}
+# The processes of that browser (by its profile folder), as a list of process IDs.
+function Get-WVLockBrowserPids {
+    try {
+        $p = $WV.LockBrowserProfile.Replace('\', '\\')
+        return @(Get-CimInstance Win32_Process -Filter "Name = 'msedge.exe' AND CommandLine LIKE '%$p%'" -ErrorAction Stop | ForEach-Object { [uint32]$_.ProcessId })
+    } catch { return @() }
+}
+function Stop-WVLockBrowser { foreach ($id in (Get-WVLockBrowserPids)) { try { Stop-Process -Id $id -Force -ErrorAction SilentlyContinue } catch { } } }
+
+function New-WVLockWindow {
+    try {
+        Add-Type -Namespace WelcomeVideo -Name LockFront -MemberDefinition @'
+[DllImport("user32.dll")] public static extern System.IntPtr GetForegroundWindow();
+[DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(System.IntPtr hWnd, out uint pid);
+'@ -ErrorAction SilentlyContinue
+    } catch { }
+    $win = [System.Windows.Markup.XamlReader]::Parse($lockXaml)
+    $script:LockState = @{ Window = $win; Pending = $null; Wait = $null; NextCheck = [DateTime]::MinValue; Done = $false; Url = '' }
+    try {
+        $iconBytes = [System.IO.File]::ReadAllBytes([System.IO.Path]::Combine($WV.Dir, 'welcome-video.ico'))
+        $decoder = [System.Windows.Media.Imaging.BitmapDecoder]::Create([System.IO.MemoryStream]::new($iconBytes), 'None', 'OnLoad')
+        $best = $null
+        foreach ($frame in $decoder.Frames) { if (-not $best -or $frame.PixelWidth -gt $best.PixelWidth) { $best = $frame } }
+        $win.FindName('Logo').Source = $best; $win.Icon = $best
+    } catch { }
+    try {
+        $file = [System.IO.Path]::Combine($WV.Dir, 'bg-tla-dark.jpg')
+        if ([System.IO.File]::Exists($file)) {
+            $bitmap = [System.Windows.Media.Imaging.BitmapImage]::new()
+            $bitmap.BeginInit(); $bitmap.UriSource = [System.Uri]::new($file); $bitmap.CacheOption = 'OnLoad'; $bitmap.DecodePixelWidth = 1600; $bitmap.EndInit()
+            $brush = [System.Windows.Media.ImageBrush]::new($bitmap); $brush.Stretch = 'UniformToFill'
+            $win.FindName('Picture').Background = $brush
+        }
+    } catch { }
+    $win.FindName('Body').Text = if ((Get-WVSignIn).reason -eq 'expired') {
+        'Your Hub sign-in has run out. Sign in again with the account you use for the TLA Hub to keep using this computer.'
+    } else { 'Before you can use this computer, sign in once with the account you use for the TLA Hub.' }
+
+    $lockNote = { param($t) $script:LockState.Window.FindName('Note').Text = $t }
+    $lockFront = {
+        $w = $script:LockState.Window
+        $w.Topmost = $true
+        if ($w.WindowState -ne 'Maximized') { $w.WindowState = 'Maximized' }
+        try { [void]$w.Activate() } catch { }
+    }
+    $script:LockFront = $lockFront; $script:LockNote = $lockNote
+    $stop = {
+        $l = $script:LockState
+        if ($l.Pending) { try { $l.Pending.Listener.Stop() } catch { } ; $l.Pending = $null }
+        Stop-WVLockBrowser; $l.Kiosk = $false
+        $l.Window.FindName('SignIn').Content = 'Sign in'
+    }
+    $script:LockStop = $stop
+
+    $win.FindName('SignIn').Add_Click({
+        $l = $script:LockState
+        if ($l.Pending) {   # (the button says "Open the sign-in page again" meanwhile)
+            try { $l.Kiosk = Start-WVLockBrowser $l.Pending.Url; $l.BrowserPids = @(); $l.PidCheck = [DateTime]::MinValue } catch { }
+            return
+        }
+        try {
+            $l.Pending = Start-WVSignIn
+            $l.Kiosk = Start-WVLockBrowser $l.Pending.Url; $l.BrowserPids = @(); $l.PidCheck = [DateTime]::MinValue   # (7.3.0)
+            $l.Window.Topmost = $false
+            $l.Window.FindName('SignIn').Content = 'Open the sign-in page again'
+            & $script:LockNote 'Sign in with your Hub account on the page that opened. This computer unlocks by itself.'
+        } catch {
+            & $script:LockStop
+            & $script:LockNote "Couldn't start signing in ($($_.Exception.Message)). Try again."
+        }
+    })
+    $win.FindName('SignOut').Add_Click({
+        & $script:LockStop
+        try { [void][System.Diagnostics.Process]::Start([System.IO.Path]::Combine($env:SystemRoot, 'System32\shutdown.exe'), '/l') } catch { }
+    })
+    # It only closes once they're signed in (or Windows is signing them out).
+    $win.Add_Closing({ param($s, $e) if (-not $script:LockState.Done -and -not $script:LockState.Ending) { $e.Cancel = $true } })
+    if (-not $script:LockSessionHook) {   # (once per run: the window is made again each time it's needed)
+        $script:LockSessionHook = $true
+        [Microsoft.Win32.SystemEvents]::add_SessionEnding({ param($s, $e) if ($script:LockState) { $script:LockState.Ending = $true; try { $script:LockState.Window.Close() } catch { } } })
+    }
+    $win.Add_StateChanged({ param($s, $e) if ($s.WindowState -ne 'Maximized') { $s.WindowState = 'Maximized' } })
+
+    $timer = [System.Windows.Threading.DispatcherTimer]::new()
+    $timer.Interval = [TimeSpan]::FromMilliseconds(250)
+    $timer.Add_Tick({
+        $l = $script:LockState
+        try {
+            if ($l.Pending) {
+                $answer = $null
+                try { $answer = Receive-WVSignIn $l.Pending } catch { $answer = @{} }
+                if ($null -ne $answer) {
+                    $pending = $l.Pending; $l.Pending = $null
+                    Stop-WVLockBrowser; $l.Kiosk = $false   # (7.3.0: the sign-in browser closes once it's done)
+                    $l.Window.FindName('SignIn').Content = 'Sign in'
+                    $r = Complete-WVSignIn $pending $answer
+                    if ($r.ok) {
+                        & $script:LockNote 'Signed in. Unlocking...'
+                        if ($r.needKeys) { [void](Invoke-WVCareRequest 'signin') }
+                        $l.Wait = [DateTime]::UtcNow.AddSeconds(75); $l.NextCheck = [DateTime]::MinValue
+                        try { Start-WVScript 'apply-background.ps1' } catch { }
+                    } else { & $script:LockNote $r.message }
+                    & $script:LockFront
+                } else {
+                    # Only the sign-in browser may be in front meanwhile (7.3.0: only its own kiosk window, not any browser).
+                    $fg = [WelcomeVideo.LockFront]::GetForegroundWindow(); [uint32]$fpid = 0
+                    [void][WelcomeVideo.LockFront]::GetWindowThreadProcessId($fg, [ref]$fpid)
+                    if ($l.Kiosk) {
+                        if ([DateTime]::UtcNow -ge $l.PidCheck) { $l.BrowserPids = Get-WVLockBrowserPids; $l.PidCheck = [DateTime]::UtcNow.AddSeconds(2) }
+                        if ($fpid -ne $PID -and $l.BrowserPids -notcontains $fpid) { & $script:LockFront; $l.Window.Topmost = $false }
+                    } else {
+                        $name = ''
+                        if ($fpid -and $fpid -ne $PID) { try { $name = [System.Diagnostics.Process]::GetProcessById([int]$fpid).ProcessName.ToLowerInvariant() } catch { } }
+                        if ($fpid -ne $PID -and $WV.LockBrowsers -notcontains $name) { & $script:LockFront; $l.Window.Topmost = $false }
+                    }
+                }
+            } elseif (-not $l.Window.IsActive) {
+                & $script:LockFront
+            }
+            if ([DateTime]::UtcNow -ge $l.NextCheck) {
+                $l.NextCheck = [DateTime]::UtcNow.AddSeconds($(if ($l.Wait) { 2 } else { 5 }))
+                if ((Get-WVSignIn -Fresh).state -ne 'out') {
+                    $l.Done = $true; $script:LockTimer.Stop()
+                    & $script:LockStop
+                    $l.Window.Close(); return
+                }
+                if ($l.Wait -and [DateTime]::UtcNow -gt $l.Wait) { $l.Wait = $null; & $script:LockNote 'Couldn''t finish signing in. Try again in a minute.' }
+            }
+        } catch { Write-WVLockLog "tick: $($_.Exception.Message)" }
+    })
+    $win.Add_Loaded({ param($s, $e) [void]$s.Activate(); Write-WVLockLog "shown ($((Get-WVSignIn).reason))" })
+    $script:LockTimer = $timer
+    $win.Add_Closed({ param($s, $e) $script:LockTimer.Stop(); & $script:LockStop; Write-WVLockLog 'closed (signed in)' })
+    $timer.Start()
     return $win
 }

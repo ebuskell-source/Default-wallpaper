@@ -7,7 +7,8 @@
 # 5.0: -Care opens TLA Care (the "TLA Care" Start menu entry), -Tour the Welcome to TLA tour.
 # 5.7.0: signing in with the Hub account, at the top; until they do, everything else is greyed out (TLA Classic).
 # -SignIn starts signing in straight away (the reminder's Sign in button).
-param([switch]$Report, [switch]$Care, [switch]$Tour, [switch]$SignIn)
+# 6.2.5: -Lock: the lock screen on TLA's own PCs, checked every minute (the "TLA BootPaper Sign-in Lock" task).
+param([switch]$Report, [switch]$Care, [switch]$Tour, [switch]$SignIn, [switch]$Lock)
 
 $ErrorActionPreference = 'Stop'
 . ([System.IO.Path]::Combine($PSScriptRoot, 'common.ps1'))
@@ -39,6 +40,38 @@ trap {
     exit 1
 }
 
+if ($Lock) {
+    # Every minute while they're signed in to Windows. Errors are noted, never shown: it runs on its own.
+    $logDir = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'TLA BootPaper')
+    if ($env:TB_TEST) {   # (developer check: what it decides, and a picture of the window, then it closes)
+        [System.IO.File]::WriteAllText([System.IO.Path]::Combine($env:TB_TEST, 'lock.txt'),
+            "corporate=$(Test-WVCorporate) must=$(Test-WVMustSignIn) needed=$(Test-WVLockNeeded) online=$(Test-WVOnline)")
+        $lockWindow = New-WVLockWindow
+        $lockWindow.Add_ContentRendered({
+            param($s, $e)
+            $f = [System.Windows.Threading.DispatcherFrame]::new(); $t = [System.Windows.Threading.DispatcherTimer]::new()
+            $t.Interval = [TimeSpan]::FromMilliseconds(800); $t.Tag = $f; $t.Add_Tick({ param($a, $b) $a.Stop(); $a.Tag.Continue = $false }); $t.Start()
+            [System.Windows.Threading.Dispatcher]::PushFrame($f)
+            $v = $s.Content
+            $r = [System.Windows.Media.Imaging.RenderTargetBitmap]::new([int]$v.ActualWidth, [int]$v.ActualHeight, 96, 96, [System.Windows.Media.PixelFormats]::Pbgra32)
+            $r.Render($v); $enc = [System.Windows.Media.Imaging.PngBitmapEncoder]::new(); $enc.Frames.Add([System.Windows.Media.Imaging.BitmapFrame]::Create($r))
+            $fs = [System.IO.File]::Create([System.IO.Path]::Combine($env:TB_TEST, 'lock.png')); $enc.Save($fs); $fs.Close()
+            $script:LockState.Done = $true; $s.Close()
+        })
+        [void]$lockWindow.ShowDialog()
+        return
+    }
+    while ($true) {
+        try {
+            if (Test-WVLockNeeded) { $lockWindow = New-WVLockWindow; [void]$lockWindow.ShowDialog(); Clear-WVSignInCache }
+        } catch {
+            try { [void][System.IO.Directory]::CreateDirectory($logDir)
+                  [System.IO.File]::AppendAllText([System.IO.Path]::Combine($logDir, 'app-errors.log'), ('{0:yyyy-MM-dd HH:mm:ss} {1} lock: {2}{3}' -f (Get-Date), "$($WV.Release)", $_.Exception.Message, "`r`n")) } catch { }
+        }
+        [System.Threading.Thread]::Sleep(5000)   # (7.3.0: every 5 seconds, so it locks straight away, not up to a minute later)
+    }
+    return
+}
 if ($Report) {
     $reportWindow = New-WVReportWindow
     [void]$reportWindow.ShowDialog()
@@ -51,6 +84,29 @@ if ($Care) {
 }
 if ($Tour) {
     $tourWindow = New-WVTourWindow
+    # Developer check (TB_TEST=<folder>): a picture of each page, and of each themed section of the backgrounds page
+    # (6.0.5), then it closes. Nothing is saved. Not used normally.
+    if ($env:TB_TEST) {
+        $tourWindow.Add_ContentRendered({
+            param($s, $e)
+            $pump = { param($ms) $f = [System.Windows.Threading.DispatcherFrame]::new(); $t = [System.Windows.Threading.DispatcherTimer]::new()
+                      $t.Interval = [TimeSpan]::FromMilliseconds($ms); $t.Tag = $f; $t.Add_Tick({ param($a, $b) $a.Stop(); $a.Tag.Continue = $false }); $t.Start()
+                      [System.Windows.Threading.Dispatcher]::PushFrame($f) }
+            $shot = { param($name) & $pump 400; $v = $s.Content
+                      $r = [System.Windows.Media.Imaging.RenderTargetBitmap]::new([int]$v.ActualWidth, [int]$v.ActualHeight, 96, 96, [System.Windows.Media.PixelFormats]::Pbgra32)
+                      $r.Render($v); $enc = [System.Windows.Media.Imaging.PngBitmapEncoder]::new(); $enc.Frames.Add([System.Windows.Media.Imaging.BitmapFrame]::Create($r))
+                      $fs = [System.IO.File]::Create([System.IO.Path]::Combine($env:TB_TEST, $name)); $enc.Save($fs); $fs.Close() }
+            $ts = $script:TourState
+            for ($i = 0; $i -lt $ts.Pages.Count; $i++) {
+                $ts.NameBox = $null   # (so leaving the name page doesn't save a name)
+                Show-WVTourPage $i; & $shot ('tour-{0}-{1}.png' -f ($i + 1), $ts.Pages[$i])
+                if ($ts.Pages[$i] -eq 'background') {
+                    foreach ($cid in @($WV.Categories.Keys)) { $ts.Cat = $cid; Show-WVTourPage $i; & $shot ('tour-{0}-background-{1}.png' -f ($i + 1), $cid) }
+                }
+            }
+            $s.Close()
+        })
+    }
     [void]$tourWindow.ShowDialog()
     return
 }
@@ -137,7 +193,7 @@ $xaml = @'
               <Border x:Name="Frame" BorderThickness="3" BorderBrush="Transparent" CornerRadius="9" Padding="2">
                 <ContentPresenter/>
               </Border>
-              <TextBlock Text="{TemplateBinding Tag}" HorizontalAlignment="Center" Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/>
+              <TextBlock Text="{TemplateBinding Tag}" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/>
             </StackPanel>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
@@ -404,22 +460,11 @@ $xaml = @'
       <TextBlock TextWrapping="Wrap" Foreground="#102A4C"><Run x:Name="TempText"/> <Hyperlink x:Name="TempEnd">Go back now</Hyperlink></TextBlock>
     </Border>
     <StackPanel x:Name="SeasonSection" Visibility="Collapsed">
-      <TextBlock Text="Seasonal theme" Foreground="#5F6368" Margin="0,0,0,8"/>
+      <TextBlock Text="Seasonal" Foreground="#5F6368" Margin="0,0,0,8"/>
       <WrapPanel x:Name="SeasonTiles" Margin="0,0,-12,0"/>
     </StackPanel>
-    <TextBlock Text="With an intro video" Foreground="#5F6368" Margin="0,0,0,8"/>
-    <WrapPanel x:Name="Tiles" Margin="0,0,-12,0"/>
-    <!-- 5.9.0: the animal backgrounds -->
-    <StackPanel x:Name="AnimalSection" Visibility="Collapsed">
-      <TextBlock Text="Animals" Foreground="#5F6368" Margin="0,6,0,8"/>
-      <WrapPanel x:Name="AnimalTiles" Margin="0,0,-12,0"/>
-    </StackPanel>
-    <StackPanel x:Name="MoreSection">
-      <TextBlock Text="Intro videos coming soon" Foreground="#5F6368" Margin="0,6,0,2"/>
-      <TextBlock Text="Until their own video is ready, these play the TLA Classic video." FontSize="12"
-                 Foreground="#8A8A8A" TextWrapping="Wrap" Margin="0,0,0,8"/>
-      <WrapPanel x:Name="MoreTiles" Margin="0,0,-12,0"/>
-    </StackPanel>
+    <!-- 6.0.5: a section for each theme (Tech, Places, Art styles, Animals, TLA), made below -->
+    <StackPanel x:Name="CategorySections"/>
     <!-- 5.9.0: their own pictures, on a PC of their own -->
     <StackPanel x:Name="OwnSection" Visibility="Collapsed">
       <TextBlock Text="Your own pictures" Foreground="#5F6368" Margin="0,6,0,2"/>
@@ -466,6 +511,10 @@ $xaml = @'
       <TextBlock x:Name="UpdateCheckText" Foreground="#5F6368" TextWrapping="Wrap" VerticalAlignment="Center"
                  Text="New versions install by themselves. To get one straight away, check now."/>
     </DockPanel>
+    <!-- 6.1.0: how far an update has got, and a button that opens the new version once it's in -->
+    <ProgressBar x:Name="UpdateProgress" Height="6" Margin="0,10,170,0" Minimum="0" Maximum="100" Visibility="Collapsed"/>
+    <Button x:Name="RestartApp" Content="Restart TLA BootPaper" HorizontalAlignment="Left" Padding="14,5" Margin="0,10,0,0"
+            Visibility="Collapsed" Cursor="Hand"/>
     </StackPanel>
     </Border>
 
@@ -491,7 +540,7 @@ $xaml = @'
 $window = [System.Windows.Markup.XamlReader]::Parse($xaml)
 $c = @{}
 foreach ($name in 'LockedNote', 'Enabled', 'Options', 'VideoChoice', 'Sound', 'AllowSkip', 'LastPlayed', 'BackgroundNote',
-                  'Tiles', 'MoreSection', 'MoreTiles', 'ResetText', 'Reset', 'WhatsNew', 'Helpdesk', 'PlayNow', 'CloseButton', 'VersionText',
+                  'CategorySections', 'ResetText', 'Reset', 'WhatsNew', 'Helpdesk', 'PlayNow', 'CloseButton', 'VersionText',
                   'AnnouncementBox', 'AnnouncementText', 'QuietMode', 'QuietHours', 'QuietStart', 'QuietEnd', 'QuietDays',
                   'PreferredName', 'SaveName', 'NameStatus', 'SeasonSection', 'SeasonTiles',
                   'PlayQuiet', 'PickFor', 'FitChoice', 'LockChoice', 'TempBox', 'TempText', 'TempEnd',
@@ -500,8 +549,8 @@ foreach ($name in 'LockedNote', 'Enabled', 'Options', 'VideoChoice', 'Sound', 'A
                   'ScreensaverNote', 'CallsOn', 'CallsNote', 'OpenPictures', 'RemindersOn', 'UnboxBox', 'PrepareUnbox',
                   'ConnectBox', 'ConnectTla', 'GreetingOn', 'NameHint', 'Scroller', 'StaffLink',
                   'SignInBox', 'SignInButton', 'SignOutText', 'SignOut', 'SignInTitle', 'SignInText', 'SignInError',
-                  'UpdateCheckRow', 'CheckUpdates', 'UpdateCheckText',
-                  'AnimalSection', 'AnimalTiles', 'OwnSection', 'OwnTiles', 'AddPicture') {
+                  'UpdateCheckRow', 'CheckUpdates', 'UpdateCheckText', 'UpdateProgress', 'RestartApp',
+                  'OwnSection', 'OwnTiles', 'AddPicture') {
     $c[$name] = $window.FindName($name)
 }
 # The organization's announcement (4.0), if there is one.
@@ -607,14 +656,34 @@ function New-WVTile([string]$Id, [string]$Name) {
     $tile.Tag         = $Name
     return $tile
 }
+# 6.0.5: a section for each theme (5.9.0 had Animals): a heading, a note when one of its backgrounds needs one,
+# and its pictures.
+$catSections = [ordered]@{}
+$greyBrush = [System.Windows.Media.BrushConverter]::new()
+foreach ($cid in $WV.Categories.Keys) {
+    $panel = [System.Windows.Controls.StackPanel]::new()
+    $head = [System.Windows.Controls.TextBlock]::new()
+    $head.Text = $WV.Categories[$cid]; $head.Foreground = $greyBrush.ConvertFromString('#5F6368'); $head.Margin = '0,6,0,8'
+    $note = [System.Windows.Controls.TextBlock]::new()
+    $note.FontSize = 12; $note.Foreground = $greyBrush.ConvertFromString('#8A8A8A'); $note.TextWrapping = 'Wrap'
+    $note.Margin = '0,-4,0,8'; $note.Visibility = 'Collapsed'
+    $wrap = [System.Windows.Controls.WrapPanel]::new(); $wrap.Margin = '0,0,-12,0'
+    [void]$panel.Children.Add($head); [void]$panel.Children.Add($note); [void]$panel.Children.Add($wrap)
+    [void]$c.CategorySections.Children.Add($panel)
+    $catSections[$cid] = @{ Panel = $panel; Note = $note; Tiles = $wrap }
+}
 $tiles = [ordered]@{}
 foreach ($id in $WV.Backgrounds.Keys) {
     $tile = New-WVTile $id $WV.Backgrounds[$id]
-    if ($WV.Animals -contains $id) { [void]$c.AnimalTiles.Children.Add($tile) }   # (5.9.0: their own section)
-    elseif ($WV.Videos.Contains($id)) { [void]$c.Tiles.Children.Add($tile) } else { [void]$c.MoreTiles.Children.Add($tile) }
+    [void]$catSections[(Get-WVCategory $id)].Tiles.Children.Add($tile)
+    # (what its intro videos are, now that they're no longer grouped that way)
+    $tile.ToolTip = if ($WV.ChannelOnly.ContainsKey($id)) { "$($WV.Backgrounds[$id]): for our beta testers on the Experimental channel. It plays the TLA Classic video." }
+        elseif (-not $WV.Videos.Contains($id)) { "$($WV.Backgrounds[$id]): its own intro video is coming soon. Until then, it plays the TLA Classic video." }
+        elseif ($WV.Variants.ContainsKey($id) -and $WV.VideoHashes.Contains("$id-$($WV.Variants[$id])")) { "$($WV.Backgrounds[$id]): an intro video for light mode and one for dark mode" }
+        else { "$($WV.Backgrounds[$id]): one intro video for light and dark mode" }
     $tiles[$id] = $tile
 }
-$tiles['surprise'] = New-WVTile 'surprise' 'Surprise me'
+$tiles['surprise'] = New-WVTile 'surprise' "Surprise me`n$($WV.Captions['surprise'])"
 $tiles['surprise'].ToolTip = 'A different background every day'
 
 # ---- 5.9.0: their own pictures (on a PC of their own) ------------------------------------------------------
@@ -739,8 +808,7 @@ $c.AddPicture.Add_Click({
     Update-Controls
     if ($ownTiles.Contains($id)) { $ownTiles[$id].IsChecked = $true }   # (picks it: saved and put on the desktop)
 })
-[void]$c.Tiles.Children.Add($tiles['surprise'])
-if ($c.MoreTiles.Children.Count -eq 0) { $c.MoreSection.Visibility = 'Collapsed' }
+[void]$catSections[(Get-WVCategory 'surprise')].Tiles.Children.Add($tiles['surprise'])
 $season = Get-WVSeason
 $seasonTile = $null
 if ($season -and [System.IO.File]::Exists("$(Get-WVBackgroundPath $season)")) {
@@ -869,7 +937,9 @@ function Update-Controls {
     $orgBackground = "$(Get-WVOrgSetting 'Background')"
     foreach ($id in $tiles.Keys) {
         if ($id -ne 'surprise') {
-            $tiles[$id].Tag = if ($id -eq $orgBackground) { "$($WV.Backgrounds[$id]) (default)" } else { $WV.Backgrounds[$id] }
+            # (6.1.0: a caption on a second line, like "Windows default"; those say they're defaults already)
+            $tiles[$id].Tag = if ($WV.Captions.ContainsKey($id)) { "$($WV.Backgrounds[$id])`n$($WV.Captions[$id])" }
+                              elseif ($id -eq $orgBackground) { "$($WV.Backgrounds[$id]) (default)" } else { $WV.Backgrounds[$id] }
             # 4.3: only what's out on their release channel (the organization's default always shows).
             $tiles[$id].Visibility = if ((Test-WVReleased $id) -or $id -eq $orgBackground) { 'Visible' } else { 'Collapsed' }
         }
@@ -878,8 +948,18 @@ function Update-Controls {
     foreach ($id in $lockItems.Keys) {
         $lockItems[$id].Visibility = if ((Test-WVReleased $id) -or $id -eq $orgBackground) { 'Visible' } else { 'Collapsed' }
     }
-    # 5.9.0: the Animals section (once one is out on their channel) and their own pictures (on a PC of their own).
-    $c.AnimalSection.Visibility = if (@($WV.Animals | Where-Object { $tiles[$_].Visibility -eq 'Visible' }).Count) { 'Visible' } else { 'Collapsed' }
+    # 5.9.0: their own pictures (on a PC of their own). 6.0.5: each theme's section, once one of its backgrounds is
+    # out on their channel, with a note naming the ones still waiting for their own intro video.
+    foreach ($cid in $catSections.Keys) {
+        $shown = @($tiles.Keys | Where-Object { (Get-WVCategory $_) -eq $cid -and $tiles[$_].Visibility -eq 'Visible' })
+        $catSections[$cid].Panel.Visibility = if ($shown.Count) { 'Visible' } else { 'Collapsed' }
+        $soon = @($shown | Where-Object { $_ -ne 'surprise' -and -not $WV.ChannelOnly.ContainsKey($_) -and -not $WV.Videos.Contains($_) } | ForEach-Object { $WV.Backgrounds[$_] })
+        $only = @($shown | Where-Object { $WV.ChannelOnly.ContainsKey($_) } | ForEach-Object { $WV.Backgrounds[$_] })
+        $catSections[$cid].Note.Text = if ($soon.Count -gt 1) { "$($soon -join ' and '): their own intro videos are coming soon. Until then, they play the TLA Classic video." }
+            elseif ($soon.Count) { "$($soon[0]): its own intro video is coming soon. Until then, it plays the TLA Classic video." }
+            elseif ($only.Count) { "For our beta testers. $($only -join ' and ') plays the TLA Classic intro video." } else { '' }
+        $catSections[$cid].Note.Visibility = if ($catSections[$cid].Note.Text) { 'Visible' } else { 'Collapsed' }
+    }
     $ownOk = Test-WVOwnPicturesAllowed
     $c.OwnSection.Visibility = if ($ownOk) { 'Visible' } else { 'Collapsed' }
     if ($ownOk) { Sync-WVOwnTiles }
@@ -930,6 +1010,7 @@ function Update-Controls {
     $c.CallsOn.Visibility = if (Test-WVReleased 'calls') { 'Visible' } else { 'Collapsed' }
     $c.CallsOn.IsChecked  = Test-WVOn 'CallBackgrounds'
     $c.CallsOn.IsEnabled  = -not $locked
+    $c.OpenPictures.IsEnabled = -not (Test-WVSignedOut)   # (6.1.5: greyed out until they sign in)
     $c.CallsNote.Text = if ("$(Get-WVValue $WV.StateKey 'CallBackgroundStatus')" -eq 'no-teams') {
         "Microsoft Teams isn't on this computer yet. For Zoom or other apps, add them yourself:"
     } else { 'In a Teams meeting: More > Video effects. For Zoom or other apps, add them yourself:' }
@@ -1183,7 +1264,31 @@ $c.ChannelExperimental.Add_Checked({ Set-WVChannel 'experimental' })
 # not: it's for the whole computer. 5.9.5: on every PC (it used to only ask Intune to check in on a PC Intune
 # manages), the answer says when it was checked, and when an update started, the app follows it to the end.
 function Get-WVClock([DateTime]$When) { return $When.ToString('h:mm tt', [Globalization.CultureInfo]::GetCultureInfo('en-US')) }
+# 6.1.0: the progress bar under it: $null hides it, -1 shows it busy, 0 to 100 shows how far.
+function Set-WVUpdateBar($Value) {
+    if ($null -eq $Value) { $c.UpdateProgress.Visibility = 'Collapsed'; $c.UpdateProgress.IsIndeterminate = $false; return }
+    $c.UpdateProgress.Visibility = 'Visible'
+    if ($Value -lt 0) { $c.UpdateProgress.IsIndeterminate = $true } else { $c.UpdateProgress.IsIndeterminate = $false; $c.UpdateProgress.Value = $Value }
+}
+# 6.1.0: opens the new version: another copy of the app, from the install folder, then this one closes.
+$c.RestartApp.Add_Click({
+    try { Start-WVScript 'settings.ps1' } catch { }
+    $window.Close()
+})
+# 6.1.0: a newer version installed while this window was open (by itself, or from another window): it says so.
+$staleTimer = [System.Windows.Threading.DispatcherTimer]::new()
+$staleTimer.Interval = [TimeSpan]::FromSeconds(10)
+$staleTimer.Add_Tick({
+    if (-not $c.CheckUpdates.IsEnabled -or $c.RestartApp.Visibility -eq 'Visible' -or $c.UpdateCheckRow.Visibility -ne 'Visible') { return }
+    $installed = Get-WVInstalledRelease
+    if ($installed -and $installed -ne $WV.Release) {
+        $c.UpdateCheckText.Text = "TLA BootPaper was updated to version $installed. Restart it to use the new version."
+        $c.RestartApp.Visibility = 'Visible'
+    }
+})
+$staleTimer.Start()
 $c.CheckUpdates.Add_Click({
+    $c.RestartApp.Visibility = 'Collapsed'; Set-WVUpdateBar $null
     $at = Invoke-WVCareRequest 'update'
     if (-not $at) { $c.UpdateCheckText.Text = "Couldn't check for updates. Try again in a moment."; return }
     $c.CheckUpdates.IsEnabled = $false
@@ -1201,26 +1306,36 @@ $c.CheckUpdates.Add_Click({
                                       else { 'The check is taking longer than usual. Try again in a few minutes.' }
             $u = Get-WVUpdateStatus
             if ($result -and $u -and $u.State -in 'starting', 'installing' -and $u.Time -ge $t.Since - 5) {
-                $t.Follow = @{ Version = $u.Version; Until = [DateTime]::Now.AddMinutes(15) }
+                $t.Follow = @{ Version = $u.Version; Until = [DateTime]::Now.AddMinutes(20) }
+                Set-WVUpdateBar -1
                 return
             }
             $s.Stop(); $c.CheckUpdates.IsEnabled = $true
             return
         }
-        # Following the install: done once the version installed here has caught up.
+        # Following the install: done once the version installed here has caught up. (6.1.0: with a progress bar.)
         $u = Get-WVUpdateStatus
         $installed = Get-WVInstalledRelease
+        $v = $t.Follow.Version
         $text = $null
-        if ((ConvertTo-WVVersion $installed) -ge (ConvertTo-WVVersion $t.Follow.Version)) {
-            $text = "Updated to version $installed at $(Get-WVClock ([DateTime]::Now)). Close TLA BootPaper and open it again to use it."
+        if ((ConvertTo-WVVersion $installed) -ge (ConvertTo-WVVersion $v)) {
+            $text = "Updated to version $installed at $(Get-WVClock ([DateTime]::Now)). Restart TLA BootPaper to use it."
+            $c.RestartApp.Visibility = 'Visible'
         } elseif ($u -and $u.State -eq 'failed' -and $u.Time -ge $t.Since - 5) {
             $text = "Version $($u.Version) couldn't be installed: $(if ($u.Why) { $u.Why } else { 'something went wrong' }). It tries again by itself later, or you can check again."
         } elseif ([DateTime]::Now -gt $t.Follow.Until) {
-            $text = "Version $($t.Follow.Version) is still installing. It finishes by itself; check again in a few minutes."
-        } elseif ($u -and $u.State -eq 'installing' -and $c.UpdateCheckText.Text -notlike 'Installing version*') {
-            $c.UpdateCheckText.Text = "Installing version $($u.Version)... This takes a few minutes. You can keep using your PC."
+            $text = "Version $v is still installing. It finishes by itself; check again in a few minutes."
+        } elseif ($u -and $u.State -eq 'installing' -and $u.Progress -match '^download (\d+)$') {
+            $c.UpdateCheckText.Text = "Downloading version $v... $($Matches[1])%  You can keep using your PC."
+            Set-WVUpdateBar ([int]$Matches[1])
+        } elseif ($u -and $u.State -eq 'installing') {
+            $c.UpdateCheckText.Text = "Installing version $v... This takes a few minutes. You can keep using your PC."
+            Set-WVUpdateBar -1
+        } else {
+            $c.UpdateCheckText.Text = "Getting version $v ready..."
+            Set-WVUpdateBar -1
         }
-        if ($text) { $s.Stop(); $c.UpdateCheckText.Text = $text; $c.CheckUpdates.IsEnabled = $true }
+        if ($text) { $s.Stop(); $c.UpdateCheckText.Text = $text; $c.CheckUpdates.IsEnabled = $true; Set-WVUpdateBar $null }
     })
     $timer.Start()
 })
@@ -1442,6 +1557,7 @@ if ($env:TB_TEST) {
     # 5.7.0: the sign-in box as it is, waiting for the browser, and with an error.
     $c.Scroller.ScrollToTop(); & $shot 'win6-signin.png'
     # 5.9.0: the Animals section, and their own pictures (TB_OWN: pictures to add first, separated by |).
+    # (6.0.5: and a picture of each themed section, win11-<id>.png)
     if ($env:TB_OWN) {
         $said = @(foreach ($f in $env:TB_OWN -split '\|') {
             try { "added $([System.IO.Path]::GetFileName($f)): $(Add-WVOwnPicture $f)" } catch { "not added $([System.IO.Path]::GetFileName($f)): $($_.Exception.Message)" }
@@ -1454,11 +1570,19 @@ if ($env:TB_TEST) {
         $said += "Background: $(Get-WVSetting 'Background') current: $(Get-WVCurrentBackground) path: $(Get-WVBackgroundPath (Get-WVCurrentBackground))"
         $said | Out-File ([System.IO.Path]::Combine($env:TB_TEST, 'own.txt')) -Encoding utf8
     }
-    foreach ($part in @(@($c.AnimalSection, 'win9-animals.png'), @($c.OwnSection, 'win10-own.png'))) {
+    foreach ($part in @(@($catSections['animals'].Panel, 'win9-animals.png'), @($c.OwnSection, 'win10-own.png'))) {
         if ($part[0].Visibility -ne 'Visible') { continue }
         & $pump 200
         $y = $part[0].TranslatePoint([System.Windows.Point]::new(0, 0), $c.Scroller.Content).Y
         $c.Scroller.ScrollToVerticalOffset([Math]::Max(0, $y - 240)); & $shot $part[1]
+    }
+    # 6.0.5: each themed section.
+    foreach ($cid in $catSections.Keys) {
+        $panel = $catSections[$cid].Panel
+        if ($panel.Visibility -ne 'Visible') { continue }
+        & $pump 200
+        $y = $panel.TranslatePoint([System.Windows.Point]::new(0, 0), $c.Scroller.Content).Y
+        $c.Scroller.ScrollToVerticalOffset([Math]::Max(0, $y - 60)); & $shot "win11-$cid.png"
     }
     # 5.9.5: Check for updates, start to finish (TB_TEST_UPDATE=1: clicks it, then a picture each time the text
     # changes and update-texts.txt with them, until it's done or 10 minutes have gone by).
@@ -1469,8 +1593,10 @@ if ($env:TB_TEST) {
         $note = {
             $t = "$($c.UpdateCheckText.Text)"
             if ($t -ne $script:lastText) {
-                $script:lastText = $t; $script:shotN++
-                $texts.Add("$(Get-WVClock ([DateTime]::Now))  $t"); & $shot "win11-update-$($script:shotN).png"
+                $script:lastText = $t
+                $texts.Add("$(Get-WVClock ([DateTime]::Now))  $t  [bar $(if ($c.UpdateProgress.Visibility -ne 'Visible') { 'hidden' } elseif ($c.UpdateProgress.IsIndeterminate) { 'busy' } else { "$([int]$c.UpdateProgress.Value)%" })$(if ($c.RestartApp.Visibility -eq 'Visible') { ', Restart button' })]")
+                $k = $t -replace '\d+%', ''
+                if ($k -ne $script:lastShot) { $script:lastShot = $k; $script:shotN++; & $shot "win11-update-$($script:shotN).png" }
             }
         }
         & $note

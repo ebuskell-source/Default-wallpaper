@@ -37,7 +37,7 @@ $OwnPictures    = ''           # (5.9.0) their own pictures in the app: '' = on 
 $ErrorActionPreference = 'Stop'
 $InstallDir = Join-Path $env:ProgramData 'WelcomeVideo'
 $TaskName   = 'Welcome Video'
-$Version    = '42'   # raise this (and the one in the detection script) whenever you change the video or settings
+$Version    = '48'   # raise this (and the one in the detection script) whenever you change the video or settings
 $Shortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA BootPaper.lnk'
 $ReportShortcut = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\Report a problem to TLA.lnk'   # (4.3)
 $CareShortcut   = Join-Path $env:ProgramData 'Microsoft\Windows\Start Menu\Programs\TLA Care.lnk'                  # (5.0)
@@ -64,15 +64,17 @@ function Copy-WVFile([string]$Source, [string]$Destination, [switch]$Optional) {
 # Backgrounds first: stored flat in the package (bg-<id>.jpg, thumb-<id>.jpg), installed under the names in
 # common.ps1 ($WV.PictureRevisions: 5.9.5, Microsoft and Liquid Glass in 4K as "-r6"). The pictures they replace
 # stay, since an older Intune detection script looks for them.
-$picRev     = @{ 'anime' = 'r5'; 'microsoft' = 'r6'; 'liquid-glass' = 'r6' }
-$variantRev = @{ 'microsoft' = 'r6'; 'liquid-glass' = 'r6' }
+$picRev     = @{ 'anime' = 'r5'; 'microsoft' = 'r6'; 'liquid-glass' = 'r6'; 'pixel' = 'r3' }
+$variantRev = @{ 'microsoft' = 'r6'; 'liquid-glass' = 'r6'; 'pixel' = 'r3' }
 $bgDir    = Join-Path $InstallDir 'Backgrounds'
 $thumbDir = Join-Path $bgDir 'thumbs'
 [void][System.IO.Directory]::CreateDirectory($thumbDir)
 # (4.0: and the seasonal themes Fall, Christmas and Easter, and the "Surprise me" tile's picture.)
 foreach ($id in 'microsoft', 'liquid-glass', 'penguins', 'code', 'frutiger-aero', 'solarpunk', 'rainy', 'space', 'ocean', 'beach', 'claymation', 'blocks', 'bricks', 'pixel', 'anime', 'sky-city', 'tla',
                 'grumpy-cat', 'bonjovi', 'raccoon',   # (5.9.0: Animals)
-                'fall', 'christmas', 'easter') {
+                'experimental',                       # (6.1.0: Battle of the Beta Testers, the Experimental channel's own)
+                'vancouver',                          # (6.4.5)
+                'fall', 'christmas', 'easter', 'winter') {
     $r = if ($picRev.Contains($id)) { $picRev[$id] } else { 'r2' }
     Copy-WVFile (Join-Path $PSScriptRoot "bg-$id.jpg")    (Join-Path $bgDir "$id-$r.jpg")
     Remove-Item -LiteralPath (Join-Path $bgDir "$id.jpg") -Force -ErrorAction SilentlyContinue   # before 3.2.3
@@ -87,7 +89,7 @@ foreach ($file in Get-ChildItem -LiteralPath $PSScriptRoot -Filter 'bg-*-*.jpg')
     Copy-WVFile (Join-Path $PSScriptRoot "thumb-$($Matches[1])-$($Matches[2]).jpg") (Join-Path $thumbDir "$($Matches[1])-$($Matches[2]).jpg")
 }
 
-foreach ($old in 'anime-r2.jpg', 'anime-r4.jpg') { Remove-Item -LiteralPath (Join-Path $bgDir $old) -Force -ErrorAction SilentlyContinue }   # before 3.3.3
+foreach ($old in 'anime-r2.jpg', 'anime-r4.jpg', 'pixel-r2.jpg', 'pixel-dark.jpg') { Remove-Item -LiteralPath (Join-Path $bgDir $old) -Force -ErrorAction SilentlyContinue }   # before 3.3.3
 # No longer used: the single welcome.mp4 (before 3.1).
 Remove-Item -LiteralPath (Join-Path $InstallDir 'welcome.mp4') -Force -ErrorAction SilentlyContinue
 
@@ -96,7 +98,8 @@ foreach ($file in 'play-video.ps1', 'settings.ps1', 'common.ps1', 'whatsnew.ps1'
                   'care.ps1', 'care-system.ps1', 'session.ps1', 'tour.ps1', 'theme-check.ps1', 'oem-logo.bmp',
                   'update.ps1', 'uninstall-video.ps1',     # (5.4: updating itself outside Intune, and uninstalling)
                   'greeting.ps1',                           # (5.5.5: the greeting in each theme's style)
-                  'signin.ps1') {                           # (5.7.0: signing in with the Hub account)
+                  'signin.ps1',                             # (5.7.0: signing in with the Hub account)
+                  'browser-host.ps1', 'browser-host.cmd') { # (6.3.5: the new tab page's background)
     Copy-WVFile (Join-Path $PSScriptRoot $file) (Join-Path $InstallDir $file)
 }
 # The icon may be open at that moment; the old copy keeps working until the next update.
@@ -140,7 +143,7 @@ $wideThumbs = Join-Path $InstallDir 'WideThumbs'
 [void][System.IO.Directory]::CreateDirectory($wideThumbs)
 $wideNames = @{}
 foreach ($id in 'microsoft', 'liquid-glass', 'penguins', 'code', 'frutiger-aero', 'solarpunk', 'rainy', 'space', 'ocean', 'beach', 'claymation', 'blocks', 'bricks', 'pixel', 'anime', 'sky-city', 'tla',
-                'grumpy-cat', 'bonjovi', 'raccoon') {
+                'grumpy-cat', 'bonjovi', 'raccoon', 'experimental', 'vancouver') {
     $r = if ($picRev.Contains($id)) { $picRev[$id] } else { 'r2' }
     $sources = [ordered]@{ $id = Join-Path $bgDir "$id-$r.jpg" }
     foreach ($mode in 'light', 'dark') {
@@ -317,6 +320,35 @@ $updateSettings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontSto
     -ExecutionTimeLimit (New-TimeSpan -Minutes 30) -MultipleInstances IgnoreNew
 Register-ScheduledTask -TaskName $updateTask -Action $updateAction -Trigger $updateTriggers `
     -Principal $lockPrincipal -Settings $updateSettings -Force | Out-Null
+
+# ---- The lock screen (6.2.5) -----------------------------------------------------------------------------
+# As whoever signs in (the Users group), a minute after they do: settings.ps1 -Lock stays running while they're
+# signed in and checks every minute. It only ever shows on TLA's own PCs (see Test-WVLockNeeded in tour.ps1). Started
+# now too, for whoever is signed in while this installs.
+$signLockTask   = 'TLA BootPaper Sign-in Lock'
+$signLockAction = New-ScheduledTaskAction -Execute 'powershell.exe' `
+    -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -STA -WindowStyle Hidden -File `"$(Join-Path $InstallDir 'settings.ps1')`" -Lock"
+$signLockTrigger = New-ScheduledTaskTrigger -AtLogOn
+$signLockTrigger.Delay = 'PT1M'
+$signLockPrincipal = New-ScheduledTaskPrincipal -GroupId 'S-1-5-32-545' -RunLevel Limited
+$signLockSettings  = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+    -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances IgnoreNew -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
+Register-ScheduledTask -TaskName $signLockTask -Action $signLockAction -Trigger $signLockTrigger -Principal $signLockPrincipal `
+    -Settings $signLockSettings -Force | Out-Null
+try { Start-ScheduledTask -TaskName $signLockTask -ErrorAction Stop } catch { }
+
+# ---- The TLA new tab page's background (6.3.5) ---------------------------------------------------------------
+# Chrome and Edge ask browser-host.cmd (as the person) which background is on their desktop, for the TLA New Tab
+# extension only (allowed_origins).
+$hostJson = Join-Path $InstallDir 'browser-host.json'
+$hostDef = [ordered]@{ name = 'ca.schoolathome.bootpaper'
+    description = 'TLA BootPaper: which background is on this person''s desktop, for the TLA new tab page'
+    path = (Join-Path $InstallDir 'browser-host.cmd'); type = 'stdio'
+    allowed_origins = @('chrome-extension://bemjdlnfdfdgnkimadgogaadgdfnipam/') }
+[System.IO.File]::WriteAllText($hostJson, ($hostDef | ConvertTo-Json), [System.Text.UTF8Encoding]::new($false))
+foreach ($browser in 'Google\Chrome', 'Microsoft\Edge') {
+    [Microsoft.Win32.Registry]::SetValue("HKEY_LOCAL_MACHINE\SOFTWARE\$browser\NativeMessagingHosts\ca.schoolathome.bootpaper", '', $hostJson)
+}
 
 # ---- Unboxing (5.0) ---------------------------------------------------------------------------------------
 # "Prepare for initial unboxing" is offered once, on computers BootPaper is installed on for the first time (a new

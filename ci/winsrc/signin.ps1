@@ -192,6 +192,36 @@ function Get-WVWeb([string]$Url, [int]$TimeoutMs = 20000, [switch]$Head) {
         try { return $r.ReadToEnd() } finally { $r.Dispose() }
     } finally { $res.Close() }
 }
+# 6.5.5: the time from GitHub's server (its Date header), or $null offline. A sign-in that just came back is checked
+# against it, so a PC whose clock is wrong can still sign in; SYSTEM puts the clock itself right (Repair-WVClock).
+function Get-WVNetNow {
+    try {
+        try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch { }
+        $req = [System.Net.HttpWebRequest]::Create($WV.AuthSource)
+        $req.Method = 'HEAD'; $req.Timeout = 10000
+        $req.CachePolicy = [System.Net.Cache.RequestCachePolicy]::new([System.Net.Cache.RequestCacheLevel]::NoCacheNoStore)
+        $res = $req.GetResponse()
+        try { $d = $res.Headers['Date'] } finally { $res.Close() }
+        if ($d) { return [DateTimeOffset]::Parse($d, [Globalization.CultureInfo]::InvariantCulture).ToUnixTimeSeconds() }
+    } catch { }
+    return $null
+}
+# SYSTEM, every 30 minutes: more than 2 minutes off GitHub's time (set by hand, say)? Turn automatic time back on and
+# set the clock from the time server.
+function Repair-WVClock($Log) {
+    $net = Get-WVNetNow
+    if ($null -eq $net) { return }
+    $off = $net - [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    if ([Math]::Abs($off) -le 120) { return }
+    if ($Log) { & $Log ("The clock is {0} minutes off; setting it from network time." -f [Math]::Round(-$off / 60)) }
+    try {
+        Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\Parameters' -Name Type -Value 'NTP'
+        Set-Service w32time -StartupType Automatic; Start-Service w32time -ErrorAction SilentlyContinue
+        & w32tm.exe /resync /force | Out-Null
+    } catch { }
+    $after = $net - [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    if ([Math]::Abs($after) -gt 120) { try { Set-Date -Adjust ([TimeSpan]::FromSeconds($after)) | Out-Null } catch { } }
+}
 # Can this PC reach the sign-in page? (Asked only when a sign-in has run out, for the grace days; kept 10 minutes.)
 function Test-WVOnline {
     $c = "$(Get-WVValue $WV.StateKey 'OnlineCheck')".Split(' ')
@@ -314,7 +344,7 @@ function Complete-WVSignIn($Pending, $Answer) {
     if ($Answer['error'] -or -not $Answer['token']) {
         return @{ ok = $false; message = $(if ($Answer['error'] -eq 'not_eligible') { 'Your Hub account can''t be used for TLA BootPaper.' } else { 'Signing in didn''t finish. Try again.' }) }
     }
-    $c = Get-WVSignInSettings; $now = Get-WVNow
+    $c = Get-WVSignInSettings; $now = Get-WVNetNow; if ($null -eq $now) { $now = Get-WVNow }   # (6.5.5)
     $token = "$($Answer['token'])"; if ($token.Length -gt 8192) { $token = $token.Substring(0, 8192) }
     $r = Test-WVSignInToken $token $c (Get-WVSignInKeys) (Get-WVSignInDevice) (Get-WVSignInUser) $Pending.Salt $now -Fresh
     $needKeys = $false
