@@ -7,7 +7,4 @@ foreach ($f in 'tour.ps1','settings.ps1','signin.ps1','sync-videos.ps1','common.
 try { . "$d\common.ps1"; . "$d\tour.ps1" 2>$null } catch { $r += "load: $($_.Exception.Message)" }
 try { [WelcomeVideo.KeyBlock]::On(); $r += "keyblock on ok"; [WelcomeVideo.KeyBlock]::Off(); $r += "keyblock off ok" } catch { $r += "keyblock: $($_.Exception.Message)" }
 try { $r += "prepared(no key)=$(Test-WVUnboxPrepared)"; New-Item 'HKLM:\SOFTWARE\WelcomeVideo\Unbox' -Force | Out-Null; Set-ItemProperty 'HKLM:\SOFTWARE\WelcomeVideo\Unbox' State armed; $r += "prepared(armed)=$(Test-WVUnboxPrepared)" } catch { $r += "unbox: $($_.Exception.Message)" }
-$src = Get-Content "$d\tour.ps1" -Raw
-$m = [regex]::Match($src, "(?s)-Name KeyBlock -UsingNamespace System.Runtime.InteropServices -MemberDefinition @'\r?\n(.*?)\r?\n'@")
-try { Add-Type -Namespace T2 -Name KeyBlock -UsingNamespace System.Runtime.InteropServices -MemberDefinition $m.Groups[1].Value -ErrorAction Stop; $r += "compile ok" } catch { $r += "compile: $($_.Exception.Message) $($_ | Out-String)" }
 $r | Set-Content "$o\summary.txt"

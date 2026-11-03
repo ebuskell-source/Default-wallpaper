@@ -487,7 +487,7 @@ function Stop-WVLockBrowser { foreach ($id in (Get-WVLockBrowserPids)) { try { S
 # 7.3.5: while the lock is up, the Windows key (and Ctrl+Esc, Alt+Tab, Alt+Esc) do nothing, so the Start menu and the
 # taskbar can't be reached. (Ctrl+Alt+Del can't be blocked by any app; its menu only offers to lock, switch user or sign out.)
 try {
-    Add-Type -Namespace WelcomeVideo -Name KeyBlock -UsingNamespace System.Runtime.InteropServices -MemberDefinition @'
+    Add-Type -Namespace WelcomeVideo -Name KeyBlock -MemberDefinition @'
 public delegate System.IntPtr HookProc(int code, System.IntPtr wParam, System.IntPtr lParam);
 [DllImport("user32.dll")] static extern System.IntPtr SetWindowsHookEx(int id, HookProc fn, System.IntPtr mod, uint thread);
 [DllImport("user32.dll")] static extern bool UnhookWindowsHookEx(System.IntPtr h);
