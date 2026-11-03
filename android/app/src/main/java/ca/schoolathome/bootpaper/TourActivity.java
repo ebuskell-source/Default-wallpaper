@@ -98,7 +98,7 @@ public class TourActivity extends Activity {
         StringBuilder d = new StringBuilder();
         for (int i = 0; i < PAGES.length; i++) d.append(i == page ? "● " : "○ ");
         dots.setText(d.toString().trim());
-        back.setVisibility(page == 0 ? View.INVISIBLE : View.VISIBLE);
+        back.setVisibility(page == 0 ? View.GONE : View.VISIBLE);
         next.setText(page == PAGES.length - 1 ? "Done" : "Next");
     }
 }
