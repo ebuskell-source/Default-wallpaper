@@ -26,6 +26,7 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_tablet
+          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           script: bash ci/android-emu-test.sh
       - name: results
         if: always()

@@ -1,6 +1,6 @@
 O=out/emu; mkdir -p $O
 adb install -r android/app/build/outputs/apk/debug/app-debug.apk > $O/log.txt 2>&1
-adb shell am start -n ca.schoolathome.bootpaper/.TourActivity >> $O/log.txt 2>&1; sleep 10
+adb shell am force-stop ca.schoolathome.bootpaper; adb shell am start -n ca.schoolathome.bootpaper/.TourActivity >> $O/log.txt 2>&1; sleep 10
 adb exec-out screencap -p > $O/1-tour.png
 adb shell input keyevent KEYCODE_HOME; sleep 5; adb exec-out screencap -p > $O/2-home.png
 adb shell dumpsys jobscheduler | grep -A3 "ca.schoolathome.bootpaper" | head -8 >> $O/log.txt
