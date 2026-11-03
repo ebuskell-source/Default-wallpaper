@@ -1,0 +1,23 @@
+Performing Streamed Install
+Success
+Starting: Intent { cmp=ca.schoolathome.bootpaper/.TourActivity }
+  JOB #u0a192/1: 6329c77 ca.schoolathome.bootpaper/.WallpaperJob
+    u0a192 tag=*job*/ca.schoolathome.bootpaper/.WallpaperJob#1
+    Source: uid=u0a192 user=0 pkg=ca.schoolathome.bootpaper
+    JobInfo:
+      Service: ca.schoolathome.bootpaper/.WallpaperJob
+      PERIODIC: interval=+15m0s0ms flex=+15m0s0ms
+      PERSISTED
+      Priority: 300 [DEFAULT]
+ User 0: id=2: mWhich=3: mSystemWasBoth=true
+  displayId=0
+  mWallpaperComponent=ComponentInfo{com.android.systemui/com.android.systemui.wallpapers.ImageWallpaper}
+     mDisplayId=0
+ User 0: id=3: mWhich=2: mSystemWasBoth=true
+  displayId=0
+  mWallpaperComponent=null
+ User 0: id=1: mWhich=1: mSystemWasBoth=false
+  displayId=0
+  mWallpaperComponent=ComponentInfo{com.android.systemui/com.android.systemui.wallpapers.ImageWallpaper}
+Running job [FORCED]
+done
