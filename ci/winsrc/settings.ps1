@@ -61,6 +61,11 @@ if ($Lock) {
         [void]$lockWindow.ShowDialog()
         return
     }
+    # 7.3.5: at sign-in, give the intro video a few seconds to start, so the lock shows after it rather than under it
+    $me = [System.Diagnostics.Process]::GetCurrentProcess().SessionId
+    $videoUp = { @([System.Diagnostics.Process]::GetProcessesByName('powershell') | Where-Object { $_.SessionId -eq $me -and $_.Id -ne $PID -and "$($_.MainWindowTitle)" -eq 'TLA BootPaper video' }).Count -gt 0 }
+    $until = [DateTime]::UtcNow.AddSeconds(6)
+    while ([DateTime]::UtcNow -lt $until -and -not (& $videoUp)) { [System.Threading.Thread]::Sleep(500) }
     while ($true) {
         try {
             if (Test-WVLockNeeded) { $lockWindow = New-WVLockWindow; [void]$lockWindow.ShowDialog(); Clear-WVSignInCache }

@@ -401,7 +401,9 @@ function Test-WVCorporate {
     } catch { }
     return $false   # (unlike Test-WVOwnedByTla: only when it's certain)
 }
-function Test-WVMustSignIn { return (Test-WVCorporate) -and (Get-WVSignIn -Fresh).state -eq 'out' }
+# 7.3.5: only once "Prepare for initial unboxing" has been clicked on this PC, so it doesn't lock while it's being set up.
+function Test-WVUnboxPrepared { return @('armed', 'unboxing', 'done') -contains "$(Get-WVValue 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Unbox' 'State')" }
+function Test-WVMustSignIn { return (Test-WVCorporate) -and (Test-WVUnboxPrepared) -and (Get-WVSignIn -Fresh).state -eq 'out' }
 function Test-WVLockNeeded {
     if (-not (Test-WVMustSignIn)) { return $false }
     # (not over the welcome video, and not over the tour while it's in front: the tour asks them to sign in itself.
@@ -481,6 +483,31 @@ function Get-WVLockBrowserPids {
     } catch { return @() }
 }
 function Stop-WVLockBrowser { foreach ($id in (Get-WVLockBrowserPids)) { try { Stop-Process -Id $id -Force -ErrorAction SilentlyContinue } catch { } } }
+
+# 7.3.5: while the lock is up, the Windows key (and Ctrl+Esc, Alt+Tab, Alt+Esc) do nothing, so the Start menu and the
+# taskbar can't be reached. (Ctrl+Alt+Del can't be blocked by any app; its menu only offers to lock, switch user or sign out.)
+try {
+    Add-Type -Namespace WelcomeVideo -Name KeyBlock -UsingNamespace System.Runtime.InteropServices -MemberDefinition @'
+public delegate System.IntPtr HookProc(int code, System.IntPtr wParam, System.IntPtr lParam);
+[DllImport("user32.dll")] static extern System.IntPtr SetWindowsHookEx(int id, HookProc fn, System.IntPtr mod, uint thread);
+[DllImport("user32.dll")] static extern bool UnhookWindowsHookEx(System.IntPtr h);
+[DllImport("user32.dll")] static extern System.IntPtr CallNextHookEx(System.IntPtr h, int code, System.IntPtr w, System.IntPtr l);
+[DllImport("user32.dll")] static extern short GetAsyncKeyState(int vk);
+[DllImport("kernel32.dll")] static extern System.IntPtr GetModuleHandle(string name);
+static System.IntPtr hook = System.IntPtr.Zero;
+static HookProc proc = Filter;
+static System.IntPtr Filter(int code, System.IntPtr w, System.IntPtr l) {
+    if (code >= 0) {
+        int vk = Marshal.ReadInt32(l), flags = Marshal.ReadInt32(l, 8);
+        bool alt = (flags & 0x20) != 0, ctrl = (GetAsyncKeyState(0x11) & 0x8000) != 0;
+        if (vk == 0x5B || vk == 0x5C || (vk == 0x09 && alt) || (vk == 0x1B && (alt || ctrl))) return (System.IntPtr)1;
+    }
+    return CallNextHookEx(hook, code, w, l);
+}
+public static void On() { if (hook == System.IntPtr.Zero) hook = SetWindowsHookEx(13, proc, GetModuleHandle(null), 0); }
+public static void Off() { if (hook != System.IntPtr.Zero) { UnhookWindowsHookEx(hook); hook = System.IntPtr.Zero; } }
+'@ -ErrorAction SilentlyContinue
+} catch { }
 
 function New-WVLockWindow {
     try {
@@ -605,7 +632,8 @@ function New-WVLockWindow {
     })
     $win.Add_Loaded({ param($s, $e) [void]$s.Activate(); Write-WVLockLog "shown ($((Get-WVSignIn).reason))" })
     $script:LockTimer = $timer
-    $win.Add_Closed({ param($s, $e) $script:LockTimer.Stop(); & $script:LockStop; Write-WVLockLog 'closed (signed in)' })
+    $win.Add_SourceInitialized({ try { [WelcomeVideo.KeyBlock]::On() } catch { } })   # (7.3.5: no Windows key)
+    $win.Add_Closed({ param($s, $e) try { [WelcomeVideo.KeyBlock]::Off() } catch { }; $script:LockTimer.Stop(); & $script:LockStop; Write-WVLockLog 'closed (signed in)' })
     $timer.Start()
     return $win
 }

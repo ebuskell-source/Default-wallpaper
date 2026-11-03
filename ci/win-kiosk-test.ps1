@@ -1,23 +1,10 @@
-# 7.3.0: the scripts parse, the kiosk sign-in browser opens and is found by its profile, and closes.
+# 7.3.5: scripts parse, the key block compiles and switches on and off, the unboxing gate reads.
 $o = "$PWD\out\kiosk"; New-Item -ItemType Directory -Force $o | Out-Null
-$r = @()
-
-
-$d = "$PWD\ci\winsrc"
-$r += "dir: $d"
-foreach ($f in 'tour.ps1','settings.ps1','signin.ps1','sync-videos.ps1','common.ps1') {
+$r = @(); $d = "$PWD\ci\winsrc"
+foreach ($f in 'tour.ps1','settings.ps1','signin.ps1','sync-videos.ps1','common.ps1','install-video.ps1') {
   $e = $null; [void][System.Management.Automation.Language.Parser]::ParseFile("$d\$f", [ref]$null, [ref]$e); $r += "$f parse errors: $($e.Count) $($e | ForEach-Object { $_.Message + ' @' + $_.Extent.StartLineNumber })"
 }
-try {
-  . "$d\common.ps1"; . "$d\tour.ps1" -ErrorAction SilentlyContinue 2>$null
-} catch { $r += "load: $($_.Exception.Message)" }
-try {
-  $k = Start-WVLockBrowser 'https://ebuskell-source.github.io/'; Start-Sleep 8
-  $p = Get-WVLockBrowserPids; $r += "kiosk=$k pids=$($p.Count)"
-  Add-Type -AssemblyName System.Windows.Forms,System.Drawing
-  $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds; $bmp = New-Object Drawing.Bitmap $b.Width,$b.Height
-  [Drawing.Graphics]::FromImage($bmp).CopyFromScreen($b.Location,[Drawing.Point]::Empty,$b.Size); $bmp.Save("$o\kiosk.png")
-  Stop-WVLockBrowser; Start-Sleep 3; $r += "after stop pids=$((Get-WVLockBrowserPids).Count)"
-} catch { $r += "kiosk: $($_.Exception.Message)" }
-try { $n = Get-WVNetNow; $r += "netnow=$n local=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" } catch { $r += "netnow: $($_.Exception.Message)" }
+try { . "$d\common.ps1"; . "$d\tour.ps1" 2>$null } catch { $r += "load: $($_.Exception.Message)" }
+try { [WelcomeVideo.KeyBlock]::On(); $r += "keyblock on ok"; [WelcomeVideo.KeyBlock]::Off(); $r += "keyblock off ok" } catch { $r += "keyblock: $($_.Exception.Message)" }
+try { $r += "prepared(no key)=$(Test-WVUnboxPrepared)"; New-Item 'HKLM:\SOFTWARE\WelcomeVideo\Unbox' -Force | Out-Null; Set-ItemProperty 'HKLM:\SOFTWARE\WelcomeVideo\Unbox' State armed; $r += "prepared(armed)=$(Test-WVUnboxPrepared)" } catch { $r += "unbox: $($_.Exception.Message)" }
 $r | Set-Content "$o\summary.txt"

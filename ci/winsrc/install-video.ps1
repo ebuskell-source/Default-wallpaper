@@ -329,7 +329,7 @@ $signLockTask   = 'TLA BootPaper Sign-in Lock'
 $signLockAction = New-ScheduledTaskAction -Execute 'powershell.exe' `
     -Argument "-NoProfile -NonInteractive -ExecutionPolicy Bypass -STA -WindowStyle Hidden -File `"$(Join-Path $InstallDir 'settings.ps1')`" -Lock"
 $signLockTrigger = New-ScheduledTaskTrigger -AtLogOn
-$signLockTrigger.Delay = 'PT1M'
+# (7.3.5: no delay: it checks as soon as they sign in to Windows, then every 5 seconds)
 $signLockPrincipal = New-ScheduledTaskPrincipal -GroupId 'S-1-5-32-545' -RunLevel Limited
 $signLockSettings  = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
     -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances IgnoreNew -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
