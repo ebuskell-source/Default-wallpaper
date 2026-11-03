@@ -4,7 +4,7 @@ android {
     compileSdk 34
     defaultConfig {
         applicationId 'ca.schoolathome.bootpaper'
-        minSdk 26
+        minSdk 30
         targetSdk 34
         versionCode 70305
         versionName '7.3.5'
