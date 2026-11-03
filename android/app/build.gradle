@@ -1,0 +1,23 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'ca.schoolathome.bootpaper'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'ca.schoolathome.bootpaper'
+        minSdk 26
+        targetSdk 34
+        versionCode 70305
+        versionName '7.3.5'
+    }
+    signingConfigs {
+        release {
+            // The key comes from the repository's Actions secrets (never stored in the code).
+            storeFile file(System.getenv('TB_KEYSTORE') ?: 'none.jks')
+            storePassword System.getenv('TB_KEY_PASS')
+            keyAlias 'tla-bootpaper'
+            keyPassword System.getenv('TB_KEY_PASS')
+        }
+    }
+    buildTypes { release { minifyEnabled false; signingConfig signingConfigs.release } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
