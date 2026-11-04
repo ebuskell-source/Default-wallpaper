@@ -61,6 +61,19 @@ if ($Lock) {
         [void]$lockWindow.ShowDialog()
         return
     }
+    # 7.5.0: one lock per Windows session. The task now starts for every person who signs in (it used to skip
+    # anyone who signed in while someone else was still signed in); a second copy in the same session just leaves.
+    $one = [System.Threading.Mutex]::new($false, 'Local\TLABootPaperSignInLock')
+    $mine = $false
+    try { $mine = $one.WaitOne(0) } catch [System.Threading.AbandonedMutexException] { $mine = $true }
+    if (-not $mine) { return }
+    # (and an older copy from before 7.5.0, which doesn't take part, gives way to this one)
+    try {
+        $sid = [System.Diagnostics.Process]::GetCurrentProcess().SessionId
+        Get-CimInstance Win32_Process -Filter "Name = 'powershell.exe'" -ErrorAction Stop |
+            Where-Object { $_.ProcessId -ne $PID -and $_.SessionId -eq $sid -and "$($_.CommandLine)" -like '*settings.ps1*-Lock*' } |
+            ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+    } catch { }
     # 7.3.5: at sign-in, give the intro video a few seconds to start, so the lock shows after it rather than under it
     $me = [System.Diagnostics.Process]::GetCurrentProcess().SessionId
     $videoUp = { @([System.Diagnostics.Process]::GetProcessesByName('powershell') | Where-Object { $_.SessionId -eq $me -and $_.Id -ne $PID -and "$($_.MainWindowTitle)" -eq 'TLA BootPaper video' }).Count -gt 0 }

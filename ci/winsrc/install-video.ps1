@@ -267,6 +267,9 @@ Register-ScheduledTask -TaskName $videoTask -Action $videoAction -Trigger $video
     -Principal $lockPrincipal -Settings $videoSettings -Force | Out-Null
 # (5.0: anyone may start it too, from TLA Care's "Download now")
 $service.GetFolder('\').GetTask($videoTask).SetSecurityDescriptor('D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;GRGX;;;AU)', 0)
+# 7.4.5: and run it now, so the clock and BC time zone are put right within a minute of installing or updating
+# (not only at the next startup or half hour)
+Start-ScheduledTask -TaskName $videoTask -ErrorAction SilentlyContinue
 
 # ---- Updating someone's lock screen in their session (4.1) ---------------------------------------------
 # No schedule of its own: the backgrounds task starts it, in the session of the person signed in, when their
@@ -332,7 +335,9 @@ $signLockTrigger = New-ScheduledTaskTrigger -AtLogOn
 # (7.3.5: no delay: it checks as soon as they sign in to Windows, then every 5 seconds)
 $signLockPrincipal = New-ScheduledTaskPrincipal -GroupId 'S-1-5-32-545' -RunLevel Limited
 $signLockSettings  = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
-    -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances IgnoreNew -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
+    -ExecutionTimeLimit ([TimeSpan]::Zero) -MultipleInstances Parallel -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
+# (7.5.0: Parallel, not IgnoreNew. It's one task for everyone, and it never ends, so with IgnoreNew a second person
+# signing in while the first was still signed in got no lock at all. settings.ps1 -Lock keeps it to one per person.)
 Register-ScheduledTask -TaskName $signLockTask -Action $signLockAction -Trigger $signLockTrigger -Principal $signLockPrincipal `
     -Settings $signLockSettings -Force | Out-Null
 try { Start-ScheduledTask -TaskName $signLockTask -ErrorAction Stop } catch { }
