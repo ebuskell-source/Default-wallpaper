@@ -222,6 +222,21 @@ function Repair-WVClock($Log) {
     $after = $net - [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
     if ([Math]::Abs($after) -gt 120) { try { Set-Date -Adjust ([TimeSpan]::FromSeconds($after)) | Out-Null } catch { } }
 }
+# 7.4.0 (SYSTEM, every 30 minutes): BC time, UTC-7 all year (BC stopped changing clocks on March 8, 2026). Windows'
+# own "British Columbia Standard Time" zone once the PC has it (October 2026 update), "Yukon Standard Time" (the same
+# clock) until then; automatic time zone off, so location can't switch it back to the old Pacific rules.
+function Set-WVBCTime($Log) {
+    try {
+        $want = if ([System.TimeZoneInfo]::GetSystemTimeZones() | Where-Object Id -eq 'British Columbia Standard Time') {
+            'British Columbia Standard Time' } else { 'Yukon Standard Time' }
+        try { Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Services\tzautoupdate' -Name Start -Value 4 } catch { }
+        $now = [System.TimeZoneInfo]::Local.Id
+        if ($now -ne $want) {
+            & tzutil.exe /s $want
+            if ($Log) { & $Log "Time zone set to $want (BC time, UTC-7 all year; it was $now)." }
+        }
+    } catch { if ($Log) { & $Log "BC time: $($_.Exception.Message)" } }
+}
 # Can this PC reach the sign-in page? (Asked only when a sign-in has run out, for the grace days; kept 10 minutes.)
 function Test-WVOnline {
     $c = "$(Get-WVValue $WV.StateKey 'OnlineCheck')".Split(' ')
