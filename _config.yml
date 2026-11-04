@@ -1,0 +1,9 @@
+# GitHub Pages only serves the web pages (TLA-BootPaper/signin, admin, newtab, extension, ipad).
+# Installers and videos are downloaded from raw.githubusercontent.com, not from Pages, and are left
+# out of the site: with them it was over Pages' 1 GB limit and deploys timed out.
+exclude:
+  - TLA-BootPaper/windows
+  - TLA-BootPaper/mac
+  - TLA-BootPaper/linux
+  - TLA-BootPaper/videos
+  - TLA-BootPaper/android
