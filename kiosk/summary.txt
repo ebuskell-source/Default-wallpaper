@@ -1,0 +1,9 @@
+tour.ps1 parse errors: 0 
+settings.ps1 parse errors: 0 
+signin.ps1 parse errors: 0 
+sync-videos.ps1 parse errors: 0 
+common.ps1 parse errors: 0 
+install-video.ps1 parse errors: 0 
+task MultipleInstances: Parallel
+second run: second: left
+first run: first: holds it
