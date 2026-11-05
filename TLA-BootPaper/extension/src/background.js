@@ -41,7 +41,7 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
           if (!b.url || !/^https?:\/\//i.test(b.url) || seen.has(b.url)) continue;
           seen.add(b.url); out.push({ title: String(b.title || '').slice(0, 80), url: String(b.url) });
         }
-        done(out.slice(0, 12));
+        done(out.slice(0, 60));   // (1.4: up to 60; the page shows 9 and "All")
       });
     } catch (e) { done([]); }
   });

@@ -129,6 +129,7 @@
                   border-bottom: 1px solid rgba(255, 255, 255, 0.16); font: 600 15px var(--type); }
   .shortcuts h2 svg { width: 19px; height: 19px; stroke: var(--white); }
   .shortcuts .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; }
+  .shortcuts #favourite-row.all { max-height: min(40vh, 330px); overflow-y: auto; }
   .tile { position: relative; width: 96px; }
   .tile > a, .tile > button.add { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; padding: 8px 4px 6px;
           border: 0; border-radius: 14px; background: none; color: var(--white); text-decoration: none; font: 13px/1.2 var(--type);
@@ -544,7 +545,7 @@ const EXTENSION_ID = 'bemjdlnfdfdgnkimadgogaadgdfnipam';
 const STORE_KEY = 'tla-newtab-shortcuts';
 const MAX_TILES = 10;
 let store = { mine: [], hidden: [] };
-let mostVisited = [], favourites = [], iconBase = '';
+let mostVisited = [], favourites = [], iconBase = '', allFavourites = false;
 try {
   const s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
   if (s && Array.isArray(s.mine)) store.mine = s.mine.filter(x => x && typeof x.name === 'string' && webUrl(x.url)).slice(0, MAX_TILES);
@@ -626,7 +627,10 @@ function showShortcuts() {
   // 7.5: their favourites (bookmarks bar), as they had them on the browser's own new tab page
   const favBox = document.getElementById('favourite-row');
   favBox.textContent = '';
-  favourites.slice(0, MAX_TILES).forEach(f => {
+  // (more than fit in one row: the first 9 and a "More" tile that shows them all, scrolling if there are many)
+  const many = favourites.length > MAX_TILES;
+  favBox.classList.toggle('all', many && allFavourites);
+  favourites.slice(0, many && !allFavourites ? MAX_TILES - 1 : favourites.length).forEach(f => {
     const tile = document.createElement('div');
     tile.className = 'tile';
     const a = document.createElement('a');
@@ -637,6 +641,24 @@ function showShortcuts() {
     tile.append(a);
     favBox.append(tile);
   });
+  if (many) {
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    const more = document.createElement('button');
+    more.type = 'button'; more.className = 'add';
+    more.setAttribute('aria-expanded', String(allFavourites));
+    const fav = document.createElement('span');
+    fav.className = 'fav'; fav.setAttribute('aria-hidden', 'true');
+    fav.innerHTML = '<svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;stroke-width:2.2;fill:none"><path d="' +
+      (allFavourites ? 'm6 14.5 6-6 6 6' : 'm6 9.5 6 6 6-6') + '"/></svg>';
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = allFavourites ? 'Fewer' : 'All ' + favourites.length;
+    more.append(fav, label);
+    more.addEventListener('click', () => { allFavourites = !allFavourites; showShortcuts(); });
+    tile.append(more);
+    favBox.append(tile);
+  }
   favBox.hidden = document.getElementById('favourites-title').hidden = !favourites.length;
   document.getElementById('shortcuts').hidden = false;
 }
