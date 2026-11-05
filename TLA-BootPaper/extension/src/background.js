@@ -28,11 +28,20 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
       .map(s => ({ title: String(s.title || '').slice(0, 80), url: String(s.url) }));
     // 1.2: and their favourites: the sites on the bookmarks bar (Edge: favourites bar), not the folders on it
     const done = favourites => sendResponse({ sites, favourites, base: chrome.runtime.getURL('') });   // (base: for icons, _favicon/)
+    // 1.3: every bookmarks bar, not only id '1': since 2025 Chrome keeps a signed-in person's synced bookmarks on a
+    // bar of their own (folderType 'bookmarks-bar'), next to the computer's local one.
     try {
-      chrome.bookmarks.getChildren('1', items => {
+      chrome.bookmarks.getTree(tree => {
         void chrome.runtime.lastError;
-        done((items || []).filter(b => b && b.url && /^https?:\/\//i.test(b.url)).slice(0, 12)
-          .map(b => ({ title: String(b.title || '').slice(0, 80), url: String(b.url) })));
+        const bars = [], seen = new Set(), out = [];
+        for (const root of tree || []) for (const n of root.children || []) {
+          if (n.folderType === 'bookmarks-bar' || (n.folderType === undefined && n.id === '1')) bars.push(n);
+        }
+        for (const bar of bars) for (const b of bar.children || []) {
+          if (!b.url || !/^https?:\/\//i.test(b.url) || seen.has(b.url)) continue;
+          seen.add(b.url); out.push({ title: String(b.title || '').slice(0, 80), url: String(b.url) });
+        }
+        done(out.slice(0, 12));
       });
     } catch (e) { done([]); }
   });
