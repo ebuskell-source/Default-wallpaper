@@ -26,7 +26,15 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
       .filter(s => s && /^https?:\/\//i.test(String(s.url)))
       .slice(0, 12)
       .map(s => ({ title: String(s.title || '').slice(0, 80), url: String(s.url) }));
-    sendResponse({ sites, base: chrome.runtime.getURL('') });   // (base: for the sites' icons, _favicon/)
+    // 1.2: and their favourites: the sites on the bookmarks bar (Edge: favourites bar), not the folders on it
+    const done = favourites => sendResponse({ sites, favourites, base: chrome.runtime.getURL('') });   // (base: for icons, _favicon/)
+    try {
+      chrome.bookmarks.getChildren('1', items => {
+        void chrome.runtime.lastError;
+        done((items || []).filter(b => b && b.url && /^https?:\/\//i.test(b.url)).slice(0, 12)
+          .map(b => ({ title: String(b.title || '').slice(0, 80), url: String(b.url) })));
+      });
+    } catch (e) { done([]); }
   });
   return true;   // (answers asynchronously)
 });
