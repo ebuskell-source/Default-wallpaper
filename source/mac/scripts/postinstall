@@ -1,0 +1,120 @@
+#!/bin/zsh
+# postinstall - runs as root after the Welcome Video package installs its files.
+# Replaces the old "macOS Welcome Video" Intune script: same folder, same LaunchAgent label
+# (so the "macOS Welcome Video Login Item" profile still covers it), same swiftDialog video window.
+# Nothing starts now: the video, background and release log take effect at each person's next login.
+
+LABEL="ca.schoolathome.welcomevideo"
+SUPPORT_DIR="/Library/Application Support/${LABEL}"
+AGENT_PLIST="/Library/LaunchAgents/${LABEL}.plist"
+GUARD_PLIST="/Library/LaunchDaemons/${LABEL}.guard.plist"
+LOGIN_PLIST="/Library/LaunchDaemons/${LABEL}.login.plist"
+UPDATE_PLIST="/Library/LaunchDaemons/${LABEL}.update.plist"
+LOCK_PLIST="/Library/LaunchAgents/${LABEL}.lock.plist"      # (6.2.5)
+OC_PLIST="/Library/LaunchDaemons/${LABEL}.opencore.plist"   # (7.0)
+APP="/Applications/TLA BootPaper.app"
+LOG_FILE="/Library/Logs/${LABEL}.log"
+DIALOG_BIN="/usr/local/bin/dialog"
+
+log()  { print -r -- "$(/bin/date '+%Y-%m-%d %H:%M:%S') $*" >> "$LOG_FILE"; }
+fail() { log "ERROR: $*"; exit 1; }
+
+VERSION="$(/usr/bin/awk -F'"' '/^WV_RELEASE=/ { print $2; exit }' "$SUPPORT_DIR/common.zsh" 2>/dev/null)"
+log "---- TLA BootPaper ${VERSION:-?} package installed ----"   # (5.0: the real version; it said 3.3.3 since 3.3.3)
+# An earlier version was here already (the intro videos download after the first install)?
+was_installed=0; [[ -d "$SUPPORT_DIR/Videos" || -f "$SUPPORT_DIR/.videos-ok" ]] && was_installed=1
+
+# Leftovers from the old script version (it downloaded the video and wrote a config file).
+/bin/rm -f "$SUPPORT_DIR/config.zsh" "$SUPPORT_DIR/.video-source" "$SUPPORT_DIR/.download.tmp" \
+           "$SUPPORT_DIR/welcome-video.mov" "$SUPPORT_DIR/welcome-video.m4v"
+# No longer used: the app under its old name, the single video (before 3.1) and the old picker image (before 3.2).
+/bin/rm -rf "/Applications/Welcome Video.app"
+/bin/rm -f "$SUPPORT_DIR/welcome-video.mp4" "$SUPPORT_DIR/picker.png"
+# The backgrounds before 3.2.3 (now <id>-r2.jpg).
+for id in tla frutiger-aero liquid-glass microsoft rainy space code; do /bin/rm -f "$SUPPORT_DIR/Backgrounds/$id.jpg"; done
+/bin/rm -f "$SUPPORT_DIR/Backgrounds/pixel-r2.jpg" "$SUPPORT_DIR/Backgrounds/pixel-dark.jpg"   # before 6.4.5 (now -r3)
+/bin/rm -f "$SUPPORT_DIR/Backgrounds/anime-r2.jpg" "$SUPPORT_DIR/Backgrounds/anime-r3.jpg" "$SUPPORT_DIR/Backgrounds/anime-r4.jpg"   # before 3.3.6 (now anime-r5.jpg)
+# Half-finished downloads from before 5.0 (two copies used to download at once into the same file).
+/bin/rm -f "$SUPPORT_DIR"/Videos/.*.download(N)
+
+# Ownership and permissions: only root can change what runs in everyone's login session.
+/usr/sbin/chown -R root:wheel "$SUPPORT_DIR" "$APP"
+/bin/chmod -R go-w "$SUPPORT_DIR" "$APP"
+/bin/chmod 755 "$SUPPORT_DIR/tla-player" "$SUPPORT_DIR/tla-signin" "$SUPPORT_DIR/login-watch.zsh" "$SUPPORT_DIR/play-welcome-video.zsh" "$SUPPORT_DIR/settings.zsh" "$SUPPORT_DIR/guard.zsh" "$SUPPORT_DIR/install-dialog.zsh" "$SUPPORT_DIR/sync-videos.zsh" \
+             "$SUPPORT_DIR/update.zsh" "$SUPPORT_DIR/screensaver-setup.zsh" "$SUPPORT_DIR/browser-host.zsh" "$SUPPORT_DIR/opencore.zsh" "$APP/Contents/MacOS/welcome-video"
+/usr/sbin/chown root:wheel "$AGENT_PLIST" "$GUARD_PLIST" "$LOGIN_PLIST" "$UPDATE_PLIST" "$LOCK_PLIST" "$OC_PLIST"
+/bin/chmod 644 "$AGENT_PLIST" "$GUARD_PLIST" "$LOGIN_PLIST" "$UPDATE_PLIST" "$LOCK_PLIST" "$OC_PLIST"
+
+# TLA Care and unboxing (5.0). A Mac TLA BootPaper is installed on for the first time can be prepared for unboxing
+# (once, when the admin decides). Macs that already had it are in someone's hands: they get TLA Classic and the
+# Welcome to TLA tour by themselves at the first login after their next startup (as if prepared now, by "update"),
+# once the tour is out on that person's release channel.
+/bin/mkdir -p "$SUPPORT_DIR/Care"; /bin/chmod 755 "$SUPPORT_DIR/Care"
+if [[ ! -f "$SUPPORT_DIR/Care/unbox" ]]; then
+  now="$(/bin/date +%s)"
+  if (( was_installed )); then
+    print -r -- "state=armed"$'\n'"armed_at=$now"$'\n'"armed_by=update"$'\n'"changed=$now" > "$SUPPORT_DIR/Care/unbox"
+    log "Unboxing: the Welcome to TLA tour at the next startup (already in use)."
+  else
+    print -r -- "state=ready"$'\n'"changed=$now" > "$SUPPORT_DIR/Care/unbox"
+    log "Unboxing: ready."
+  fi
+  /bin/chmod 644 "$SUPPORT_DIR/Care/unbox"
+fi
+
+# Hub sign-in (5.7.0): the guard fetches its settings and keys into SignIn/ (only root can write there). Fetched again
+# straight after an update, so a new version starts with them.
+/bin/mkdir -p "$SUPPORT_DIR/SignIn"; /bin/chmod 755 "$SUPPORT_DIR/SignIn"
+/bin/rm -f "$SUPPORT_DIR/.signin-checked" "$SUPPORT_DIR"/SignIn/state-*(N)
+
+# The background guard (a system service, so people without admin rights can't stop it). Reload it so
+# an update takes effect straight away.
+/bin/launchctl bootout "system/${LABEL}.guard" 2>/dev/null
+/bin/launchctl bootstrap system "$GUARD_PLIST" 2>/dev/null || log "WARNING: couldn't start the background guard"
+# The login watcher (starts the intro video the moment someone logs in). Started now, but it only reacts to
+# the next login: nobody gets a video just because the package installed.
+/bin/launchctl bootout "system/${LABEL}.login" 2>/dev/null
+/bin/launchctl bootstrap system "$LOGIN_PLIST" 2>/dev/null || log "WARNING: couldn't start the login watcher"
+# Updates and the announcement for Macs Intune doesn't manage (5.0). Started only if it isn't running already:
+# when it's the one installing this update, stopping it would stop the install.
+/bin/launchctl print "system/${LABEL}.update" >/dev/null 2>&1 ||
+  /bin/launchctl bootstrap system "$UPDATE_PLIST" 2>/dev/null || log "WARNING: couldn't start the updater"
+# The OpenCore upgrade (7.0): only does anything once someone starts it in TLA Care. Not restarted if it's running:
+# it may be partway through a download or an install.
+/bin/launchctl print "system/${LABEL}.opencore" >/dev/null 2>&1 ||
+  /bin/launchctl bootstrap system "$OC_PLIST" 2>/dev/null || log "WARNING: couldn't start the OpenCore upgrade service"
+# The TLA new tab page's background (6.3.5): Chrome and Edge ask browser-host.zsh, for the TLA New Tab extension only.
+for d in "/Library/Google/Chrome/NativeMessagingHosts" "/Library/Microsoft/Edge/NativeMessagingHosts"; do
+  /usr/sbin/chown root:wheel "$d" "$d/ca.schoolathome.bootpaper.json" 2>/dev/null; /bin/chmod 755 "$d"; /bin/chmod 644 "$d/ca.schoolathome.bootpaper.json" 2>/dev/null
+done
+# The lock screen's check (6.2.5: TLA's own Macs only; see settings.zsh --lock-check). It starts by itself at each
+# login; for whoever is logged in now, it starts straight away.
+cu="$(/usr/bin/stat -f %Su /dev/console 2>/dev/null)"
+if [[ -n "$cu" && "$cu" != root && "$cu" != loginwindow ]]; then
+  cuid="$(/usr/bin/id -u "$cu" 2>/dev/null)"
+  if [[ -n "$cuid" ]]; then
+    /bin/launchctl bootout "gui/$cuid/${LABEL}.lock" 2>/dev/null
+    /bin/launchctl bootstrap "gui/$cuid" "$LOCK_PLIST" 2>/dev/null || log "WARNING: couldn't start the lock screen's check for $cu"
+  fi
+fi
+/usr/bin/touch "$APP"   # so Launchpad and Spotlight pick up the app and its icon
+
+# swiftDialog shows the video, the app and the release log. If it can't be installed right now (offline,
+# GitHub unreachable), the background guard keeps trying every 15 minutes; this package still counts as
+# installed, so Intune doesn't keep reinstalling it.
+/bin/zsh "$SUPPORT_DIR/install-dialog.zsh" || log "swiftDialog not installed yet; the background guard will retry."
+# The intro videos are downloaded (full quality, checked against their SHA-256), not in this package. If that
+# isn't possible right now, the Mac keeps any videos it already has and the background guard keeps trying.
+# (5.0: if the guard, just started, is already downloading them, this leaves it to the guard.)
+/bin/zsh "$SUPPORT_DIR/sync-videos.zsh"
+case $? in
+  0)  ;;
+  75) log "The background guard is downloading the intro videos." ;;
+  *)  log "Some intro videos aren't downloaded yet; the background guard will retry." ;;
+esac
+# The TLA screensaver (5.0): Aerial, once the screensaver video is here (otherwise the guard does it later).
+/bin/rm -f "$SUPPORT_DIR/.screensaver-attempt"
+/bin/zsh "$SUPPORT_DIR/screensaver-setup.zsh" >/dev/null 2>&1
+
+log "Done. Takes effect at each person's next login."
+exit 0

@@ -1,0 +1,7 @@
+[Unit]
+Description=TLA BootPaper: keep the TLA backgrounds and download intro videos
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /opt/tla-bootpaper/tla-bootpaper.py guard
+Nice=10

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=TLA BootPaper
+Comment=Choose your TLA intro video and background
+Exec=/usr/bin/python3 /opt/tla-bootpaper/tla-bootpaper.py app
+Icon=/opt/tla-bootpaper/AppIcon.png
+Categories=Settings;DesktopSettings;
+Keywords=wallpaper;background;video;TLA;BootPaper;
+StartupNotify=true

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=TLA Care
+Comment=Check this computer and fix common problems
+Exec=/usr/bin/python3 /opt/tla-bootpaper/tla-bootpaper.py care
+Icon=/opt/tla-bootpaper/AppIcon.png
+Categories=Settings;System;
+Keywords=help;check;fix;storage;sound;restart;wifi;TLA;Care;
+StartupNotify=true

@@ -1,0 +1,30 @@
+# TLA BootPaper: what works differently on a Mac upgraded with OpenCore Legacy Patcher, shown in TLA Care before
+# someone chooses. Lines: <who>	<macOS: all, sequoia or tahoe>	<text>. <who> is "all", a graphics class from
+# opencore-models.tsv (nonmetal, hd3000, ivyhaswell, broadwell, kepler, gcn), "usb11", or "touchbar".
+# Sources: Dortania's OpenCore Legacy Patcher docs (SEQUOIA-DROP, ONGOING-ISSUES, TROUBLESHOOT-NONMETAL, TERMS,
+# UNINSTALL, MODELS) and its Legacy Metal issue (#1008, issues listed for macOS 13 and not marked fixed since), and
+# reports from people testing OCLP 3.0 with Tahoe (MacRumors "macOS Tahoe 26 on unsupported Macs" thread).
+all	all	iPhone Mirroring won't open: it needs Apple's T2 chip, which this Mac doesn't have.
+all	all	Apple Intelligence (Writing Tools, Genmoji, Image Playground) won't appear: it needs an Apple silicon chip.
+all	all	Each macOS update (for example 15.6 to 15.7) downloads the whole installer, about 12 GB, instead of an update of about 3 GB.
+all	all	After each macOS update, the screen runs without graphics acceleration (slow, choppy animations, no transparency) until TLA BootPaper puts the patches back, which takes one more restart.
+all	all	If OpenCore is ever removed from this Mac, it won't start up (it shows a circle with a line through it) until macOS is reinstalled from a USB installer.
+all	tahoe	Tahoe comes from OpenCore Legacy Patcher 3.0.0-rc.5, a release candidate: its makers haven't published their list of what doesn't work on Tahoe yet.
+all	tahoe	People testing earlier 3.0 versions reported that the Mac didn't go to sleep, and that the time zone couldn't be changed by hand (Location Services kept setting it).
+touchbar	tahoe	On 2016 and 2017 MacBook Pros with a Touch Bar, people testing earlier 3.0 versions reported that Touch ID and Wi-Fi didn't work.
+nonmetal	all	Zoom won't open without a separate fix.
+nonmetal	all	Apps can't ask for the camera or microphone, so Zoom and Teams can't use them unless permission is given another way.
+nonmetal	all	Menus and sidebars with a blurred background look smeared when the pointer moves over them.
+nonmetal	all	Safari extensions can't be turned on.
+nonmetal	all	When editing a widget in the sidebar, the Done button can't be clicked.
+nonmetal	all	Maps doesn't work, and neither does what relies on it: Find My, and Places in Photos.
+hd3000	all	Firefox and Thunderbird can freeze the whole Mac unless their hardware acceleration is turned off.
+ivyhaswell	all	The Weather app quits when you scroll to the bottom of its list.
+ivyhaswell	all	QuickTime Player shows green blocks along the timeline of .mov videos.
+ivyhaswell	all	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+broadwell	all	Memoji freezes or quits, so a Memoji can't be used as your account picture.
+kepler	all	Screen recordings of part of the screen come out with garbled areas (recording the whole screen works).
+gcn	all	The Photos app won't open.
+gcn	all	The screensaver quits as soon as it starts.
+gcn	all	The camera shows a black picture.
+usb11	all	The built-in keyboard, trackpad and Bluetooth don't work after installing (and after each macOS update) until the patches are put back, so a USB keyboard and mouse, plugged in through a USB hub, are needed until then.

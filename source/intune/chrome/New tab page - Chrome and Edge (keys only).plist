@@ -1,0 +1,6 @@
+<key>NewTabPageLocation</key>
+<string>https://ebuskell-source.github.io/Default-wallpaper/TLA-BootPaper/newtab/</string>
+<key>ExtensionInstallForcelist</key>
+<array>
+	<string>bemjdlnfdfdgnkimadgogaadgdfnipam;https://ebuskell-source.github.io/Default-wallpaper/TLA-BootPaper/extension/updates.xml</string>
+</array>

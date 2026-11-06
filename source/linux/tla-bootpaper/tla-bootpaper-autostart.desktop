@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=TLA BootPaper
+Comment=TLA intro video and background at login
+Exec=/usr/bin/python3 /opt/tla-bootpaper/tla-bootpaper.py login
+Icon=/opt/tla-bootpaper/AppIcon.png
+NoDisplay=true
+X-GNOME-Autostart-enabled=true
+X-GNOME-Autostart-Delay=0
+X-GNOME-AutoRestart=false

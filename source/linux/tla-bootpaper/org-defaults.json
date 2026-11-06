@@ -1,0 +1,9 @@
+{
+  "Enabled": 1,
+  "PlayWhen": "EverySignIn",
+  "Sound": 1,
+  "AllowSkip": 0,
+  "Background": "penguins",
+  "Video": "match",
+  "UsersCanChange": 1
+}

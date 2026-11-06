@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Report a problem to TLA
+Comment=Tell the TLA helpdesk about a problem with this computer
+Exec=/usr/bin/python3 /opt/tla-bootpaper/tla-bootpaper.py report
+Icon=/opt/tla-bootpaper/AppIcon.png
+Categories=Settings;
+Keywords=help;helpdesk;problem;bug;support;TLA;
+StartupNotify=true

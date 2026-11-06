@@ -1,0 +1,7 @@
+{
+  "name": "ca.schoolathome.bootpaper",
+  "description": "TLA BootPaper: which background is on this person's desktop, for the TLA new tab page",
+  "path": "/Library/Application Support/ca.schoolathome.welcomevideo/browser-host.zsh",
+  "type": "stdio",
+  "allowed_origins": ["chrome-extension://bemjdlnfdfdgnkimadgogaadgdfnipam/"]
+}
