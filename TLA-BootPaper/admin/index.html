@@ -294,6 +294,8 @@ async function saveAnnouncement() {
       loadAnnouncement();   // (what's there now, with the ids of anything just added)
     } catch (e) { failed.push('Windows PCs (' + e.message + ')'); }
   }
+  // (a Windows policy without its text box used to be skipped without a word, so Windows kept an old announcement)
+  else failed.push('Windows PCs (' + (where.win ? 'the policy "' + WIN_POLICY + '" has no announcement text setting' : 'no policy named "' + WIN_POLICY + '"') + ')');
   if (where.ipad) {
     try {
       await graph(`/deviceManagement/deviceConfigurations/${where.ipad.id}`, { method: 'PATCH', body: JSON.stringify({
