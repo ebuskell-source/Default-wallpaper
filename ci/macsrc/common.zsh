@@ -9,7 +9,7 @@
 
 WV_DIR="/Library/Application Support/ca.schoolathome.welcomevideo"
 WV_DOMAIN="ca.schoolathome.welcomevideo"
-WV_RELEASE="7.4.0"                     # this package's version (4.3: what people see also depends on their release channel)
+WV_RELEASE="7.6.0"                     # this package's version (4.3: what people see also depends on their release channel)
 WV_DIALOG="/usr/local/bin/dialog"      # swiftDialog
 WV_APP="/Applications/TLA BootPaper.app"
 WV_ICON="$WV_DIR/AppIcon.png"
@@ -86,7 +86,7 @@ WV_VIDEO_NAMES=("Match my desktop background" "Surprise me (a different one each
 # Stable). WV_SINCE: the release that brought something; anything not listed has been out for longer.
 WV_CHANNELS=(stable experimental)
 WV_CHANNEL_NAMES=("Stable" "Experimental")
-typeset -gA WV_CHANNEL_MARKS=(stable 7.4.0 experimental 7.4.0)   # as marked when this package was made (7.0.5: Experimental)
+typeset -gA WV_CHANNEL_MARKS=(stable 7.6.0 experimental 7.6.0)   # as marked when this package was made (7.0.5: Experimental)
 typeset -gA WV_SINCE=(lockdown 6.2.5 sky-city 4.3 report 4.3 lightdark 5.0 screensaver 5.0 calls 5.0 care 5.0 tour 5.0 connect 5.2.5
                       beach 5.4 anime-dark 5.4 pixel-dark 5.4.5 claymation-dark 5.4.5
                       greeting-styles 5.5.5 greeting-switch 5.5.5
@@ -1110,7 +1110,7 @@ wv_reported_background() { [[ "$1" =~ '^own-[0-9a-f]{8}$' ]] && print own || pri
 # clearing out system leftovers, downloading the videos now, preparing for unboxing) is asked of guard.zsh, which
 # runs as root every 20 seconds: the person's "CareRequest" setting holds one word from a fixed list (so nothing
 # else can be asked for), and the answer comes back in Care/result ("<word>|<time asked>|<text>").
-WV_CARE_REQUESTS=(cleanup audio videos unbox update opencore-sequoia opencore-tahoe)   # (5.8.0: update, "Check for updates"; 7.0: opencore-*)
+WV_CARE_REQUESTS=(cleanup audio videos unbox update osupdate opencore-sequoia opencore-tahoe)   # (5.8.0: update, "Check for updates"; 7.0: opencore-*)
 wv_care_ago() {   # wv_care_ago <seconds>
   local -i s=$1 h
   if (( s < 120 )); then print "just now"
@@ -1140,18 +1140,25 @@ wv_care_checks() {   # wv_care_checks [quick]   ("quick": only what's worth a re
     elif (( pct < 10 || free < 15 )); then wv_care_row storage warn "Storage is getting full" "$text" cleanup "Free up space"
     else wv_care_row storage ok "Storage" "$text"; fi
   fi
-  # macOS updates (7.6.0), from the list macOS keeps from its last background check (quick: no new search). If they
-  # won't fit, how much room they need and which of the person's own files to delete (suggestions only).
+  # macOS updates (7.6.0): TLA Care's own check (guard.zsh asks Apple with softwareupdate -l, every 6 hours, and when
+  # TLA Care is opened over an hour after the last one). If they won't fit, how much room they need and which of the
+  # person's own files to delete (suggestions only).
   if [[ "$1" != quick ]]; then
-    local -a upd
-    upd=(${(f)"$(/usr/bin/defaults read /Library/Preferences/com.apple.SoftwareUpdate RecommendedUpdates 2>/dev/null |
-      /usr/bin/sed -n -e 's/.*"Display Name" = "\(.*\)";/\1/p' -e 's/.*"Display Name" = \([^";]*\);/\1/p')"})
-    if (( ${#upd} == 0 )); then wv_care_row osupdate ok "macOS updates" "Up to date (as of macOS's last check)." swupdate "Open Software Update"
+    local -a osl; osl=("${(@f)$(/bin/cat "$WV_DIR/Care/osupdate" 2>/dev/null)}")
+    local osat="${osl[1]#error }"; local -i osage=-1; [[ "$osat" == <-> ]] && osage=$(( now - osat ))
+    (( osage < 0 || osage > 3600 )) && wv_care_request osupdate >/dev/null 2>&1
+    local when="Checked $(wv_care_ago $(( osage < 0 ? 0 : osage )))."
+    if (( osage < 0 )); then wv_care_row osupdate info "macOS updates" "Checking for updates now. Click Check again in a minute or two." swupdate "Open Software Update"
+    elif [[ "${osl[1]}" == error* ]]; then wv_care_row osupdate info "macOS updates" "Couldn't reach Apple to check for updates. It'll try again soon." swupdate "Open Software Update"
+    elif (( ${#osl} < 2 )) || [[ -z "${osl[2]}" ]]; then wv_care_row osupdate ok "macOS updates" "Up to date. $when" swupdate "Open Software Update"
     else
+      local -a upd=(${osl[2,-1]%%	*}); local -i kib=0; local l
+      for l in ${osl[2,-1]}; do [[ "${l##*	}" == <-> ]] && (( kib += ${l##*	} )); done
       local names="${(j:; :)upd[1,3]}"; (( ${#upd} > 3 )) && names+=" and $(( ${#upd} - 3 )) more"
-      local -i need=3; [[ "${(j: :)upd}" == *macOS* ]] && need=15   # (a macOS update needs far more room than an app)
+      local -i need=$(( (2 * kib + 1048575) / 1048576 + 2 ))   # (room to download and to install)
+      [[ "${(j: :)upd}" == *macOS* ]] && (( need < 15 )) && need=15
       local -F ufree=0; [[ "${df[2]}" == <-> ]] && (( ufree = df[2] / 1000000.0 ))
-      if (( ufree >= need )); then wv_care_row osupdate warn "Update ready" "$names. Install it when you can: it keeps your Mac safe." swupdate "Open Software Update"
+      if (( ufree >= need )); then wv_care_row osupdate warn "Update ready" "$names. Install it when you can: it keeps your Mac safe. $when" swupdate "Open Software Update"
       else
         local -a big; local line
         for line in ${(f)"$(/usr/bin/find "$HOME/Downloads" "$HOME/Desktop" "$HOME/Documents" "$HOME/Movies" -type f -size +200M \

@@ -11,7 +11,7 @@
 
 $WV = @{
     Dir       = $PSScriptRoot
-    Release   = '7.5.0' # this package's version (4.3: what people see also depends on their release channel)
+    Release   = '7.6.0' # this package's version (4.3: what people see also depends on their release channel)
     DeviceKey = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo'
     UserKey   = 'HKEY_CURRENT_USER\Software\WelcomeVideo'
     StateKey  = 'HKEY_CURRENT_USER\Software\WelcomeVideo\State'
@@ -116,7 +116,7 @@ $WV = @{
     # Experimental first, Stable once it's been tried. People pick their channel in the app (organization
     # default: Stable). Since = the release that brought something; anything not listed has been out for longer.
     Channels  = [ordered]@{ 'stable' = 'Stable'; 'experimental' = 'Experimental' }
-    ChannelReleases = @{ 'stable' = '7.5.0'; 'experimental' = '7.5.0' }   # as marked when this package was made (7.5.0: Stable)
+    ChannelReleases = @{ 'stable' = '7.6.0'; 'experimental' = '7.6.0' }   # as marked when this package was made (7.6.0: Stable)
     Since     = @{ 'sky-city' = '4.3'; 'report' = '4.3'; 'lockdown' = '6.2.5'
                    'lightdark' = '5.0'; 'screensaver' = '5.0'; 'calls' = '5.0'; 'care' = '5.0'; 'tour' = '5.0'
                    'connect' = '5.2.5'

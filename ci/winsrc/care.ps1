@@ -11,7 +11,7 @@
 
 $WV.CareKey      = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Care'
 $WV.CareTask     = 'TLA Care'
-$WV.CareRequests = 'cleanup', 'audio', 'sync', 'unbox', 'signin', 'update'   # (5.7.0: signin; 5.8.0: update)
+$WV.CareRequests = 'cleanup', 'audio', 'sync', 'unbox', 'signin', 'update', 'osupdate'   # (5.7.0: signin; 5.8.0: update)
 
 function Format-WVCareAgo([TimeSpan]$Span) {
     if ($Span.TotalMinutes -lt 2) { return 'just now' }
@@ -102,21 +102,26 @@ function Get-WVBigFiles([int]$Count = 5) {
     return $list
 }
 
-# 7.6.0: Windows updates waiting, from what Windows Update found at its last check (no new search, so it's quick).
-# If they won't fit in the free space, it says how much room is needed and which of the person's files to delete.
+# 7.6.0: Windows updates waiting, from TLA Care's own check (care-system.ps1 asks Microsoft every 6 hours, and when
+# TLA Care is opened over an hour after the last one). If they won't fit in the free space, how much room is needed
+# and which of the person's files to delete.
 function Get-WVOSUpdateCheck {
-    $session = New-Object -ComObject Microsoft.Update.Session
-    $searcher = $session.CreateUpdateSearcher(); $searcher.Online = $false
-    $found = @($searcher.Search("IsInstalled=0 and IsHidden=0 and Type='Software'").Updates)
-    if (-not $found.Count) { return New-WVCareCheck 'osupdate' 'Windows updates' 'ok' 'Up to date (as of Windows Update''s last check).' 'winupdate' 'Open Windows Update' }
-    $size = 0.0; foreach ($u in $found) { $size += [double]$u.MaxDownloadSize }
-    $names = (@($found | Select-Object -First 3 | ForEach-Object { "$($_.Title)" -replace '\s*\(KB\d+\).*$', '' }) -join '; ')
-    if ($found.Count -gt 3) { $names += " and $($found.Count - 3) more" }
+    $key = "$($WV.CareKey)\OSUpdate"
+    $at = $null; try { $at = [DateTime]::Parse("$(Get-WVValue $key 'At')", $null, 'RoundtripKind') } catch { }
+    if (-not $at -or $at -lt [DateTime]::UtcNow.AddHours(-1)) { [void](Invoke-WVCareRequest 'osupdate') }
+    if (-not $at) { return New-WVCareCheck 'osupdate' 'Windows updates' 'info' 'Checking for updates now. Click Check again in a minute or two.' 'winupdate' 'Open Windows Update' }
+    if ("$(Get-WVValue $key 'Error')") { return New-WVCareCheck 'osupdate' 'Windows updates' 'info' "Couldn't reach Microsoft to check for updates. It'll try again soon." 'winupdate' 'Open Windows Update' }
+    $mins = [int]([DateTime]::UtcNow - $at.ToUniversalTime()).TotalMinutes
+    $when = if ($mins -lt 2) { 'Checked just now.' } elseif ($mins -lt 120) { "Checked $mins minutes ago." } else { "Checked $([int]($mins / 60)) hours ago." }
+    $count = 0; [void][int]::TryParse("$(Get-WVValue $key 'Count')", [ref]$count)
+    if (-not $count) { return New-WVCareCheck 'osupdate' 'Windows updates' 'ok' "Up to date. $when" 'winupdate' 'Open Windows Update' }
+    $names = "$(Get-WVValue $key 'Names')"; if ($count -gt 3) { $names += " and $($count - 3) more" }
+    $size = 0.0; [void][double]::TryParse("$(Get-WVValue $key 'Bytes')", [ref]$size)
     $need = [Math]::Ceiling(2 * $size / 1GB) + 2   # (room to download and to unpack)
-    if (@($found | Where-Object { "$($_.Title)" -match 'Windows 1\d, version|Feature update' }).Count) { $need = [Math]::Max($need, 20) }
+    if ("$(Get-WVValue $key 'Feature')" -eq '1') { $need = [Math]::Max($need, 20) }
     $free = 0.0; try { $free = [System.IO.DriveInfo]::new("$($env:SystemDrive)".TrimEnd(':')).AvailableFreeSpace / 1GB } catch { }
     if ($free -ge $need) {
-        return New-WVCareCheck 'osupdate' 'Windows update ready' 'warn' "$names. Install it when you can: it keeps your computer safe." 'winupdate' 'Open Windows Update'
+        return New-WVCareCheck 'osupdate' 'Windows update ready' 'warn' "$names. Install it when you can: it keeps your computer safe. $when" 'winupdate' 'Open Windows Update'
     }
     $big = @(Get-WVBigFiles)
     $tip = if ($big.Count) { ' To make room, delete what you no longer need, biggest first: ' + ($big -join '; ') + '.' } else { ' Delete files you no longer need, or move them to OneDrive.' }
