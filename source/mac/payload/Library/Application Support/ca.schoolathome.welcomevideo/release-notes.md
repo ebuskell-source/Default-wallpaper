@@ -1,31 +1,30 @@
-# [mac] Version 7.4.0
-- [mac] **The clock shows BC time again.** BC stays on UTC-7 all year now, and TLA BootPaper keeps the time zone set to it.
+# Version 7.6.0
+- **TLA Care checks for system updates.** It tells you when a Windows or macOS update is waiting. If there isn't enough room for it, it tells you how much space the update needs and which of your biggest files you could delete (biggest first) to make room. Nothing is deleted for you.
 
-# [mac] Version 7.3.5
-- [mac] **TLA's Macs only lock for sign-in after "Prepare for initial unboxing"**, so a Mac can be set up first without signing in to the Hub.
+# [win] Version 7.5.0
+- [win] **On TLA's PCs, everyone who signs in to Windows gets the sign-in screen**, even while someone else is still signed in on the same PC.
 
-# [mac] Version 7.2.5
-- [mac] **A Mac whose clock is wrong can sign in again.** Sign-ins are checked against the internet's time, and TLA BootPaper puts the clock right.
+# [win] Version 7.4.5
+- [win] **The clock is put right within a minute of installing or updating TLA BootPaper**, instead of at the next restart or half hour.
 
-# [mac] Version 7.2.0
-- [mac] **macOS Sonoma and older get a version of swiftDialog that works on them**, so the backup windows TLA BootPaper uses can open there.
+# [win] Version 7.4.0
+- [win] **The clock shows BC time again.** BC stays on UTC-7 all year now, and TLA BootPaper keeps the time zone set to it.
 
-# [mac] Version 7.1.5
-- [mac] **TLA Care's check marks are centred on Intel Macs.**
+# [win] Version 7.3.5
+- [win] **The Windows key no longer opens the Start menu while the sign-in screen is up**, and neither do Ctrl+Esc, Alt+Tab or Alt+Esc.
+- [win] **The sign-in screen appears as soon as you sign in to Windows**, instead of a minute later.
+- [win] **TLA's PCs only lock for sign-in after "Prepare for initial unboxing"**, so a PC can be set up first without signing in to the Hub.
 
-# [mac] Version 7.1.0
-- [mac] **TLA Care says when a Mac can't get a newer macOS**, and why, instead of showing nothing.
+# [win] Version 7.3.0
+- [win] **On TLA's PCs, the sign-in screen appears within seconds** of signing out or a sign-in running out, instead of up to a minute later.
+- [win] **Signing in from the sign-in screen no longer opens your whole browser.** The Hub's sign-in page opens full screen on its own, and closes once you're signed in.
 
-# [mac] Version 7.0.5
-- [mac] **On TLA's Macs, the sign-in screen no longer waits behind the Welcome to TLA tour.** If you leave the tour and use other apps without signing in, the Mac locks until you do.
-- [mac] **Check my Mac opens TLA Care again.**
+# [win] Version 7.2.5
+- [win] **TLA BootPaper now has the same version number on every platform.**
+- [win] **A PC whose clock is wrong can sign in again.** Sign-ins are checked against the internet's time, and TLA BootPaper puts the clock right.
 
-# [mac] Version 7.0
-- [mac] **A newer macOS for older Intel Macs, in TLA Care** (Experimental channel). On Macs Apple no longer updates, TLA Care offers macOS Sequoia (recommended) or macOS Tahoe through OpenCore Legacy Patcher, shows exactly what works differently on that Mac first, and then does the whole upgrade by itself.
-- [mac] **On TLA's Macs, signing out locks the Mac straight away**, instead of up to a minute later.
-
-# [mac] Version 6.5.0
-- [mac] **Sign out works again.** Clicking it and confirming now signs you out.
+# [win] Version 6.5.0
+- [win] **On TLA's PCs, the sign-in screen no longer waits behind the Welcome to TLA tour.** If you leave the tour and use other apps without signing in, the PC locks until you do.
 
 # [mac] Version 6.4.5
 - [mac] **Vancouver**, a new background in Nature, in a daytime and a night-time look.

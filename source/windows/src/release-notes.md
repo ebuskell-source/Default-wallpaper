@@ -1,3 +1,6 @@
+# Version 7.6.0
+- **TLA Care checks for system updates.** It tells you when a Windows or macOS update is waiting. If there isn't enough room for it, it tells you how much space the update needs and which of your biggest files you could delete (biggest first) to make room. Nothing is deleted for you.
+
 # [win] Version 7.5.0
 - [win] **On TLA's PCs, everyone who signs in to Windows gets the sign-in screen**, even while someone else is still signed in on the same PC.
 

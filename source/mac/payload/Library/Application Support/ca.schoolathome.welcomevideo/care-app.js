@@ -218,7 +218,7 @@ function runAction(index) {
     case 'restart':
       if (confirm('Restart your Mac now?', 'Save your work first: open apps will close.', 'Restart')) sh(['--restart'], false);
       return;
-    case 'wifi': case 'touchid': case 'storage': case 'password': case 'connect':   // (5.1: a teacher's password; 5.2.5: Connect to TLA)
+    case 'wifi': case 'touchid': case 'storage': case 'password': case 'connect': case 'swupdate':   // (5.1: a teacher's password; 5.2.5: Connect to TLA)
       sh(['--open', c.action], false); return;
     case 'report':
       sh(['--report'], false); return;

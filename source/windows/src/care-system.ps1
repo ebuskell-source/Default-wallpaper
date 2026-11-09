@@ -168,7 +168,7 @@ if ($console) {
     if ($request) {
         Set-Value $state 'CareRequest' ''   # used up, whatever happens next
         $when = ConvertFrom-Stamp $requestAt
-        if ('cleanup', 'audio', 'sync', 'unbox', 'signin', 'update' -notcontains $request -or -not $when -or $when -lt [DateTime]::UtcNow.AddMinutes(-10)) {
+        if ('cleanup', 'audio', 'sync', 'unbox', 'signin', 'update', 'osupdate' -notcontains $request -or -not $when -or $when -lt [DateTime]::UtcNow.AddMinutes(-10)) {
             Write-Log "Ignored request '$request'."
             $request = ''
         }
@@ -231,6 +231,36 @@ switch ($request) {
             Set-Result 'This computer has already been prepared for unboxing.'
         }
     }
+}
+
+# ---- Windows updates, TLA Care's own check (7.6.0) -------------------------------------------------------
+# Asks Microsoft now (an online Windows Update search, not Windows' last automatic check): every 6 hours when this task
+# runs, and when TLA Care asks ("osupdate", sent when it's opened over an hour after the last check). The answer goes in
+# HKLM\SOFTWARE\WelcomeVideo\Care\OSUpdate: At, Error, Count, Names (up to 3, "; "), Bytes, Feature (1: a new version).
+function Update-OSCheck {
+    $key = "$CareKey\OSUpdate"
+    try {
+        $searcher = (New-Object -ComObject Microsoft.Update.Session).CreateUpdateSearcher()
+        # (not Defender's virus definitions: they arrive several times a day and install by themselves)
+        $found = @(@($searcher.Search("IsInstalled=0 and IsHidden=0 and Type='Software'").Updates) |
+            Where-Object { "$($_.Title)" -notmatch 'Security Intelligence Update|Definition Update' })
+        $bytes = 0.0; foreach ($u in $found) { $bytes += [double]$u.MaxDownloadSize }
+        Set-Value $key 'Count' "$($found.Count)"
+        Set-Value $key 'Names' ((@($found | Select-Object -First 3 | ForEach-Object { "$($_.Title)" -replace '\s*\(KB\d+\).*$', '' })) -join '; ')
+        Set-Value $key 'Bytes' ([string][long]$bytes)
+        Set-Value $key 'Feature' $(if (@($found | Where-Object { "$($_.Title)" -match 'Windows 1\d, version|Feature update' }).Count) { '1' } else { '0' })
+        Set-Value $key 'Error' ''
+        Write-Log "Windows updates: $($found.Count) waiting."
+    } catch {
+        Set-Value $key 'Error' $_.Exception.Message
+        Write-Log "Windows updates: couldn't check ($($_.Exception.Message))."
+    }
+    Set-Value $key 'At' ([DateTime]::UtcNow.ToString('o'))
+}
+$lastOS = ConvertFrom-Stamp "$(Get-WVValue "$CareKey\OSUpdate" 'At')"
+if ($request -eq 'osupdate' -or -not $lastOS -or $lastOS -lt [DateTime]::UtcNow.AddHours(-6)) {
+    Update-OSCheck
+    if ($request -eq 'osupdate') { Set-Result 'Checked.' }
 }
 
 # ---- By itself ------------------------------------------------------------------------------------------

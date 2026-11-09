@@ -287,6 +287,7 @@ case "$1" in
       touchid|password) /usr/bin/open "x-apple.systempreferences:com.apple.Touch-ID-Settings.extension" ;;
       connect) wv_open_connect ;;   # (5.2.5: Company Portal, or its download)   # (Touch ID & Password, or Login Password: where Change… is)
       storage) /usr/bin/open "x-apple.systempreferences:com.apple.settings.Storage" ;;
+      swupdate) /usr/bin/open "x-apple.systempreferences:com.apple.Software-Update-Settings.extension" ;;   # (7.6.0)
     esac
     exit 0 ;;
   --care) # 7.0.5: in the app's own program (like the lock screen), so it opens in front when the app asks for it;

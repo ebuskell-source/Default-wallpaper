@@ -163,6 +163,28 @@ lines=("${(@f)out}")
 src="${lines[-1]}"
 field() { local l="${${(@M)lines:#$1	*}[1]}"; print -r -- "${l#$1	}" }   # the rest of the line that starts with <name><tab>
 
+# ---- macOS updates, TLA Care's own check (7.6.0) ------------------------------------------------------------
+# softwareupdate -l asks Apple now (not macOS's last automatic check). It takes up to a minute or two, so it runs in
+# the background: every 6 hours, or sooner when TLA Care asks ("osupdate"). Answer in Care/osupdate, readable by all:
+# line 1 the time it finished (or "error <time>"), then one line per update: <title><tab><size in KiB>.
+wv_os_check() {
+  local lock="$WV_DIR/Care/.osupdate.running"
+  [[ -e "$lock" && $(( $(/bin/date +%s) - $(/usr/bin/stat -f %m "$lock") )) -lt 900 ]] && return 0   # (one at a time)
+  /bin/mkdir -p "$WV_DIR/Care"; : > "$lock"
+  (
+    local out tmp="$WV_DIR/Care/.osupdate.$$"
+    if out="$(/usr/sbin/softwareupdate -l 2>&1)"; then
+      { /bin/date +%s
+        print -r -- "$out" | /usr/bin/sed -n 's/^[[:space:]]*Title: \(.*\), Version: .*Size: \([0-9]*\)K.*/\1	\2/p'; } > "$tmp"
+    else
+      print -r -- "error $(/bin/date +%s)" > "$tmp"
+    fi
+    /bin/chmod 644 "$tmp"; /bin/mv -f "$tmp" "$WV_DIR/Care/osupdate"; /bin/rm -f "$lock"
+  ) >/dev/null 2>&1 &!
+}
+osdone="$(/usr/bin/head -1 "$WV_DIR/Care/osupdate" 2>/dev/null)"; osdone="${osdone#error }"
+[[ "$osdone" == <-> ]] && (( $(/bin/date +%s) - osdone < 21600 )) || wv_os_check
+
 # ---- TLA Care requests (5.0) ----------------------------------------------------------------------------------
 # One word from a fixed list, asked for in the last 10 minutes; the answer goes in Care/result.
 care="$(field care)"
@@ -170,10 +192,12 @@ if [[ -n "$care" ]]; then
   request="${care%%	*}"; at="${care#*	}"
   result() { print -r -- "$request|$at|$1" > "$WV_DIR/Care/.result.$$" && /bin/chmod 644 "$WV_DIR/Care/.result.$$" &&
              /bin/mv -f "$WV_DIR/Care/.result.$$" "$WV_DIR/Care/result"; }
-  if [[ "$request" != (cleanup|audio|videos|unbox|signin|update|opencore-sequoia|opencore-tahoe) || "$at" != <-> ]] || (( $(/bin/date +%s) - at > 600 )); then
+  if [[ "$request" != (cleanup|audio|videos|unbox|signin|update|osupdate|opencore-sequoia|opencore-tahoe) || "$at" != <-> ]] || (( $(/bin/date +%s) - at > 600 )); then
     log "TLA Care: ignored a request ('$request')."
   else
     case "$request" in
+      osupdate)   # (7.6.0: TLA Care was opened and the last check is over an hour old)
+        wv_os_check; result "Checking now." ;;
       audio)
         /usr/bin/killall coreaudiod 2>/dev/null   # (macOS starts it again straight away)
         sleep 2

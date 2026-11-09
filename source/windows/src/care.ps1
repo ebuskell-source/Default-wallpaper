@@ -11,7 +11,7 @@
 
 $WV.CareKey      = 'HKEY_LOCAL_MACHINE\SOFTWARE\WelcomeVideo\Care'
 $WV.CareTask     = 'TLA Care'
-$WV.CareRequests = 'cleanup', 'audio', 'sync', 'unbox', 'signin', 'update'   # (5.7.0: signin; 5.8.0: update)
+$WV.CareRequests = 'cleanup', 'audio', 'sync', 'unbox', 'signin', 'update', 'osupdate'   # (5.7.0: signin; 5.8.0: update)
 
 function Format-WVCareAgo([TimeSpan]$Span) {
     if ($Span.TotalMinutes -lt 2) { return 'just now' }
@@ -78,6 +78,54 @@ function Get-WVStorageCheck {
         return New-WVCareCheck 'storage' 'Storage is getting full' 'warn' $text 'cleanup' 'Free up space'
     }
     return New-WVCareCheck 'storage' 'Storage' 'ok' $text
+}
+
+# 7.6.0: the biggest of the person's own files (Downloads, Desktop, Documents, Videos, over 200 MB), and the Recycle
+# Bin, as "name (2.1 GB, in Downloads)", for when an update won't fit. Suggestions only: nothing is deleted here.
+function Get-WVBigFiles([int]$Count = 5) {
+    $found = [System.Collections.Generic.List[object]]::new()
+    foreach ($folder in 'Downloads', 'Desktop', 'Documents', 'Videos') {
+        $dir = [System.IO.Path]::Combine($env:USERPROFILE, $folder)
+        if (-not [System.IO.Directory]::Exists($dir)) { continue }
+        try {
+            foreach ($f in [System.IO.Directory]::EnumerateFiles($dir, '*', 'AllDirectories')) {
+                try { $i = [System.IO.FileInfo]::new($f); if ($i.Length -ge 200MB) { $found.Add([pscustomobject]@{ Name = $i.Name; Size = $i.Length; In = $folder }) } } catch { }
+            }
+        } catch { }
+    }
+    $list = @($found | Sort-Object Size -Descending | Select-Object -First $Count | ForEach-Object { '{0} ({1:0.0} GB, in {2})' -f $_.Name, ($_.Size / 1GB), $_.In })
+    try {
+        $bin = 0L
+        foreach ($item in (New-Object -ComObject Shell.Application).Namespace(10).Items()) { $bin += [long]$item.ExtendedProperty('Size') }
+        if ($bin -ge 500MB) { $list += 'the Recycle Bin ({0:0.0} GB: empty it)' -f ($bin / 1GB) }
+    } catch { }
+    return $list
+}
+
+# 7.6.0: Windows updates waiting, from TLA Care's own check (care-system.ps1 asks Microsoft every 6 hours, and when
+# TLA Care is opened over an hour after the last one). If they won't fit in the free space, how much room is needed
+# and which of the person's files to delete.
+function Get-WVOSUpdateCheck {
+    $key = "$($WV.CareKey)\OSUpdate"
+    $at = $null; try { $at = [DateTime]::Parse("$(Get-WVValue $key 'At')", $null, 'RoundtripKind') } catch { }
+    if (-not $at -or $at -lt [DateTime]::UtcNow.AddHours(-1)) { [void](Invoke-WVCareRequest 'osupdate') }
+    if (-not $at) { return New-WVCareCheck 'osupdate' 'Windows updates' 'info' 'Checking for updates now. Click Check again in a minute or two.' 'winupdate' 'Open Windows Update' }
+    if ("$(Get-WVValue $key 'Error')") { return New-WVCareCheck 'osupdate' 'Windows updates' 'info' "Couldn't reach Microsoft to check for updates. It'll try again soon." 'winupdate' 'Open Windows Update' }
+    $mins = [int]([DateTime]::UtcNow - $at.ToUniversalTime()).TotalMinutes
+    $when = if ($mins -lt 2) { 'Checked just now.' } elseif ($mins -lt 120) { "Checked $mins minutes ago." } else { "Checked $([int]($mins / 60)) hours ago." }
+    $count = 0; [void][int]::TryParse("$(Get-WVValue $key 'Count')", [ref]$count)
+    if (-not $count) { return New-WVCareCheck 'osupdate' 'Windows updates' 'ok' "Up to date. $when" 'winupdate' 'Open Windows Update' }
+    $names = "$(Get-WVValue $key 'Names')"; if ($count -gt 3) { $names += " and $($count - 3) more" }
+    $size = 0.0; [void][double]::TryParse("$(Get-WVValue $key 'Bytes')", [ref]$size)
+    $need = [Math]::Ceiling(2 * $size / 1GB) + 2   # (room to download and to unpack)
+    if ("$(Get-WVValue $key 'Feature')" -eq '1') { $need = [Math]::Max($need, 20) }
+    $free = 0.0; try { $free = [System.IO.DriveInfo]::new("$($env:SystemDrive)".TrimEnd(':')).AvailableFreeSpace / 1GB } catch { }
+    if ($free -ge $need) {
+        return New-WVCareCheck 'osupdate' 'Windows update ready' 'warn' "$names. Install it when you can: it keeps your computer safe. $when" 'winupdate' 'Open Windows Update'
+    }
+    $big = @(Get-WVBigFiles)
+    $tip = if ($big.Count) { ' To make room, delete what you no longer need, biggest first: ' + ($big -join '; ') + '.' } else { ' Delete files you no longer need, or move them to OneDrive.' }
+    return New-WVCareCheck 'osupdate' 'Not enough room for updates' 'bad' ("$names needs about {0} GB free; you have {1:0.#} GB.$tip" -f $need, $free) 'winupdate' 'Open Windows Update'
 }
 
 function Get-WVInternetCheck {
@@ -207,7 +255,7 @@ function Get-WVCareChecks([switch]$Quick) {
     $rows = [System.Collections.Generic.List[object]]::new()
     $problems = Get-WVProblemDevices
     foreach ($check in @(
-        { Get-WVRestartCheck }, { Get-WVStorageCheck },
+        { Get-WVRestartCheck }, { Get-WVStorageCheck }, $(if (-not $Quick) { { Get-WVOSUpdateCheck } }),
         $(if (-not $Quick) { { Get-WVInternetCheck } }),
         { Get-WVSoundCheck $problems },
         $(if (-not $Quick) { { Get-WVDevicesCheck $problems } }),
@@ -432,6 +480,7 @@ function Invoke-WVCareAction($Button) {
             return
         }
         'wifi'    { Start-WVSettingsPage 'ms-settings:network-wifi'; return }
+        'winupdate' { Start-WVSettingsPage 'ms-settings:windowsupdate'; return }   # (7.6.0)
         'hello'   { Start-WVSettingsPage 'ms-settings:signinoptions'; return }
         'connect' { Start-WVSettingsPage $WV.ConnectPage; return }   # (5.2.5)
         'report'  {
