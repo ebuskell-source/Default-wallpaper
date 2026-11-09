@@ -1140,6 +1140,27 @@ wv_care_checks() {   # wv_care_checks [quick]   ("quick": only what's worth a re
     elif (( pct < 10 || free < 15 )); then wv_care_row storage warn "Storage is getting full" "$text" cleanup "Free up space"
     else wv_care_row storage ok "Storage" "$text"; fi
   fi
+  # 7.6.0: macOS updates and OpenCore are one row ("macOS updates"): what Apple offers this Mac comes first; a newer
+  # macOS through OpenCore Legacy Patcher (7.0, opencore.zsh, TLA's older Intel Macs) is added to it, or is the row
+  # itself when Apple has nothing to install, or while an OpenCore upgrade is running or has stopped.
+  local -a osr ocr; local ocmore=""
+  if [[ "$1" != quick && -f "$WV_DIR/opencore.zsh" ]]; then
+    source "$WV_DIR/opencore.zsh"
+    local ocp="$(oc_get phase)" ocn="$(oc_get note)" oct="$(oc_get target)" offer
+    if [[ "$ocp" == (prepare|fetch|installing) ]]; then
+      ocr=(opencore info "Upgrading to ${OC_NAME[$oct]}" "$ocn")
+    elif [[ "$ocp" == failed ]]; then
+      ocr=(opencore warn "The ${OC_NAME[$oct]} upgrade stopped" "$ocn If it happens again, tell the helpdesk." opencore "Try again")
+    elif [[ "$ocp" != done ]]; then
+      offer="$(oc_offer)"
+      case "$offer" in
+        offer*) local -a ocv=(${=offer#*	})
+                ocmore=" A newer macOS, ${OC_NAME[${ocv[1]}]}, can also go on this Mac with OpenCore Legacy Patcher: install this update first."
+                ocr=(opencore info "${OC_NAME[${ocv[1]}]} for this Mac" "Apple doesn't update this Mac any more. OpenCore Legacy Patcher can put ${OC_NAME[${ocv[1]}]}${ocv[2]:+ (or ${OC_NAME[${ocv[2]}]})} on it. See what changes first." opencore "See what changes") ;;
+        none*)  ocmore=" No newer macOS for this Mac: ${offer#*	}" ;;
+      esac
+    fi
+  fi
   # macOS updates (7.6.0): TLA Care's own check (guard.zsh asks Apple with softwareupdate -l, every 6 hours, and when
   # TLA Care is opened over an hour after the last one). If they won't fit, how much room they need and which of the
   # person's own files to delete (suggestions only).
@@ -1148,9 +1169,9 @@ wv_care_checks() {   # wv_care_checks [quick]   ("quick": only what's worth a re
     local osat="${osl[1]#error }"; local -i osage=-1; [[ "$osat" == <-> ]] && osage=$(( now - osat ))
     (( osage < 0 || osage > 3600 )) && wv_care_request osupdate >/dev/null 2>&1
     local when="Checked $(wv_care_ago $(( osage < 0 ? 0 : osage )))."
-    if (( osage < 0 )); then wv_care_row osupdate info "macOS updates" "Checking for updates now. Click Check again in a minute or two." swupdate "Open Software Update"
-    elif [[ "${osl[1]}" == error* ]]; then wv_care_row osupdate info "macOS updates" "Couldn't reach Apple to check for updates. It'll try again soon." swupdate "Open Software Update"
-    elif (( ${#osl} < 2 )) || [[ -z "${osl[2]}" ]]; then wv_care_row osupdate ok "macOS updates" "Up to date. $when" swupdate "Open Software Update"
+    if (( osage < 0 )); then osr=(osupdate info "macOS updates" "Checking for updates now. Click Check again in a minute or two." swupdate "Open Software Update")
+    elif [[ "${osl[1]}" == error* ]]; then osr=(osupdate info "macOS updates" "Couldn't reach Apple to check for updates. It'll try again soon." swupdate "Open Software Update")
+    elif (( ${#osl} < 2 )) || [[ -z "${osl[2]}" ]]; then osr=(osupdate ok "macOS updates" "Up to date. $when" swupdate "Open Software Update")
     else
       local -a upd=(${osl[2,-1]%%	*}); local -i kib=0; local l
       for l in ${osl[2,-1]}; do [[ "${l##*	}" == <-> ]] && (( kib += ${l##*	} )); done
@@ -1158,7 +1179,7 @@ wv_care_checks() {   # wv_care_checks [quick]   ("quick": only what's worth a re
       local -i need=$(( (2 * kib + 1048575) / 1048576 + 2 ))   # (room to download and to install)
       [[ "${(j: :)upd}" == *macOS* ]] && (( need < 15 )) && need=15
       local -F ufree=0; [[ "${df[2]}" == <-> ]] && (( ufree = df[2] / 1000000.0 ))
-      if (( ufree >= need )); then wv_care_row osupdate warn "Update ready" "$names. Install it when you can: it keeps your Mac safe. $when" swupdate "Open Software Update"
+      if (( ufree >= need )); then osr=(osupdate warn "Update ready" "$names. Install it when you can: it keeps your Mac safe. $when" swupdate "Open Software Update")
       else
         local -a big; local line
         for line in ${(f)"$(/usr/bin/find "$HOME/Downloads" "$HOME/Desktop" "$HOME/Documents" "$HOME/Movies" -type f -size +200M \
@@ -1170,9 +1191,15 @@ wv_care_checks() {   # wv_care_checks [quick]   ("quick": only what's worth a re
         (( trash >= 500000 )) && big+=("$(printf 'the Trash (%.1f GB: empty it)' $(( trash / 1000000.0 )))")
         local tip=" Delete files you no longer need, or move them to Google Drive or OneDrive."
         (( ${#big} )) && tip=" To make room, delete what you no longer need, biggest first: ${(j:; :)big}."
-        wv_care_row osupdate bad "Not enough room for updates" "$(printf '%s needs about %d GB free; you have %.1f GB.' "$names" $need $ufree)$tip" swupdate "Open Software Update"
+        osr=(osupdate bad "Not enough room for updates" "$(printf '%s needs about %d GB free; you have %.1f GB.' "$names" $need $ufree)$tip" swupdate "Open Software Update")
       fi
     fi
+  fi
+  if [[ "$1" != quick ]]; then
+    if [[ "${ocr[1]}" == opencore && ( "${ocr[2]}" == warn || "${ocr[3]}" == Upgrading* ) ]]; then wv_care_row "${ocr[@]}"   # (an upgrade running or stopped)
+    elif [[ "${osr[2]}" == (warn|bad) ]]; then osr[4]+="${ocmore/: install this update first/: install this update first}"; wv_care_row "${osr[@]}"
+    elif (( ${#ocr} )); then ocr[4]="${osr[4]:+${osr[4]} }${ocr[4]}"; ocr[3]="${ocr[3]}"; wv_care_row "${ocr[@]}"
+    elif (( ${#osr} )); then [[ "${osr[2]}" == ok ]] && osr[4]+="$ocmore"; wv_care_row "${osr[@]}"; fi
   fi
   # Internet
   if [[ "$1" != quick ]]; then
@@ -1202,24 +1229,6 @@ wv_care_checks() {   # wv_care_checks [quick]   ("quick": only what's worth a re
       wv_care_row battery warn "The battery is wearing out" "It holds about ${maxc:-less} of its charge when new${cond:+ (macOS says: $cond)}. If it doesn't last the school day, tell the helpdesk." report "Report it"
     else
       wv_care_row battery ok "Battery" "${charge:+$charge% charged}${maxc:+; battery health $maxc}."
-    fi
-  fi
-  # 7.0: a newer macOS with OpenCore Legacy Patcher (opencore.zsh), on TLA's older Intel Macs
-  if [[ "$1" != quick && -f "$WV_DIR/opencore.zsh" ]]; then
-    source "$WV_DIR/opencore.zsh"
-    local ocp="$(oc_get phase)" ocn="$(oc_get note)" oct="$(oc_get target)" offer
-    if [[ "$ocp" == (prepare|fetch|installing) ]]; then
-      wv_care_row opencore info "Upgrading to ${OC_NAME[$oct]}" "$ocn"
-    elif [[ "$ocp" == failed ]]; then
-      wv_care_row opencore warn "The ${OC_NAME[$oct]} upgrade stopped" "$ocn If it happens again, tell the helpdesk." opencore "Try again"
-    elif [[ "$ocp" != done ]]; then
-      offer="$(oc_offer)"
-      case "$offer" in
-        offer*) local -a ocv=(${=offer#*	})
-                wv_care_row opencore info "${OC_NAME[${ocv[1]}]} for this Mac" "Apple doesn't update this Mac any more. OpenCore Legacy Patcher can put ${OC_NAME[${ocv[1]}]}${ocv[2]:+ (or ${OC_NAME[${ocv[2]}]})} on it. See what changes first." opencore "See what changes" ;;
-        none*)  # (7.0.5: say so, rather than leaving it out)
-                wv_care_row opencore info "No newer macOS for this Mac" "${offer#*	}" ;;
-      esac
     fi
   fi
   # Connected to TLA (5.2.5: only on Macs Intune doesn't manage)
