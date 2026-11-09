@@ -1,0 +1,6 @@
+care.ps1 parse errors: 0 
+care-system.ps1 parse errors: 0 
+log: Windows updates: 1 waiting.
+online check took 17s
+row: warn | Windows update ready | Security Intelligence Update for Microsoft Defender Antivirus - KB2267602 (Version 1.463.212.0) - Current Channel (Broad). Install it when you can: it keeps your computer safe. Checked just now.
+no room: bad | Not enough room for updates | Test update A; Test update B needs about 1002 GB free; you have 28 GB. To make room, delete what you no longer need, biggest first: Big test video.mp4 (0.3 GB, in Downloads).
