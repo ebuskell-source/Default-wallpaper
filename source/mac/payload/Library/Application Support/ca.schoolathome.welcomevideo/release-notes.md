@@ -1,3 +1,6 @@
+# [mac] Version 7.7.0
+- [mac] **TLA BootPaper now runs on macOS 10.13 High Sierra and later** (it needed macOS 13 before), so older Macs can get TLA Care and its OpenCore upgrade to a newer macOS.
+
 # Version 7.6.0
 - **TLA Care checks for system updates.** It tells you when a Windows or macOS update is waiting. If there isn't enough room for it, it tells you how much space the update needs and which of your biggest files you could delete (biggest first) to make room. Nothing is deleted for you.
 

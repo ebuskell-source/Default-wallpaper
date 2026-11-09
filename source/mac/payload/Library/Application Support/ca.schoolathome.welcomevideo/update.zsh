@@ -100,15 +100,15 @@ status() {   # status <installing|done|failed> [why] [progress]   (5.9.5: for th
   /bin/rm -f "$WV_DIR/Care/.update.$$"
 }
 json="$(/usr/bin/curl -fsSL --connect-timeout 10 --max-time 30 "$REPO/latest.json" 2>/dev/null)" || exit 0
-version="$(print -r -- "$json" | /usr/bin/plutil -extract version raw -o - - 2>/dev/null)"
-url="$(print -r -- "$json" | /usr/bin/plutil -extract url raw -o - - 2>/dev/null)"
-want="$(print -r -- "$json" | /usr/bin/plutil -extract sha256 raw -o - - 2>/dev/null)"
-size="$(print -r -- "$json" | /usr/bin/plutil -extract size raw -o - - 2>/dev/null)"   # (6.1.0, for the progress bar)
+version="$(print -r -- "$json" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" version - 2>/dev/null)"
+url="$(print -r -- "$json" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" url - 2>/dev/null)"
+want="$(print -r -- "$json" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" sha256 - 2>/dev/null)"
+size="$(print -r -- "$json" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" size - 2>/dev/null)"   # (6.1.0, for the progress bar)
 # 7.0: "release", when there is one, is the version the package really is; "version" is then only what older copies of
 # this script compare. (7.5.0 went out by mistake for half an hour and was renumbered 7.0: "version" stays above 7.5.0,
 # e.g. 7.5.0.1, until a real release passes it, so the Macs that got 7.5.0 still take each new one, while Macs that
 # already have "release" skip it.)
-release="$(print -r -- "$json" | /usr/bin/plutil -extract release raw -o - - 2>/dev/null)"
+release="$(print -r -- "$json" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" release - 2>/dev/null)"
 [[ "$release" =~ '^[0-9]{1,4}(\.[0-9]{1,4}){0,3}$' ]] || release=""
 [[ "$size" == <1-> ]] || size=0
 [[ "$version" =~ '^[0-9]{1,4}(\.[0-9]{1,4}){0,3}$' && "$want" =~ '^[0-9a-f]{64}$' ]] || { log "latest.json doesn't look right; no update."; exit 0; }

@@ -9,7 +9,7 @@
 
 WV_DIR="/Library/Application Support/ca.schoolathome.welcomevideo"
 WV_DOMAIN="ca.schoolathome.welcomevideo"
-WV_RELEASE="7.6.0"                     # this package's version (4.3: what people see also depends on their release channel)
+WV_RELEASE="7.7.0"                     # this package's version (4.3: what people see also depends on their release channel)
 WV_DIALOG="/usr/local/bin/dialog"      # swiftDialog
 WV_APP="/Applications/TLA BootPaper.app"
 WV_ICON="$WV_DIR/AppIcon.png"
@@ -86,7 +86,7 @@ WV_VIDEO_NAMES=("Match my desktop background" "Surprise me (a different one each
 # Stable). WV_SINCE: the release that brought something; anything not listed has been out for longer.
 WV_CHANNELS=(stable experimental)
 WV_CHANNEL_NAMES=("Stable" "Experimental")
-typeset -gA WV_CHANNEL_MARKS=(stable 7.6.0 experimental 7.6.0)   # as marked when this package was made (7.0.5: Experimental)
+typeset -gA WV_CHANNEL_MARKS=(stable 7.7.0 experimental 7.7.0)   # as marked when this package was made (7.0.5: Experimental)
 typeset -gA WV_SINCE=(lockdown 6.2.5 sky-city 4.3 report 4.3 lightdark 5.0 screensaver 5.0 calls 5.0 care 5.0 tour 5.0 connect 5.2.5
                       beach 5.4 anime-dark 5.4 pixel-dark 5.4.5 claymation-dark 5.4.5
                       greeting-styles 5.5.5 greeting-switch 5.5.5
@@ -524,7 +524,7 @@ wv_ask_name() {
       --button1text "Save" --button2text "Not now" --ontop --moveable --json --width 560 --height 300 2>/dev/null)"
     rc=$?
     if (( rc == 0 )); then
-      answer="name:$(print -r -- "$out" | /usr/bin/plutil -extract pname raw -o - - 2>/dev/null)"
+      answer="name:$(print -r -- "$out" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" pname - 2>/dev/null)"
     elif (( rc == 2 )); then
       answer="skip"
     fi
@@ -993,7 +993,7 @@ wv_role() {
   local f v
   for f in "/Library/Managed Preferences/$(/usr/bin/id -un)/$WV_DOMAIN.plist" "/Library/Managed Preferences/$WV_DOMAIN.plist"; do
     [[ -f "$f" ]] || continue
-    v="$(/usr/bin/plutil -extract Role raw -o - "$f" 2>/dev/null)"
+    v="$("/Library/Application Support/ca.schoolathome.welcomevideo/pl" Role "$f" 2>/dev/null)"
     v="${(L)v}"
     [[ "$v" == (teacher|student) ]] && { print -r -- "$v"; return 0; }
   done
@@ -1005,8 +1005,8 @@ wv_password_state() {
   local xml created set
   xml="$(/usr/bin/dscl . -read "/Users/$(/usr/bin/id -un)" accountPolicyData 2>/dev/null | /usr/bin/tail -n +2)"
   [[ -n "$xml" ]] || { print unknown; return 0; }
-  created="$(print -r -- "$xml" | /usr/bin/plutil -extract creationTime raw -o - - 2>/dev/null)"
-  set="$(print -r -- "$xml" | /usr/bin/plutil -extract passwordLastSetTime raw -o - - 2>/dev/null)"
+  created="$(print -r -- "$xml" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" creationTime - 2>/dev/null)"
+  set="$(print -r -- "$xml" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" passwordLastSetTime - 2>/dev/null)"
   created="${created%%.*}"; set="${set%%.*}"
   [[ "$created" == <-> && "$set" == <-> ]] || { print unknown; return 0; }
   (( set > created + 600 )) && print changed || print unchanged    # (the first password is set as the account is made)
@@ -1198,7 +1198,7 @@ wv_care_checks() {   # wv_care_checks [quick]   ("quick": only what's worth a re
   if [[ "$1" != quick ]]; then
     if [[ "${ocr[1]}" == opencore && ( "${ocr[2]}" == warn || "${ocr[3]}" == Upgrading* ) ]]; then wv_care_row "${ocr[@]}"   # (an upgrade running or stopped)
     elif [[ "${osr[2]}" == (warn|bad) ]]; then osr[4]+="${ocmore/: install this update first/: install this update first}"; wv_care_row "${osr[@]}"
-    elif (( ${#ocr} )); then ocr[4]="${osr[4]:+${osr[4]} }${ocr[4]}"; ocr[3]="${ocr[3]}"; wv_care_row "${ocr[@]}"
+    elif (( ${#ocr} )); then [[ "${osr[2]}" == ok ]] && ocr[4]="${osr[4]} ${ocr[4]}"; wv_care_row "${ocr[@]}"   # (not "Checking…")
     elif (( ${#osr} )); then [[ "${osr[2]}" == ok ]] && osr[4]+="$ocmore"; wv_care_row "${osr[@]}"; fi
   fi
   # Internet

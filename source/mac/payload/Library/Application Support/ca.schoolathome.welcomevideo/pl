@@ -1,0 +1,23 @@
+#!/bin/zsh
+# pl <key path> [file] (7.7.0): what `plutil -extract <key> raw -o - <file or ->` prints. "raw" only exists from
+# macOS 12, so on older macOS (High Sierra to Big Sur, kept going with OpenCore Legacy Patcher) JSON is read with
+# JavaScript and property lists with PlistBuddy. Prints nothing and fails when the key isn't there.
+key="$1"; f="${2:--}"; tmp=""
+if [[ "$f" == - ]]; then
+  tmp="$(/usr/bin/mktemp -t tbpl)" || exit 1; /bin/cat > "$tmp"; f="$tmp"
+fi
+trap '[[ -n "$tmp" ]] && /bin/rm -f "$tmp"' EXIT
+osv="$(/usr/bin/sw_vers -productVersion)"
+if [[ "$osv" != (10.*|11.*) ]]; then
+  /usr/bin/plutil -extract "$key" raw -o - "$f" 2>/dev/null; exit
+fi
+if [[ "$(/usr/bin/head -c 1 "$f")" == ('{'|'[') ]]; then
+  out="$(/usr/bin/osascript -l JavaScript -e 'function run(a) {
+    var v = JSON.parse($.NSString.stringWithContentsOfFileEncodingError(a[0], 4, null).js);
+    a[1].split(".").forEach(function (k) { v = (v === null || v === undefined) ? v : v[k]; });
+    return (v === null || v === undefined || typeof v === "object") ? "" : String(v); }' "$f" "$key" 2>/dev/null)"
+else
+  out="$(/usr/libexec/PlistBuddy -c "Print :${key//./:}" "$f" 2>/dev/null)"
+fi
+[[ -n "$out" ]] || exit 1
+print -r -- "$out"

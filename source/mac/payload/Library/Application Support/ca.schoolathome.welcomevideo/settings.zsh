@@ -344,7 +344,7 @@ if [[ ! -x "$WV_DIALOG" ]]; then
 fi
 
 json_value() {   # json_value <json> <key path>
-  print -r -- "$1" | /usr/bin/plutil -extract "$2" raw -o - - 2>/dev/null
+  print -r -- "$1" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" "$2" - 2>/dev/null
 }
 
 # Open no bigger than the screen (smaller MacBooks), leaving room for the menu bar and Dock.

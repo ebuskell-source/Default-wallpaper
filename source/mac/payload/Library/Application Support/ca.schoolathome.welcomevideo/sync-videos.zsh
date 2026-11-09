@@ -83,8 +83,8 @@ fi
 # Release channels (4.3)
 json="$(/usr/bin/curl -fsSL --connect-timeout 10 --max-time 30 "$CHANNELS" 2>/dev/null)"
 if [[ -n "$json" ]]; then
-  stable="$(print -r -- "$json" | /usr/bin/plutil -extract stable raw -o - - 2>/dev/null)"
-  experimental="$(print -r -- "$json" | /usr/bin/plutil -extract experimental raw -o - - 2>/dev/null)"
+  stable="$(print -r -- "$json" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" stable - 2>/dev/null)"
+  experimental="$(print -r -- "$json" | "/Library/Application Support/ca.schoolathome.welcomevideo/pl" experimental - 2>/dev/null)"
   re='^[0-9]{1,4}(\.[0-9]{1,4}){0,3}$'
   if [[ "$stable" =~ $re && "$experimental" =~ $re ]]; then
     line="stable	$stable"$'\n'"experimental	$experimental"

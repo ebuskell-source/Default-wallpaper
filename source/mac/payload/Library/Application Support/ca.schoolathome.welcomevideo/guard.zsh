@@ -230,11 +230,11 @@ if [[ -n "$care" ]]; then
         ukey() { local -a p=(${(s:.:)1} 0 0 0 0); printf '%04d%04d%04d%04d' $(( 10#${p[1]} )) $(( 10#${p[2]} )) $(( 10#${p[3]} )) $(( 10#${p[4]} )) }
         latest="$(/usr/bin/curl -fsSL --connect-timeout 10 --max-time 20 \
           "https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/mac/latest.json" 2>/dev/null |
-          /usr/bin/plutil -extract version raw -o - - 2>/dev/null)"
+          "/Library/Application Support/ca.schoolathome.welcomevideo/pl" version - 2>/dev/null)"
         # (7.0: "release", where latest.json has one, is the real version: see update.zsh)
         rel="$(/usr/bin/curl -fsSL --connect-timeout 10 --max-time 20 \
           "https://raw.githubusercontent.com/ebuskell-source/Default-wallpaper/main/TLA-BootPaper/mac/latest.json" 2>/dev/null |
-          /usr/bin/plutil -extract release raw -o - - 2>/dev/null)"
+          "/Library/Application Support/ca.schoolathome.welcomevideo/pl" release - 2>/dev/null)"
         [[ "$rel" =~ '^[0-9]{1,4}(\.[0-9]{1,4}){0,3}$' ]] && latest="$rel"
         installed="$(/usr/bin/awk -F'"' '/^WV_RELEASE=/ { print $2; exit }' "$WV_DIR/common.zsh" 2>/dev/null)"
         if [[ ! "$latest" =~ '^[0-9]{1,4}(\.[0-9]{1,4}){0,3}$' || -z "$installed" ]]; then

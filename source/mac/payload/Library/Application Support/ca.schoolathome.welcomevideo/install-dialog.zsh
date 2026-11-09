@@ -10,6 +10,9 @@ LOG_FILE="/Library/Logs/ca.schoolathome.welcomevideo.log"
 log() { print -r -- "$(/bin/date '+%Y-%m-%d %H:%M:%S') $*" >> "$LOG_FILE"; }
 
 [[ -x "$DIALOG_BIN" ]] && exit 0
+# 7.7.0: swiftDialog needs macOS 12 or later. Older Macs (High Sierra to Big Sur, kept going with OpenCore Legacy
+# Patcher) do without it: BootPaper falls back to macOS's own dialogs there.
+osv="$(/usr/bin/sw_vers -productVersion)"; [[ "${osv%%.*}" == 10 || "${osv%%.*}" == 11 ]] && exit 0
 log "swiftDialog missing; installing it"
 
 # The download link for the newest release. The GitHub API is tried first; it allows only 60 requests an
