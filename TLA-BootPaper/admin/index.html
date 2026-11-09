@@ -89,6 +89,10 @@
     <p class="muted small" style="margin-top:0">Shown on every Mac's, Windows PC's, Linux computer's and iPad's lock screen, and at the top of TLA BootPaper (up to 300 characters). Computers Intune manages pick up a change the next time they check in (usually within a few hours); the others within about half an hour. Leave it empty for no announcement.</p>
     <textarea id="announce" maxlength="300" placeholder="For example: The TLA Hub will be closed on Friday from 6 am to 10 pm."></textarea>
     <div class="row">
+      <label class="small">Ends after <input type="date" id="announceEnds"></label>
+      <span class="muted small">Optional. After that day it's removed everywhere by itself, within about 10 minutes.</span>
+    </div>
+    <div class="row">
       <button class="primary" id="saveAnnounce" disabled>Save for Macs, Windows PCs and iPads</button>
       <button id="clearAnnounce" disabled>No announcement</button>
       <span class="status" id="announceMsg"></span>
@@ -205,6 +209,7 @@ async function loadAnnouncement() {
       const v = findText(full.settings, id => /loginwindowtext/i.test(id));
       where.mac = { policy: full, value: v };
       if (v) $('announce').value = v.simpleSettingValue.value || '';
+      $('announceEnds').value = (/Announcement ends: (\d{4}-\d{2}-\d{2})/.exec(full.description || '') || [])[1] || '';
       msgs.push(v ? 'Mac: "' + MAC_POLICY + '"' : 'Mac: found the policy, but not its text setting');
     } else msgs.push('Mac: no policy named "' + MAC_POLICY + '"');
   } catch (e) { msgs.push('Mac: ' + e.message); }
@@ -263,6 +268,12 @@ async function saveAnnouncement() {
       // (Intune doesn't take an empty text here, so "none" is a single space, which Macs show as nothing)
       where.mac.value.simpleSettingValue.value = text || ' ';
       const p = where.mac.policy;
+      // The end date lives in this policy's description; the "announcement" job on GitHub clears the text everywhere
+      // once that day is over (Vancouver time). (copy-announcement.py)
+      const ends = text ? $('announceEnds').value : '';
+      p.description = ((p.description || '').replace(/\n?Announcement ends: .*$/m, '') +
+        (ends ? '\nAnnouncement ends: ' + ends + ' (removed automatically after that day)' : '')).trim();
+      if (!ends) $('announceEnds').value = '';
       await graph(`/deviceManagement/configurationPolicies/${p.id}`, { method: 'PUT', body: JSON.stringify({
         name: p.name, description: p.description || '', platforms: p.platforms, technologies: p.technologies,
         roleScopeTagIds: p.roleScopeTagIds, templateReference: p.templateReference,
