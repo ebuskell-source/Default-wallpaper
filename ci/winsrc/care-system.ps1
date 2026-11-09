@@ -241,7 +241,9 @@ function Update-OSCheck {
     $key = "$CareKey\OSUpdate"
     try {
         $searcher = (New-Object -ComObject Microsoft.Update.Session).CreateUpdateSearcher()
-        $found = @($searcher.Search("IsInstalled=0 and IsHidden=0 and Type='Software'").Updates)
+        # (not Defender's virus definitions: they arrive several times a day and install by themselves)
+        $found = @(@($searcher.Search("IsInstalled=0 and IsHidden=0 and Type='Software'").Updates) |
+            Where-Object { "$($_.Title)" -notmatch 'Security Intelligence Update|Definition Update' })
         $bytes = 0.0; foreach ($u in $found) { $bytes += [double]$u.MaxDownloadSize }
         Set-Value $key 'Count' "$($found.Count)"
         Set-Value $key 'Names' ((@($found | Select-Object -First 3 | ForEach-Object { "$($_.Title)" -replace '\s*\(KB\d+\).*$', '' })) -join '; ')
