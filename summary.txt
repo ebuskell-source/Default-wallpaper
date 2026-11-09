@@ -1,0 +1,5 @@
+check took 15s
+1794246112
+macOS 27.2	11186590
+osupdate	warn	Update ready	macOS 27.2. Install it when you can: it keeps your Mac safe. Checked just now.	swupdate	Open Software Update
+osupdate	bad	Not enough room for updates	macOS 27.2 needs about 99999 GB free; you have 101.9 GB. To make room, delete what you no longer need, biggest first: Big test video.mov (0.3 GB, in Downloads).	swupdate	Open Software Update
