@@ -80,6 +80,49 @@ function Get-WVStorageCheck {
     return New-WVCareCheck 'storage' 'Storage' 'ok' $text
 }
 
+# 7.6.0: the biggest of the person's own files (Downloads, Desktop, Documents, Videos, over 200 MB), and the Recycle
+# Bin, as "name (2.1 GB, in Downloads)", for when an update won't fit. Suggestions only: nothing is deleted here.
+function Get-WVBigFiles([int]$Count = 5) {
+    $found = [System.Collections.Generic.List[object]]::new()
+    foreach ($folder in 'Downloads', 'Desktop', 'Documents', 'Videos') {
+        $dir = [System.IO.Path]::Combine($env:USERPROFILE, $folder)
+        if (-not [System.IO.Directory]::Exists($dir)) { continue }
+        try {
+            foreach ($f in [System.IO.Directory]::EnumerateFiles($dir, '*', 'AllDirectories')) {
+                try { $i = [System.IO.FileInfo]::new($f); if ($i.Length -ge 200MB) { $found.Add([pscustomobject]@{ Name = $i.Name; Size = $i.Length; In = $folder }) } } catch { }
+            }
+        } catch { }
+    }
+    $list = @($found | Sort-Object Size -Descending | Select-Object -First $Count | ForEach-Object { '{0} ({1:0.0} GB, in {2})' -f $_.Name, ($_.Size / 1GB), $_.In })
+    try {
+        $bin = 0L
+        foreach ($item in (New-Object -ComObject Shell.Application).Namespace(10).Items()) { $bin += [long]$item.ExtendedProperty('Size') }
+        if ($bin -ge 500MB) { $list += 'the Recycle Bin ({0:0.0} GB: empty it)' -f ($bin / 1GB) }
+    } catch { }
+    return $list
+}
+
+# 7.6.0: Windows updates waiting, from what Windows Update found at its last check (no new search, so it's quick).
+# If they won't fit in the free space, it says how much room is needed and which of the person's files to delete.
+function Get-WVOSUpdateCheck {
+    $session = New-Object -ComObject Microsoft.Update.Session
+    $searcher = $session.CreateUpdateSearcher(); $searcher.Online = $false
+    $found = @($searcher.Search("IsInstalled=0 and IsHidden=0 and Type='Software'").Updates)
+    if (-not $found.Count) { return New-WVCareCheck 'osupdate' 'Windows updates' 'ok' 'Up to date (as of Windows Update''s last check).' 'winupdate' 'Open Windows Update' }
+    $size = 0.0; foreach ($u in $found) { $size += [double]$u.MaxDownloadSize }
+    $names = (@($found | Select-Object -First 3 | ForEach-Object { "$($_.Title)" -replace '\s*\(KB\d+\).*$', '' }) -join '; ')
+    if ($found.Count -gt 3) { $names += " and $($found.Count - 3) more" }
+    $need = [Math]::Ceiling(2 * $size / 1GB) + 2   # (room to download and to unpack)
+    if (@($found | Where-Object { "$($_.Title)" -match 'Windows 1\d, version|Feature update' }).Count) { $need = [Math]::Max($need, 20) }
+    $free = 0.0; try { $free = [System.IO.DriveInfo]::new("$($env:SystemDrive)".TrimEnd(':')).AvailableFreeSpace / 1GB } catch { }
+    if ($free -ge $need) {
+        return New-WVCareCheck 'osupdate' 'Windows update ready' 'warn' "$names. Install it when you can: it keeps your computer safe." 'winupdate' 'Open Windows Update'
+    }
+    $big = @(Get-WVBigFiles)
+    $tip = if ($big.Count) { ' To make room, delete what you no longer need, biggest first: ' + ($big -join '; ') + '.' } else { ' Delete files you no longer need, or move them to OneDrive.' }
+    return New-WVCareCheck 'osupdate' 'Not enough room for updates' 'bad' ("$names needs about {0} GB free; you have {1:0.#} GB.$tip" -f $need, $free) 'winupdate' 'Open Windows Update'
+}
+
 function Get-WVInternetCheck {
     $ok = $false
     try {
@@ -207,7 +250,7 @@ function Get-WVCareChecks([switch]$Quick) {
     $rows = [System.Collections.Generic.List[object]]::new()
     $problems = Get-WVProblemDevices
     foreach ($check in @(
-        { Get-WVRestartCheck }, { Get-WVStorageCheck },
+        { Get-WVRestartCheck }, { Get-WVStorageCheck }, $(if (-not $Quick) { { Get-WVOSUpdateCheck } }),
         $(if (-not $Quick) { { Get-WVInternetCheck } }),
         { Get-WVSoundCheck $problems },
         $(if (-not $Quick) { { Get-WVDevicesCheck $problems } }),
@@ -432,6 +475,7 @@ function Invoke-WVCareAction($Button) {
             return
         }
         'wifi'    { Start-WVSettingsPage 'ms-settings:network-wifi'; return }
+        'winupdate' { Start-WVSettingsPage 'ms-settings:windowsupdate'; return }   # (7.6.0)
         'hello'   { Start-WVSettingsPage 'ms-settings:signinoptions'; return }
         'connect' { Start-WVSettingsPage $WV.ConnectPage; return }   # (5.2.5)
         'report'  {

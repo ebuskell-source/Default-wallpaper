@@ -1,17 +1,7 @@
-#!/bin/bash
-# 7.0: "Check my Mac" in the app doesn't open TLA Care. Open the app as people do, click it, and see what happens.
-set -u
-O="$PWD/out/care"; mkdir -p "$O"; D="/Library/Application Support/ca.schoolathome.welcomevideo"
-sudo installer -pkg ci/test.pkg -target / > /dev/null 2>&1; sleep 10
-defaults write ca.schoolathome.welcomevideo Channel experimental
-open -a "/Applications/TLA BootPaper.app"; sleep 8
-osascript -e 'tell application "System Events" to tell process "welcome-video" to get name of every button of window 1' >> "$O/summary.txt" 2>&1
-osascript -e 'tell application "System Events" to tell process "welcome-video" to click button "Check my Mac" of window 1' >> "$O/summary.txt" 2>&1
-sleep 15; screencapture -x -t jpg "$O/after-click.jpg"
-echo "processes:" >> "$O/summary.txt"; pgrep -fl 'care-app|settings.zsh' >> "$O/summary.txt"
-osascript -e 'tell application "System Events" to get name of every window of every process whose name is "osascript"' >> "$O/summary.txt" 2>&1
-echo "--- log" >> "$O/summary.txt"; grep -E "TLA Care|App window|care" /Library/Logs/ca.schoolathome.welcomevideo.log | tail -8 >> "$O/summary.txt"
-echo "--- direct" >> "$O/summary.txt"; time (zsh "$D/settings.zsh" --care-checks | cut -c1-80) >> "$O/summary.txt" 2>&1
-( zsh "$D/settings.zsh" --care > "$O/direct.txt" 2>&1 & ); sleep 12; screencapture -x -t jpg "$O/direct.jpg"
-pgrep -fl 'care-app' >> "$O/summary.txt"; tail -3 /Library/Logs/ca.schoolathome.welcomevideo.log >> "$O/summary.txt"
-echo done >> "$O/summary.txt"
+# 7.6.0: the macOS updates row, as it is and with no room (need forced up), with a 300 MB file in Downloads.
+mkdir -p out; mkfile -n 300m "$HOME/Downloads/Big test video.mov"
+sed 's/local -i need=3;/local -i need=99999;/' ci/macsrc/common.zsh > /tmp/common-noroom.zsh
+zsh -c 'source ci/macsrc/common.zsh 2>/dev/null; wv_care_checks' > out/rows.txt 2>&1
+zsh -c 'source /tmp/common-noroom.zsh 2>/dev/null; wv_care_checks' > out/rows-noroom.txt 2>&1
+defaults read /Library/Preferences/com.apple.SoftwareUpdate RecommendedUpdates > out/recommended.txt 2>&1
+grep osupdate out/rows.txt out/rows-noroom.txt > out/summary.txt
